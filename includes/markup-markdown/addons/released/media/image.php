@@ -7,6 +7,13 @@ defined( 'ABSPATH' ) || exit;
 class ImageAddon {
 
 
+	private $prop = array(
+		'slug' => 'Image',
+		'label' => 'Responsive Image',
+		'desc' => 'Add basic html code syntax for responsive media.'
+	);
+
+
 	public $home_url = '';
 
 
@@ -14,9 +21,20 @@ class ImageAddon {
 
 
 	public function __construct( ) {
+		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			return FALSE; # Addon has been desactivated
+		endif;
 		if ( ! is_admin() ) :
 			add_filter( 'addon_markdown2html', array( $this, 'render_responsive_image' ) );
 		endif;
+	}
+
+
+	public function __get( $name ) {
+		if ( array_key_exists( $name, $this->prop ) ) {
+			return $this->prop[ $name ];
+		}
+		return 'mmd_undefined';
 	}
 
 
@@ -39,7 +57,7 @@ class ImageAddon {
 			$align = $ops[ 'align' ][ 1 ];
 		endif;
 		$html = '<figure id="attachment_mmd_' . $ops[ 'idx' ] . '"';
-		if ( ! empty( $caption ) ) : 
+		if ( ! empty( $caption ) ) :
 			$html .= ' aria-describedby="caption-attachment-mmd' . $ops[ 'idx' ] . '" class="wp-caption ';
 		else :
 			$html .= ' class="';
@@ -74,7 +92,7 @@ class ImageAddon {
 			$height = (int)$ops[ 'height' ];
 			$html .= ' height="' . $height . '"';
 		endif;
-		# If width or height is set to 'auto', we might miss a param 
+		# If width or height is set to 'auto', we might miss a param
 		if ( ! empty( $src ) && $width > 0 && $height > 0 ) :
 			$html .= 'srcset="' . $src . ' ' . $width . 'w';
 			// Check wich size is used
@@ -85,24 +103,24 @@ class ImageAddon {
 					endif;
 					$new_height = floor( $size_value[ 0 ] * $height / $width );
 					$new_src = preg_replace( '#\d+x\d+\.([a-zA-Z]+)$#', $size_value[ 0 ] . 'x' . $new_height . '.$1', $src );
-					$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src ); 
+					$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src );
 					if ( ! file_exists( ABSPATH . $base_src ) ) :
 						$new_height--;
 						$new_src = preg_replace( '#\d+x\d+\.([a-zA-Z]+)$#', $size_value[ 0 ] . 'x' . $new_height . '.$1', $src );
-						$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src ); 
+						$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src );
 					endif;
 					if ( ! file_exists( ABSPATH . $base_src ) ) :
 						$new_height = $new_height + 2;
 						$new_src = preg_replace( '#\d+x\d+\.([a-zA-Z]+)$#', $size_value[ 0 ] . 'x' . $new_height . '.$1', $src );
-						$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src ); 
+						$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src );
 					endif;
 					if ( file_exists( ABSPATH . $base_src ) ) :
-						$html .= ', ' . $new_src . ' ' . $size_value[ 0 ] . 'w';					
+						$html .= ', ' . $new_src . ' ' . $size_value[ 0 ] . 'w';
 					endif;
 				endforeach;
 			endforeach;
 			$orig_src = preg_replace( '#-\d+x\d+\.([a-z]+)$#', '.$1', $src );
-			$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $orig_src ); 
+			$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $orig_src );
 			if ( file_exists( ABSPATH . $base_src ) ) :
 				# Force to a bigger value for large screen
 				# At this point we don't know the original image size without reading
@@ -128,10 +146,10 @@ class ImageAddon {
 
 	/**
 	 * Format the images html tags as wordpress
-	 * 
+	 *
 	 * @access public
-	 * 
-	 * @params string $content The html generated from the markdown 
+	 *
+	 * @params string $content The html generated from the markdown
 	 * @return string $content The modified html code
 	 */
 	public function render_responsive_image( $content = '' ) {
@@ -195,5 +213,3 @@ class ImageAddon {
 
 
 }
-
-new \MarkupMarkdown\ImageAddon();

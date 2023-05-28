@@ -10,8 +10,26 @@ require_once mmd()->plugin_dir . '/includes/markup-markdown/abstracts/oembed.php
 class MediaVimeoAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 
 
+	private $prop = array(
+		'slug' => 'vimeo',
+		'label' => 'Vimeo',
+		'desc' => 'Convert automatically Vimeo links to an embedded iframe.'
+	);
+
+
 	public function __construct() {
+		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			return FALSE; # Addon has been desactivated
+		endif;
 		add_filter( 'addon_markdown2html', array( $this, 'vimeo2html' ) );
+	}
+
+
+	public function __get( $name ) {
+		if ( array_key_exists( $name, $this->prop ) ) {
+			return $this->prop[ $name ];
+		}
+		return 'mmd_undefined';
 	}
 
 
@@ -33,6 +51,3 @@ class MediaVimeoAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 	}
 
 }
-
-
-new \MarkupMarkdown\MediaVimeoAddon();

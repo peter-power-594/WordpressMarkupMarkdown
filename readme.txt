@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.1.1
-Version: 2.1.1
+Stable Tag: 2.2.0
+Version: 2.2.0
 Requires at least: 4.9
 Tested up to: 6.2.2
 Requires PHP: 5.6.0
@@ -59,6 +59,11 @@ like that:
 `echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );
 
 == Changelog ==
+
+= 2.2.0 =
+
+Improvement:
+- Enabling "Screen options" on the top right area of the settings page so you can activate or disable addons one by one
 
 = 2.1.2 =
 

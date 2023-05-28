@@ -10,13 +10,21 @@ class PluginOptions {
 
 	/**
 	 * Used when the config file has change
-	 * 
+	 *
 	 * @var boolean Status if the update, TRUE in case of success or FALSE
 	 */
 	public $updated = -1;
 
 
-	public function __construct() {
+	/**
+	 * Initialized addons
+	 *
+	 * @var Array $addons The addons properties
+	 */
+	 public $addons = [];
+
+	public function __construct( $addons ) {
+		$this->addons = $addons;
 		if ( ! is_admin() ) :
 			# Don't do anything
 			return TRUE;
@@ -26,6 +34,8 @@ class PluginOptions {
 		# Options Edit Screen
 		$my_page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_SPECIAL_CHARS );
 		if ( isset( $my_page ) && $my_page === 'markup-markdown-admin' ) :
+			# Add Help and plugins toggler. Thi action should be run *after* admin_menu
+			add_action( 'load-settings_page_markup-markdown-admin', array( $this, 'mmd_setup_tools' ), 10 );
 			# Check if the setting form was submitted
 			$this->update_config();
 			# Load assets
@@ -36,13 +46,13 @@ class PluginOptions {
 
 	/**
 	 * Make the configuration file
-	 * 
+	 *
 	 * @since 1.7.2
 	 * @access private
-	 * 
+	 *
 	 * @param array $params data as key => val used later as constants
 	 * @param boolean $new to check whether the file already exists
-	 * 
+	 *
 	 * @returns boolean TRUE if the file already exists or was updated
 	 */
 	private function make_conf( $params = [], $new = FALSE ) {
@@ -58,7 +68,6 @@ class PluginOptions {
 		endif;
 		$php_code = [ "<?php" ];
 		$php_code[] = "\n\tdefined( 'ABSPATH' ) || exit;";
-		error_log( print_r( $params, true ));
 		foreach ( $params as $const => $val ) :
 			if ( is_integer( $val ) ) :
 				$php_code[] = "\n\tdefine( '" . $const . "', " . (int)$val . " );";
@@ -105,10 +114,10 @@ class PluginOptions {
 
 	/**
 	 * The options page
-	 * 
+	 *
 	 * @since 1.7.2
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function options_page() {
@@ -117,7 +126,6 @@ class PluginOptions {
 		endif;
 		do_action( 'mmd_before_options' );
 ?>
-		<div class="wrap">
 			<h1>Markup Markdown : <?php echo __( 'Settings' ); ?></h1>
 			<form method="post">
 				<div id="tabs">
@@ -140,15 +148,15 @@ class PluginOptions {
 
 	/**
 	 * Trigger when the menu item was added
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @returns void
 	 */
 	private function setup_options_completed() {
 		if ( $this->updated > -1 ) :
-			# Redirect the screen options page to avoid cache issues 
+			# Redirect the screen options page to avoid cache issues
 			# when the config file has been updated
 			$redirect_url = \menu_page_url( 'markup-markdown-admin', false )
 				. '&options_saved=' . ( $this->updated > 0 ? '1' : '0' );
@@ -160,10 +168,10 @@ class PluginOptions {
 
 	/**
 	 * Add the options menu in the admin area
-	 * 
+	 *
 	 * @since 1.7.2
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function add_admin_menu() {
@@ -172,12 +180,133 @@ class PluginOptions {
 	}
 
 
+	public function mmd_setup_tools() {
+		$update = $this->mmd_update_screen_options( filter_input( INPUT_POST, 'screen-options-apply', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
+		add_filter( 'screen_options_show_screen', array( $this, 'mmd_screen_options_show_screen' ), 10, 2 );
+		add_filter( 'screen_options_show_submit', array( $this, 'mmd_screen_options_show_submit' ), 10, 2 );
+		add_filter( 'screen_settings', array( $this, 'mmd_screen_settings' ), 10 , 2 );
+	}
+
+
+	/**
+	 * If the MMD screen options area has submitted, update the related conf
+	 *
+	 * @since 2.1.2
+	 * @access private
+	 *
+	 * @param String $submit_button The value of the submit button
+	 * @return Void
+	 */
+	private function mmd_update_screen_options( $submit_button = '' ) {
+		if ( ! $submit_button || empty( $submit_button ) || $submit_button !== __( 'Apply' ) ) :
+			return FALSE;
+		endif;
+		if ( ! check_admin_referer( 'screen-options-nonce', 'screenoptionnonce' ) ) :
+			return FALSE;
+		endif;
+		$my_addons = filter_input( INPUT_POST, 'mmd_addons', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+		$my_cnf_screen = mmd()->cache_dir . '/conf_screen.php';
+		if ( ! file_exists( $my_cnf_screen ) ) :
+			touch( $my_cnf_screen );
+		endif;
+		$php_code = [ "<?php" ];
+		$php_code[] = "\n\tdefined( 'ABSPATH' ) || exit;";
+		$php_code[] = "\n\tdefine( 'MMD_ADDONS', [";
+		if ( isset( $my_addons ) && is_array( $my_addons ) ) :
+			foreach( $my_addons as $addon ) :
+				$php_code[] = "\n\t\t\"" . htmlspecialchars( $addon ) . "\",";
+			endforeach;
+			$php_code[] = "\n\t\t\"eof\"";
+		endif;
+		$php_code[] = "\n\t]);";
+		if ( file_put_contents( $my_cnf_screen, implode( '', $php_code ) ) ) :
+			$redirect_url = \menu_page_url( 'markup-markdown-admin', false )
+				. '&options_saved=' . ( $this->updated > 0 ? '1' : '0' );
+				\wp_redirect( $redirect_url, 302 );
+			exit;
+		endif;
+		return FALSE;
+	}
+
+
+	/**
+	 * Force to display the accordion with page screen options area on the top right of the MMD Settings page
+	 *
+	 * @since 2.1.2
+	 * @access public
+	 *
+	 * @param Boolean $show_screen The current display panel setting of the screen.
+	 * @param \WP_Screen $screen The current screen settings objet.
+	 * @return Boolean TRUE in case the panel should be shown or FALSE.
+	 */
+	public function mmd_screen_options_show_screen( $show_screen, $screen ) {
+		if ( is_object( $screen ) && isset( $screen->id ) && $screen->id === 'settings_page_markup-markdown-admin' ) :
+			return TRUE;
+		endif;
+		return $show_screen;
+	}
+
+
+	/**
+	 * Force to display the submit button inside the screen options area on the top right of the MMD Settings page
+	 *
+	 * @since 2.1.2
+	 * @access public
+	 *
+	 * @param Boolean $show_screen The current submit display setting of the screen.
+	 * @param \WP_Screen $screen The current screen settings objet.
+	 * @return Boolean TRUE in case the panel should be shown or FALSE.
+	 */
+	public function mmd_screen_options_show_submit( $show_submit, $screen ) {
+		if ( is_object( $screen ) && isset( $screen->id ) && $screen->id === 'settings_page_markup-markdown-admin' ) :
+			return TRUE;
+		endif;
+		return $show_submit;
+	}
+
+
+	/**
+	 * Custom HTML inside the screen options panel
+	 *
+	 * @since 2.1.2
+	 * @access public
+	 *
+	 * @param String $panel The html code for the current panel
+	 * @param \WP_Screen $screen The current screen settings objet.
+	 * @return String The modified html code for the current panel
+	 */
+	public function mmd_screen_settings( $panel, $screen ) {
+		if ( ! is_object( $screen ) || ( isset( $screen->id ) && $screen->id !== 'settings_page_markup-markdown-admin' ) ) :
+			return $panel;
+		endif;
+		$conf_screen = mmd()->cache_dir . '/conf_screen.php';
+		if ( file_exists( $conf_screen ) ) :
+			require_once $conf_screen;
+		endif;
+		$html = '<fieldset class="metabox-prefs">';
+		$html .= '<legend>Addons Used</legend>';
+		$html .= '<p>' . __( 'You can manually activate addons or force some addons to be desactivated' ) . '</p>';
+		foreach ( $this->addons->setup as $slug ) :
+			if ( ! $this->addons->inst[ $slug ] ) :
+				continue;
+			endif;
+			$inst = $this->addons->inst[ $slug ];
+			$html .= '<label for="mmd_addon-' . $slug . '">';
+			$html .= '<input class="enable-' . $slug . '-addon" name="mmd_addons[]" id="mmd_addon-' . $slug . '" type="checkbox" value="' . $slug . '"'
+			. ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $slug, MMD_ADDONS ) ) ? ' checked="checked"' : '' )
+			. ' /> ' . $inst->label . '</label>';
+		endforeach;
+		$html .= '</fieldset>';
+		return $panel . $html;
+	}
+
+
 	/**
 	 * The options page assets
-	 * 
+	 *
 	 * @since 1.9.1
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function enqueue_setting_scripts() {
@@ -190,6 +319,3 @@ class PluginOptions {
 
 
 }
-
-
-new \MarkupMarkdown\PluginOptions();
