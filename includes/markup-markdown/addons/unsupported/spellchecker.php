@@ -6,10 +6,18 @@ defined( 'ABSPATH' ) || exit;
 
 class SpellCheckerAddon {
 
+
+	private $prop = array(
+		'slug' => 'hungspellchecker',
+		'label' => 'Hung Spell Checker',
+		'desc' => 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles'
+	);
+
+
 	/**
 	 * @property Array $dictionaries The languages list for spell checker
 	 * @see https://github.com/titoBouzout/Dictionaries
-	 * 
+	 *
 	 * @since 1.9.1
 	 * @access protected
 	 */
@@ -53,7 +61,7 @@ class SpellCheckerAddon {
 		'norwegian_nn' => array( 'code' => 'nn', 'label' => 'Norsk (Nynorsk) -- Norwegian', 'file_name' => 'Norwegian (Nynorsk)' ),
 		'occitan_fr' => array( 'code' => 'oc', 'label' => 'Occitan (France) -- Occitan', 'file_name' => 'Occitan (France)' ),
 		'persian' => array( 'code' => 'fa', 'label' => 'فارسی -- Persian', 'file_name' => 'Persian' ),
-		'polish' => array( 'code' => 'pl', 'label' => 'Polski -- Polish', 'file_name' => 'Polish' ),		
+		'polish' => array( 'code' => 'pl', 'label' => 'Polski -- Polish', 'file_name' => 'Polish' ),
 		'portuguese_br' => array( 'code' => 'pt_BR', 'label' => 'Português (Brasileiro) -- Portuguese (Brazilian)', 'file_name' => 'Portuguese (Brazilian)' ),
 		'portuguese_pt1' => array( 'code' => 'pt_PT', 'label' => 'Português (Europeu - Antes do Acordo Ortográfico de 1990) -- Portuguese (European - Before the Ortographic Agreement of 1990)', 'file_name' => 'Portuguese (European - Before OA 1990)' ),
 		'portuguese_pt2' => array( 'code' => 'pt_PT', 'label' => 'Português (Europeu) -- Portuguese (European)', 'file_name' => 'Portuguese (European)' ),
@@ -78,6 +86,9 @@ class SpellCheckerAddon {
 
 
 	public function __construct() {
+		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			return FALSE; # Addon has been desactivated
+		endif;
 		mmd()->default_conf = array( 'MMD_SPELL_CHECK' => array() );
 		$this->dict_dir = WP_CONTENT_DIR . "/mmd-dict/";
 		if ( is_admin() ) :
@@ -88,12 +99,20 @@ class SpellCheckerAddon {
 	}
 
 
+	public function __get( $name ) {
+		if ( array_key_exists( $name, $this->prop ) ) {
+			return $this->prop[ $name ];
+		}
+		return 'mmd_undefined';
+	}
+
+
 	/**
 	 * Filter to parse spellchecker options inside the options screen when the form was submitted
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function update_config( $my_cnf ) {
@@ -129,12 +148,12 @@ class SpellCheckerAddon {
 
 
 	/**
-	 * Method to automatically switch the default dictionary in used when 
+	 * Method to automatically switch the default dictionary in used when
 	 * editing a post in an alternative language - for example with Polylang
-	 * 
+	 *
 	 * @access private
 	 * @since 1.9.3
-	 * 
+	 *
 	 * @param Array $dict the dictionaries locales list
 	 * @returns Array $my_dict the list updated with different order if need be
 	 */
@@ -214,10 +233,10 @@ class SpellCheckerAddon {
 
 	/**
 	 * Install spellchecker dictionnaries
-	 * 
+	 *
 	 * @since 1.9.1
 	 * @access private
-	 * 
+	 *
 	 * @return Boolean TRUE if the new dictionary was installed
 	 * or FALSE if nothing was installed or the target dictionary already exists
 	 */
@@ -274,10 +293,10 @@ class SpellCheckerAddon {
 
 	/**
 	 * Show the spellchecker tab item inside the options screen
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function add_tabmenu() {
@@ -287,10 +306,10 @@ class SpellCheckerAddon {
 
 	/**
 	 * Display spellchecker options inside the options screen
-	 * 
+	 *
 	 * @since 1.9.1
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function add_tabcontent() {
@@ -371,6 +390,3 @@ class SpellCheckerAddon {
 
 
 }
-
-
-new \MarkupMarkdown\SpellCheckerAddon();

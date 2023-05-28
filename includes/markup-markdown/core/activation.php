@@ -23,10 +23,18 @@ class PluginActivation {
 			require_once $conf_file;
 		endif;
 		$core_dir = mmd()->plugin_dir . '/includes/markup-markdown/core/';
+		# Load the conf.
+		$conf_file = mmd()->cache_dir . '/conf.php';
+		if ( file_exists( $conf_file ) ) :
+			# If not present, wait for the addons to be loaded !
+			require_once $conf_file;
+		endif;
 		# Load core modules
 		require_once $core_dir . 'support.php';
 		require_once $core_dir . 'addons.php';
+		$mmd_addons = new PluginAddons();
 		require_once $core_dir . 'settings.php';
+		$mmd_settings = new PluginOptions( $mmd_addons );
 		# Just in case
 		$this->prepare_cache();
 	}

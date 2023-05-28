@@ -10,8 +10,26 @@ require_once mmd()->plugin_dir . '/includes/markup-markdown/abstracts/oembed.php
 class MediaYoutubeAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 
 
+	private $prop = array(
+		'slug' => 'youtube',
+		'label' => 'Youtube',
+		'desc' => 'Convert automaticall Youtube links to an embedded iframe.'
+	);
+
+
 	public function __construct() {
+		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			return FALSE; # Addon has been desactivated
+		endif;
 		add_filter( 'addon_markdown2html', array( $this, 'youtube2html' ) );
+	}
+
+
+	public function __get( $name ) {
+		if ( array_key_exists( $name, $this->prop ) ) {
+			return $this->prop[ $name ];
+		}
+		return 'mmd_undefined';
 	}
 
 
@@ -22,8 +40,8 @@ class MediaYoutubeAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 	 * @access public
 	 * @since 2.0.0
 	 *
-	 * @param string $content the html to be parsed
-	 * @returns string html with Vimeo iframes embed code
+	 * @param String $content The html to be parsed.
+	 * @return String The html with Youtube iframes embed code.
 	 */
 	public function youtube2html( $content = '' ) {
 		return $this->oembed_service([
@@ -35,6 +53,3 @@ class MediaYoutubeAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 
 
 }
-
-
-new \MarkupMarkdown\MediaYoutubeAddon();

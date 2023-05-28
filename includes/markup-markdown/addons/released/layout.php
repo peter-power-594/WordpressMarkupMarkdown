@@ -8,10 +8,20 @@ defined( 'ABSPATH' ) || exit;
 class LayoutAddon {
 
 
+	private $prop = array(
+		'slug' => 'layout',
+		'label' => 'Layout',
+		'desc' => 'A few tools to help you enhancing your layout.'
+	);
+
+
 	public function __construct() {
 		mmd()->default_conf = array( 'MMD_USE_LIGHTBOX' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
+		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			return FALSE; # Addon has been desactivated
+		endif;
 		if ( is_admin() ) :
 			add_filter( 'mmd_verified_config', array( $this, 'update_config' ) );
 			add_filter( 'mmd_var2const', array( $this, 'create_const' ) );
@@ -23,12 +33,20 @@ class LayoutAddon {
 	}
 
 
+	public function __get( $name ) {
+		if ( array_key_exists( $name, $this->prop ) ) {
+			return $this->prop[ $name ];
+		}
+		return 'mmd_undefined';
+	}
+
+
 	/**
 	 * Filter to parse layout options inside the options screen when the form was submitted
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function update_config( $my_cnf ) {
@@ -58,10 +76,10 @@ class LayoutAddon {
 
 	/**
 	 * Add the layout menu item inside the options screen
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function add_tabmenu() {
@@ -71,10 +89,10 @@ class LayoutAddon {
 
 	/**
 	 * Display layout options inside the options screen
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function add_tabcontent() {
@@ -135,10 +153,10 @@ class LayoutAddon {
 
 	/**
 	 * Trigger Masonry or lightbox assets on the frontend
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function my_plugin_assets() {
@@ -190,10 +208,10 @@ class LayoutAddon {
 
 	/**
 	 * Format the html so lightboxes or masonry layout can be used
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function render_lightbox_masonry( $content = '' ) {
@@ -224,5 +242,3 @@ class LayoutAddon {
 
 
 }
-
-new \MarkupMarkdown\LayoutAddon();
