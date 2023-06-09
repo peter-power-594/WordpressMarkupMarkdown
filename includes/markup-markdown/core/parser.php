@@ -11,10 +11,12 @@ class Parser {
 
 	private $parser = '';
 
+	private $preview = 'false';
 
 	public function __construct() {
 		if ( MMD_SUPPORT_ENABLED > 0 ) :
 			# Add the filter so the markdown can be parsed and the html generated properly on the frontend
+			$this->preview = filter_input( INPUT_GET, 'preview', FILTER_SANITIZE_SPECIAL_CHARS );
 			add_filter( 'post_markdown2html', array( $this, 'cached_post_markdown2html' ) );
 			add_filter( 'field_markdown2html', array( $this, 'post_markdown2html' ) );
 		else :
@@ -50,15 +52,16 @@ class Parser {
 	public function cached_post_markdown2html( $content ) {
 		$cache_content = mmd()->cache_dir . "/." . get_main_site_id() . '_' . get_the_id() . ".html";
 		# Cache available
-		if ( file_exists( $cache_content ) ) :
+		if ( $this->preview !== 'true' && file_exists( $cache_content ) ) :
 			$my_content = file_get_contents( $cache_content );
 			return $my_content;
 		endif;
 		# Cache not available
 		$html = $this->post_markdown2html( $content );
 		# Decode the double quotes to avoid breaking native WP shortcodes
-		file_put_contents( $cache_content, htmlspecialchars_decode( $html, ENT_COMPAT ) );
-		return $html;
+		$html_with_shortcodes = htmlspecialchars_decode( $html, ENT_COMPAT );
+		file_put_contents( $cache_content, $html_with_shortcodes );
+		return $html_with_shortcodes;
 	}
 
 

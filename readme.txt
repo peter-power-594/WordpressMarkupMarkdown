@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.2.0
-Version: 2.2.0
+Stable Tag: 2.2.1
+Version: 2.2.1
 Requires at least: 4.9
 Tested up to: 6.2.2
 Requires PHP: 5.6.0
@@ -17,6 +17,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- Disable specific addons since 2.2
 - Gallery shortcode support since 2.1
 - ACF markdown field since 2.0
 - Multilingual spell checking since 1.9
@@ -59,6 +60,12 @@ like that:
 `echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );
 
 == Changelog ==
+
+= 2.2.1 =
+
+Bug fixes:
+- Adding missing 2 & 3 columns styles for the gallery in the preview rendered by EasyMDE
+- Shortcodes now working in the preview page rendered by Wordpress (The one with /?preview=true in the url)
 
 = 2.2.0 =
 
