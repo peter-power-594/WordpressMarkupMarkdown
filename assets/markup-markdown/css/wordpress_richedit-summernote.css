@@ -1,0 +1,369 @@
+/* COMMON
+ ------------------------------------------ */
+@import url('https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/*
+@font-face {
+    font-family: Carlito;
+    src: url('../font/carlito/Carlito-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: Carlito;
+    src: url('../font/carlito/Carlito-BoldItalic.ttf');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: Carlito;
+    src: url('../font/carlito/Carlito-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: Carlito;
+    src: url('../font/carlito/Carlito-Regular.ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+*/
+#post-status-info,
+.note-dropzone {
+    display: none;
+}
+
+
+/* SUMMERNOTE
+ ------------------------------------------ */
+.wp-editor-container #wpcontent {
+    background: var(--bs-white);
+}
+.wp-editor-container .wp-heading-inline {
+    opacity: 0;
+    visibility: hidden;
+}
+.wp-editor-container .wp-heading-inline + .page-title-action {
+    display: none;
+}
+.wp-editor-container #titlediv {
+    padding-left: 50px;
+}
+.wp-editor-container #titlediv #title {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    font-size: calc(1.375rem + 1.5vw) !important;
+}
+@media (min-width: 1200px) {
+    .wp-editor-container #titlediv {
+        padding-right: 60px;
+    }
+    .wp-editor-container #titlediv #title {
+        font-size: 2.5rem !important;
+        position: relative;
+    }
+    .wp-editor-container #titlediv #title:focus {
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        box-shadow: none;
+    }
+}
+.wp-editor-container .note-editor {
+    background: transparent;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+.wp-editor-container .note-editor.note-frame .note-editing-area .note-editable,
+.wp-editor-container .note-editor.note-airframe .note-editing-area .note-editable {
+    padding: 10px 20px 10px 60px;
+    font-family: Carlito, Calibri;
+}
+@media (min-width: 1200px) {
+    .wp-editor-container .note-editor.note-frame .note-editing-area .note-editable,
+    .wp-editor-container .note-editor.note-airframe .note-editing-area .note-editable {
+        padding-right: 60px;
+        padding-left: 50px;
+        position: relative;
+    }
+    .wp-editor-container .note-editor.note-frame .note-editing-area .note-editable:after,
+    .wp-editor-container .note-editor.note-airframe .note-editing-area .note-editable:after {
+        border-left: 1px solid rgba(140, 143, 148, 0.5);
+        bottom: 0;
+        content: ' ';
+        display: block;
+        left: auto;
+        margin: 0;
+        opacity: 0.25;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        right: 61px;
+        top: 0;
+        width: 1px;
+    }
+}
+.wp-editor-container .note-editable > h1,
+.wp-editor-container .note-editable > .h1,
+.wp-editor-container .note-editable > h2,
+.wp-editor-container .note-editable > .h2,
+.wp-editor-container .note-editable > h3,
+.wp-editor-container .note-editable > .h3,
+.wp-editor-container .note-editable > h4,
+.wp-editor-container .note-editable > .h4,
+.wp-editor-container .note-editable > h5,
+.wp-editor-container .note-editable > .h5,
+.wp-editor-container .note-editable > h6,
+.wp-editor-container .note-editable > .h6,
+.wp-editor-container .note-editable p,
+.wp-editor-container .note-editable > blockquote,
+.wp-editor-container .note-editable > ul > li,
+.wp-editor-container .note-editable > ol > li,
+.wp-editor-container figcaption {
+    position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.wp-editor-container .note-editable > pre {
+    font-size: 1rem;
+    overflow: visible;
+    position: relative;
+}
+.wp-editor-container .note-editable > h1:before,
+.wp-editor-container .note-editable > .h1:before,
+.wp-editor-container .note-editable > h2:before,
+.wp-editor-container .note-editable > .h2:before,
+.wp-editor-container .note-editable > h3:before,
+.wp-editor-container .note-editable > .h3:before,
+.wp-editor-container .note-editable > h4:before,
+.wp-editor-container .note-editable > .h4:before,
+.wp-editor-container .note-editable > h5:before,
+.wp-editor-container .note-editable > .h5:before,
+.wp-editor-container .note-editable > h6:before,
+.wp-editor-container .note-editable > .h6:before {
+    bottom: 0;
+    display: inline-block;
+    margin: 0 10px 0 0;
+    opacity: 0.5;
+    position: relative;
+    vertical-align: middle;
+}
+.wp-editor-container .note-editable > h1:before,
+.wp-editor-container .note-editable > .h1:before {
+    margin-left: -1.25rem;
+}
+.wp-editor-container .note-editable > h2:before,
+.wp-editor-container .note-editable > .h2:before {
+    margin-left: -2.05rem;
+}
+.wp-editor-container .note-editable > h3:before,
+.wp-editor-container .note-editable > .h3:before {
+    margin-left: -2.68rem;
+}
+.wp-editor-container .note-editable > h4:before,
+.wp-editor-container .note-editable > .h4:before {
+    margin-left: -3.1rem;
+}
+.wp-editor-container .note-editable > h5:before,
+.wp-editor-container .note-editable > .h5:before {
+    margin-left: -3.18rem;
+}
+.wp-editor-container .note-editable > h6:before,
+.wp-editor-container .note-editable > .h6:before {
+    margin-left: -3.05rem;
+}
+.wp-editor-container .note-editable > h1:after,
+.wp-editor-container .note-editable > .h1:after,
+.wp-editor-container .note-editable > h2:after,
+.wp-editor-container .note-editable > .h2:after,
+.wp-editor-container .note-editable > h3:after,
+.wp-editor-container .note-editable > .h3:after,
+.wp-editor-container .note-editable > h4:after,
+.wp-editor-container .note-editable > .h4:after,
+.wp-editor-container .note-editable > h5:after,
+.wp-editor-container .note-editable > .h5:after,
+.wp-editor-container .note-editable > h6:after,
+.wp-editor-container .note-editable > .h6:after {
+    bottom: 0;
+    display: block;
+    font-weight: 400;
+    left: 100%;
+    margin: 0 0 0 -1px;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+}
+.wp-editor-container .note-editable > h1:before,
+.wp-editor-container .note-editable > .h1:before {
+    content: '#';
+}
+.wp-editor-container .note-editable > h2:before,
+.wp-editor-container .note-editable > .h2:before {
+    content: '##';
+}
+.wp-editor-container .note-editable > h3:before,
+.wp-editor-container .note-editable > .h3:before {
+    content: '###';
+}
+.wp-editor-container .note-editable > h4:before,
+.wp-editor-container .note-editable > .h4:before {
+    content: '####';
+}
+.wp-editor-container .note-editable > h5:before,
+.wp-editor-container .note-editable > .h5:before {
+    content: '#####';
+}
+.wp-editor-container .note-editable > h6:before,
+.wp-editor-container .note-editable > .h6:before {
+    content: '######';
+}
+.wp-editor-container .note-editable > p:after,
+.wp-editor-container .note-editable > pre:after {
+    left: 100%;
+    margin: 0 0 0 -1px;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+}
+.wp-editor-container .note-editable > ul {
+    list-style: none;
+    padding-left: 0;
+}
+.wp-editor-container .note-editable > ul > li:before {
+    margin: 0 0 0 -1px;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    left: -13px;
+}
+.wp-editor-container .note-editable > ul > li:before {
+    content: '◾';
+}
+.wp-editor-container .note-editable ul > li:after,
+.wp-editor-container .note-editable ol > li:after{
+    left: 100%;
+    margin: 0 0 0 -1px;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+}
+.wp-editor-container .note-editable > pre code:before,
+.wp-editor-container .note-editable > pre code:after {
+    color: #3c434a;
+    content: '```';
+    display: block;
+    margin: 0.25rem;
+    height: 0.5rem;
+    opacity: 0.5;
+}
+.wp-editor-container .note-editable figcaption {
+  font-size: 1rem;
+}
+.wp-editor-container .note-editable > figure > blockquote {
+  margin-bottom: 0;
+}
+.wp-editor-container .note-editable > blockquote,
+.wp-editor-container .note-editable > figure > blockquote:last-child,
+.wp-editor-container .note-editable > figure > blockquote + figcaption {
+  margin-bottom: 1rem;
+}
+.wp-editor-container .note-editable blockquote,
+.wp-editor-container .note-editable blockquote + figcaption {
+	position: relative;
+}
+.wp-editor-container .note-editable blockquote > p {
+	margin-bottom: 0;
+}
+.wp-editor-container .note-editable blockquote > p:first-child:before {
+	content: '\201C';
+}
+.wp-editor-container .note-editable blockquote > p:last-child:after {
+	content: '\201D';
+}
+.wp-editor-container .note-editable blockquote:before,
+.wp-editor-container .note-editable blockquote + figcaption:before {
+	content: ' ';
+	display: block;
+	position: absolute;
+  top: 0;
+	right: 100%;
+	left: auto;
+	bottom: 0;
+	width: 0.25rem;
+	background: rgba(140, 143, 148, 0.5);
+}
+.wp-editor-container .note-editable blockquote:before {
+	top: -0.25rem;
+}
+.wp-editor-container .note-editable blockquote:last-child:before,
+.wp-editor-container .note-editable blockquote + figcaption:before {
+	bottom: -0.25rem;
+}
+@media (min-width: 1200px) {
+    .wp-editor-container .note-editable > h1:after,
+    .wp-editor-container .note-editable > .h1:after {
+        border-left: 6px solid rgba(140, 143, 148, 0.5);
+        content: 'h1';
+        padding-left: 4px;
+    }
+    .wp-editor-container .note-editable > h2:after,
+    .wp-editor-container .note-editable > .h2:after {
+        border-left: 5px solid rgba(140, 143, 148, 0.5);
+        content: 'h2';
+        padding-left: 5px;
+    }
+    .wp-editor-container .note-editable > h3:after,
+    .wp-editor-container .note-editable > .h3:after {
+        border-left: 4px solid rgba(140, 143, 148, 0.5);
+        content: 'h3';
+        padding-left: 6px;
+    }
+    .wp-editor-container .note-editable > h4:after,
+    .wp-editor-container .note-editable > .h4:after {
+        border-left: 3px solid rgba(140, 143, 148, 0.5);
+        content: 'h4';
+        padding-left: 7px;
+    }
+    .wp-editor-container .note-editable > h5:after,
+    .wp-editor-container .note-editable > .h5:after {
+        border-left: 2px solid rgba(140, 143, 148, 0.5);
+        content: 'h5';
+        padding-left: 8px;
+    }
+    .wp-editor-container .note-editable > h6:after,
+    .wp-editor-container .note-editable > .h6:after {
+        border-left: 1px solid rgba(140, 143, 148, 0.5);
+        content: 'h6';
+        padding-left: 9px;
+    }
+    .wp-editor-container .note-editable > p:after {
+        border-left: 1px solid rgba(140, 143, 148, 0.5);
+        content: 'p';
+        padding-left: 10px;
+    }
+    .wp-editor-container .note-editable > pre:after {
+        border-left: 1px solid rgba(140, 143, 148, 0.5);
+        content: 'pre';
+        padding-left: 10px;
+    }
+    .wp-editor-container .note-editable > li:after {
+        border-left: 1px solid rgba(140, 143, 148, 0.5);
+        content: 'li';
+        padding-left: 15px;
+    }
+    .wp-editor-container .note-editable > ul > li:first-child:after {
+        content: 'ul';
+        padding-left: 10px;
+    }
+    .wp-editor-container .note-editable > ol > li:first-child:after {
+        content: 'ol';
+        padding-left: 10px;
+    }
+}
+.wp-editor-container .note-editor.note-frame,
+.wp-editor-container .note-editor.note-airframe {
+    border: 0;
+}

@@ -38,6 +38,12 @@ class PluginAddons {
 
 		require_once $addon_dir  . 'released/engine_easymde.php';
 		$my_addon = new EngineEasyMDE();
+		# $this->prop[ 'setup' ][] = $my_addon->slug;
+		$this->prop[ 'inst' ][ $my_addon->slug ] = $my_addon;
+		unset( $my_addon );
+
+		require_once $addon_dir  . 'released/engine_summernote.php';
+		$my_addon = new EngineSummerNote();
 		$this->prop[ 'setup' ][] = $my_addon->slug;
 		$this->prop[ 'inst' ][ $my_addon->slug ] = $my_addon;
 		unset( $my_addon );
