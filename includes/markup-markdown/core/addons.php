@@ -36,6 +36,12 @@ class PluginAddons {
 		# Load addons modules
 		$addon_dir = mmd()->plugin_dir . '/includes/markup-markdown/addons/';
 
+		require_once $addon_dir  . 'released/engine_easymde.php';
+		$my_addon = new EngineEasyMDE();
+		$this->prop[ 'setup' ][] = $my_addon->slug;
+		$this->prop[ 'inst' ][ $my_addon->slug ] = $my_addon;
+		unset( $my_addon );
+
 		require_once $addon_dir  . 'released/layout.php';
 		$my_addon = new LayoutAddon();
 		$this->prop[ 'setup' ][] = $my_addon->slug;
