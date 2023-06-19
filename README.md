@@ -5,7 +5,7 @@ The Rocket [Markup Markdown](https://wordpress.org/plugins/markup-markdown/) Wor
 
 Issues are not enabled, only sharing the source code.
 
-Please use the Wordpress community forum to get help:  
+Need help? Ask me and share the community with the Wordpress forum:  
 https://wordpress.org/support/plugin/markup-markdown/
 
 Business or commercial use? Request professional support here:  
