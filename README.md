@@ -9,7 +9,7 @@ Please use the Wordpress community forum to get help:
 https://wordpress.org/support/plugin/markup-markdown/
 
 Business or commercial use? Request professional support here:  
-https://www.pierre-henri-lavigne.info
+[https://red.phutu.red/contact/](https://red.phutu.red/contact/)
 
 Thank you for your understanding, and stay tune for the markdown journey!  
 It's just the beginning, and if you can feel free to do a gesture to support me:
