@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.2.1
-Version: 2.2.1
+Stable Tag: 2.2.2
+Version: 2.2.2
 Requires at least: 4.9
 Tested up to: 6.2.2
 Requires PHP: 5.6.0
@@ -17,7 +17,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
-- Disable specific addons since 2.2
+- Possible to enable or disable specific addons since 2.2
 - Gallery shortcode support since 2.1
 - ACF markdown field since 2.0
 - Multilingual spell checking since 1.9
@@ -43,23 +43,26 @@ All done ! That's all you should do.
 
 = Is it still compatible with Gutenberg or any other builder ?
 
-**YES** _BUT_ you can't use both at the same time.
-**You need to stick to one editor with one post type, you have to choose only 1 ;-)**
-Data are saved as pure markdown code in the database, for the other editors on the market data are saved as HTML or custom markups like shortcodes so data are still saved but won't be converted or rendered correctly if you revert back or switch between editors.
+**Yes but you can't use both at the same time ;-)**  
+Data are saved as pure markdown code in the database, for the other editors on the market data are saved as HTML or custom markups like shortcodes. Currently data are still saved but won't be converted or rendered correctly if you revert back or switch between editors.
 
 = Can I switch between editors or allow the markdown editor for specific users ? =
 
-**YES** _BUT_ it's a global switch. Any block editor will be disabled for **all the users** of your Wordpress instance. _filters_ are available to disable the markdown editor for specific custom post types, just keep in mind the setting will be applied to all the users. Go to the forum to know how to do it.
+**Yes, please keep in mind it's a global switch for now. You need to stick to one editor with one post type.**  
+Any block editor will be disabled for **all the users** of your Wordpress instance. _filters_ are available to disable the markdown editor for specific custom post types at a global level. For example you can do a setup to use _Divi_ or _Elementor_ to edit your pages and _Markdown_ to edit your blog'posts. Please refer to the forum to know how to do it.
 
-So to resume with a clean setup for example you _should_ be able to use Divi or Elementor with your pages and Markdown with your blog posts.
+= Can I use it with custom fields? (Or within my theme) =
 
-= How can I use it with custom fields? (Or within my theme) =
-
-Developers & designers can access the public properties & methods of the instance inside their templates through the global _mmd_ function. For example let's say you want to use it with a custom field called 'foo_bar'. You can use something
+Sure, developers & designers can access the public properties & methods of the instance inside their templates through the global _mmd_ function. For example let's say you want to use it with a custom field called 'foo_bar'. You can use something
 like that:
 `echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );
 
 == Changelog ==
+
+= 2.2.2 =
+
+Bug fix:
+- Lightboxes working again with the gallery shortcode
 
 = 2.2.1 =
 
