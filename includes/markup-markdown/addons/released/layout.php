@@ -15,6 +15,9 @@ class LayoutAddon {
 	);
 
 
+	private $gal = 0;
+
+
 	public function __construct() {
 		mmd()->default_conf = array( 'MMD_USE_LIGHTBOX' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
@@ -152,6 +155,39 @@ class LayoutAddon {
 
 
 	/**
+	 * Increment the gallery counter to separate different lightbox
+	 *
+	 * @since 2.2.2
+	 * @access public
+	 * 
+	 * @param \HTML_node $gallery_style The html opening tag and styles of current gallery
+	 *
+	 * @return \HTML_node The updated html code
+	 */
+	public function gallery_style_filter( $gallery_style ) {
+		$this->gal++;
+		return $gallery_style;
+	}
+
+
+	/**
+	 * Add extra html markup to trigger the lightbox on gallery
+	 *
+	 * @since 2.2.2
+	 * @access public
+	 * 
+	 * @param Array $attributes The current link
+	 * @param Integer $post_ID The post ID
+	 *
+	 * @return Array The updated link attributes
+	 */
+	public function attachment_link_attributes_filter( $attributes, $post_ID ) {
+		$attributes[ 'data-lightbox' ] = 'gallery' . $this->gal;
+		return $attributes;
+	}
+
+
+	/**
 	 * Trigger Masonry or lightbox assets on the frontend
 	 *
 	 * @since 2.0.0
@@ -172,8 +208,10 @@ class LayoutAddon {
 			$use_lightbox = 1;
 			wp_deregister_script( 'lightbox' );
 			wp_deregister_script( 'jquery-lightbox' );
-			wp_enqueue_style( 'lightbox', $plugin_uri . 'assets/lightbox2/css/lightbox.min.css', [], '2.11.3' );
-			wp_enqueue_script( 'lightbox', $plugin_uri . 'assets/lightbox2/js/lightbox.min.js', [ 'jquery' ], '2.11.3', true );
+			wp_enqueue_style( 'lightbox', $plugin_uri . 'assets/lightbox2/css/lightbox.min.css', [], '2.11.4' );
+			wp_enqueue_script( 'lightbox', $plugin_uri . 'assets/lightbox2/js/lightbox.min.js', [ 'jquery' ], '2.11.4', true );
+			add_filter( 'gallery_style', array( $this, 'gallery_style_filter' ), 11, 1 );
+			add_filter( 'wp_get_attachment_link_attributes', array( $this, 'attachment_link_attributes_filter' ), 11, 2 );
 		endif;
 		# Register and enqueue lightbox
 		$use_imagesloaded = 0;
