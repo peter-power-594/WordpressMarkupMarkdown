@@ -67,13 +67,12 @@
 		toolbar.push( "ordered-list" );
 		toolbar.push( "|" );
 		toolbar.push( "link" );
-		// https://codex.wordpress.org/Javascript_Reference/wp.media
-		// Single Picture
+		// Pictures : https://codex.wordpress.org/Javascript_Reference/wp.media
 		mediaFrame = wp.media({
-				frame: 'post',
-				type: 'image',
-				multiple: true,
-				title: 'Media'
+			frame: 'post',
+			type: 'image',
+			multiple: true,
+			title: 'Media'
 			// button: { text: 'OK' },
 		});
 		mediaFrame.on( 'update', function() {
@@ -89,18 +88,10 @@
 		toolbar.push({
 			name: "wpsimage",
 			action: function( editor ) {
-			mediaFrame.open();
+				mediaFrame.open();
 			},
 			className: "fa fa-picture-o",
 			title: "Image"
-		});
-		// Single or Multipictures with iframes
-		multiFrame = wp.media({
-			title: 'Media',
-			button: {
-			text: 'OK'
-			},
-			multiple: true
 		});
 		toolbar.push( "table" );
 		toolbar.push( "|" );
@@ -205,7 +196,6 @@
 			return doc.replaceRange( mkd, cur );
 		});
 	};
-
 
 
 	MarkupMarkdown.prototype.renderGallery = function( wpGallery, galleryNumber ) {
@@ -316,7 +306,6 @@
 	};
 
 
-
 	MarkupMarkdown.prototype.renderImage = function( wpImage ) {
 		var item = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/ );
 		if ( ! item || item.length < 2 ) {
@@ -356,8 +345,8 @@
 	var galCounter = 0;
 	text = text.replace( /\[gallery([^\]]*)\]/g, function( wpGallery ) {
 		galCounter++;
-			var myGallery = '<div id="tmp_gallery-' + galCounter + '"></div>';
-			_self.renderGallery( wpGallery, galCounter );
+		var myGallery = '<div id="tmp_gallery-' + galCounter + '"></div>';
+		_self.renderGallery( wpGallery, galCounter );
 		return myGallery;
 	});
 	text = _self.instance.editor.markdown( text );

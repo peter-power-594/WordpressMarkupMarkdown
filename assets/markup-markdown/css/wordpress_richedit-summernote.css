@@ -35,6 +35,9 @@
 
 /* SUMMERNOTE
  ------------------------------------------ */
+.summernote .wp-editor-container {
+    border: 1px solid #dcdcde;
+}
 .wp-editor-container #wpcontent {
     background: var(--bs-white);
 }
@@ -366,4 +369,146 @@
 .wp-editor-container .note-editor.note-frame,
 .wp-editor-container .note-editor.note-airframe {
     border: 0;
+}
+
+
+.gallery {
+    margin-bottom: 20px;
+    margin-left: -4px;
+}
+
+.wp-editor-container .gallery:after {
+    content: ' ';
+    display: block;
+    clear: both;
+    width: 100%;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+    white-space: nowrap;
+}
+
+.wp-editor-container .gallery-item {
+    float: left;
+    margin: 0 4px 4px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.wp-editor-container .gallery-columns-1.gallery-size-medium,
+.wp-editor-container .gallery-columns-1.gallery-size-thumbnail,
+.wp-editor-container .gallery-columns-2.gallery-size-thumbnail,
+.wp-editor-container .gallery-columns-3.gallery-size-thumbnail {
+    display: table;
+    margin: 0 auto 20px;
+}
+
+.wp-editor-container .gallery-columns-1 .gallery-item,
+.wp-editor-container .gallery-columns-2 .gallery-item,
+.wp-editor-container .gallery-columns-3 .gallery-item {
+	text-align: center;
+}
+
+.wp-editor-container .gallery-columns-2 .gallery-item {
+    max-width: 50%;
+    max-width: -webkit-calc(50% - 4px);
+    max-width:         calc(50% - 4px);
+}
+
+.wp-editor-container .gallery-columns-3 .gallery-item {
+    max-width: 33.3%;
+    max-width: -webkit-calc(33.3% - 4px);
+    max-width:         calc(33.3% - 4px);
+}
+
+.wp-editor-container .gallery-columns-4 .gallery-item {
+    max-width: 23%;
+    max-width: -webkit-calc(25% - 4px);
+    max-width:         calc(25% - 4px);
+}
+
+.wp-editor-container .gallery-columns-5 .gallery-item {
+    max-width: 19%;
+    max-width: -webkit-calc(20% - 4px);
+    max-width:         calc(20% - 4px);
+}
+
+.wp-editor-container .gallery-columns-6 .gallery-item {
+    max-width: 15%;
+    max-width: -webkit-calc(16.7% - 4px);
+    max-width:         calc(16.7% - 4px);
+}
+
+.wp-editor-container .gallery-columns-7 .gallery-item {
+    max-width: 13%;
+    max-width: -webkit-calc(14.28% - 4px);
+    max-width:         calc(14.28% - 4px);
+}
+
+.wp-editor-container .gallery-columns-8 .gallery-item {
+    max-width: 11%;
+    max-width: -webkit-calc(12.5% - 4px);
+    max-width:         calc(12.5% - 4px);
+}
+
+.wp-editor-container .gallery-columns-9 .gallery-item {
+    max-width: 9%;
+    max-width: -webkit-calc(11.1% - 4px);
+    max-width:         calc(11.1% - 4px);
+}
+
+.wp-editor-container .gallery-columns-1 .gallery-item:nth-of-type(1n),
+.wp-editor-container .gallery-columns-2 .gallery-item:nth-of-type(2n),
+.wp-editor-container .gallery-columns-3 .gallery-item:nth-of-type(3n),
+.wp-editor-container .gallery-columns-4 .gallery-item:nth-of-type(4n),
+.wp-editor-container .gallery-columns-5 .gallery-item:nth-of-type(5n),
+.wp-editor-container .gallery-columns-6 .gallery-item:nth-of-type(6n),
+.wp-editor-container .gallery-columns-7 .gallery-item:nth-of-type(7n),
+.wp-editor-container .gallery-columns-8 .gallery-item:nth-of-type(8n),
+.wp-editor-container .gallery-columns-9 .gallery-item:nth-of-type(9n) {
+    margin-right: 0;
+}
+
+.wp-editor-container .gallery-columns-1.gallery-size-medium figure.gallery-item:nth-of-type(1n+1),
+.wp-editor-container .gallery-columns-1.gallery-size-thumbnail figure.gallery-item:nth-of-type(1n+1),
+.wp-editor-container .gallery-columns-2.gallery-size-thumbnail figure.gallery-item:nth-of-type(2n+1),
+.wp-editor-container .gallery-columns-3.gallery-size-thumbnail figure.gallery-item:nth-of-type(3n+1),
+.wp-editor-container .widget-area .gallery-columns-2 figure.gallery-item:nth-of-type(2n+1),
+.wp-editor-container .widget-area .gallery-columns-3 figure.gallery-item:nth-of-type(3n+1),
+.wp-editor-container .widget-area .gallery-columns-4 figure.gallery-item:nth-of-type(4n+1),
+.wp-editor-container .widget-area .gallery-columns-5 figure.gallery-item:nth-of-type(5n+1),
+.wp-editor-container .widget-area .gallery-columns-6 figure.gallery-item:nth-of-type(6n+1),
+.wp-editor-container .widget-area .gallery-columns-7 figure.gallery-item:nth-of-type(7n+1),
+.wp-editor-container .widget-area .gallery-columns-8 figure.gallery-item:nth-of-type(8n+1),
+.wp-editor-container .widget-area .gallery-columns-9 figure.gallery-item:nth-of-type(9n+1) {
+    clear: left;
+}
+
+.wp-editor-container .gallery-caption {
+    background-color: rgba(0, 0, 0, 0.7);
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.3;
+    margin: 0;
+    max-height: 50%;
+    padding: 2px 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    text-align: left;
+    -webkit-transition: opacity 400ms ease;
+    transition:         opacity 400ms ease;
+    width: 100%;
+}
+
+.wp-editor-container .gallery-caption:before {
+    box-shadow: 0 -10px 15px #000 inset;
+    content: "";
+    height: 100%;
+    min-height: 49px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
 }

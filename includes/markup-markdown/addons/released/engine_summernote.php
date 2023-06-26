@@ -56,7 +56,7 @@ class EngineSummerNote {
 		wp_enqueue_script( 'markup_markdown__bootstrap_bundle', $plugin_uri . 'assets/summernote/bootstrap-5.0.2.bundle.min.js', [], '5.0.2' );
 		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/summernote/summernote-0.8.20-bs5.js', [ 'markup_markdown__bootstrap_bundle' ], '0.8.21', true );
 		wp_enqueue_script( 'markup_markdown__showdown', $plugin_uri . 'assets/showdown/showdown-2.1.0.min.js', [ 'markup_markdown__jsengine_editor' ], '2.1.0', true );
-		wp_enqueue_script( 'markup_markdown__turndown', $plugin_uri . 'assets/turndown/turndown-7.1.2.js', [ 'markup_markdown__showdown' ], '7.1.2', true );
+		wp_enqueue_script( 'markup_markdown__turndown', 'https://unpkg.com/turndown@7.1.2/dist/turndown.js', [ 'markup_markdown__showdown' ], '7.1.2', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-summernote.js', [ 'markup_markdown__turndown' ], '1.1.72', true );		
 	}
 

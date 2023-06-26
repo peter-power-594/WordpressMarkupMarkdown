@@ -909,11 +909,7 @@ var isTable = makePredByNodeName('TABLE');
 var isData = makePredByNodeName('DATA');
 
 function isInline(node) {
-  return !isBodyContainer(node) && !isList(node) && !isHr(node) && !isPara(node) && !isTable(node) && !isBlockquote(node) && !isData(node) && !isFigure(node);
-}
-
-function isFigure(node) {
-  return node && /^FIGURE/.test(node.nodeName.toUpperCase());
+  return !isBodyContainer(node) && !isList(node) && !isHr(node) && !isPara(node) && !isTable(node) && !isBlockquote(node) && !isData(node);
 }
 
 function isList(node) {
@@ -5002,7 +4998,6 @@ var Table = /*#__PURE__*/function () {
       if (options && options.tableClassName) {
         $table.addClass(options.tableClassName);
       }
-
       return $table[0];
     }
     /**
@@ -10002,7 +9997,6 @@ var Renderer = /*#__PURE__*/function () {
       if (this.options && this.options.callback) {
         this.options.callback($node);
       }
-
       if ($parent) {
         $parent.append($node);
       }
@@ -10028,30 +10022,30 @@ var Renderer = /*#__PURE__*/function () {
     };
   }
 });
-;// CONCATENATED MODULE: ./src/styles/bs5/summernote-bs5.js
-function summernote_bs5_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { summernote_bs5_typeof = function _typeof(obj) { return typeof obj; }; } else { summernote_bs5_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return summernote_bs5_typeof(obj); }
+;// CONCATENATED MODULE: ./src/styles/bs3/summernote-bs3.js
+function summernote_bs3_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { summernote_bs3_typeof = function _typeof(obj) { return typeof obj; }; } else { summernote_bs3_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return summernote_bs3_typeof(obj); }
 
 
 
 
 
-var editor = renderer.create('<div class="note-editor note-frame card"/>');
-var toolbar = renderer.create('<div class="note-toolbar card-header" role="toolbar"/>');
-var editingArea = renderer.create('<div class="note-editing-area"/>');
-var codable = renderer.create('<textarea class="note-codable" aria-multiline="true"/>');
-var editable = renderer.create('<div class="note-editable card-block" contentEditable="true" role="textbox" aria-multiline="true"/>');
+var editor = renderer.create('<div class="note-editor note-frame panel panel-default"></div>');
+var toolbar = renderer.create('<div class="panel-heading note-toolbar" role="toolbar"></div>');
+var editingArea = renderer.create('<div class="note-editing-area"></div>');
+var codable = renderer.create('<textarea class="note-codable" aria-multiline="true"></textarea>');
+var editable = renderer.create('<div class="note-editable" contentEditable="true" role="textbox" aria-multiline="true"></div>');
 var statusbar = renderer.create(['<output class="note-status-output" role="status" aria-live="polite"></output>', '<div class="note-statusbar" role="status">', '<div class="note-resizebar" aria-label="Resize">', '<div class="note-icon-bar"></div>', '<div class="note-icon-bar"></div>', '<div class="note-icon-bar"></div>', '</div>', '</div>'].join(''));
-var airEditor = renderer.create('<div class="note-editor note-airframe"/>');
+var airEditor = renderer.create('<div class="note-editor note-airframe"></div>');
 var airEditable = renderer.create(['<div class="note-editable" contentEditable="true" role="textbox" aria-multiline="true"></div>', '<output class="note-status-output" role="status" aria-live="polite"></output>'].join(''));
-var buttonGroup = renderer.create('<div class="note-btn-group btn-group">');
-var dropdown = renderer.create('<div class="note-dropdown-menu dropdown-menu" role="list">', function ($node, options) {
+var buttonGroup = renderer.create('<div class="note-btn-group btn-group"></div>');
+var dropdown = renderer.create('<ul class="note-dropdown-menu dropdown-menu"></ul>', function ($node, options) {
   var markup = Array.isArray(options.items) ? options.items.map(function (item) {
     var value = typeof item === 'string' ? item : item.value || '';
     var content = options.template ? options.template(item) : item;
-    var option = summernote_bs5_typeof(item) === 'object' ? item.option : undefined;
+    var option = summernote_bs3_typeof(item) === 'object' ? item.option : undefined;
     var dataValue = 'data-value="' + value + '"';
     var dataOption = option !== undefined ? ' data-option="' + option + '"' : '';
-    return '<a class="dropdown-item" href="#" ' + (dataValue + dataOption) + ' role="listitem" aria-label="' + value + '">' + content + '</a>';
+    return '<li aria-label="' + value + '"><a href="#" ' + (dataValue + dataOption) + '>' + content + '</a></li>';
   }).join('') : options.items;
   $node.html(markup).attr({
     'aria-label': options.title
@@ -10062,15 +10056,15 @@ var dropdown = renderer.create('<div class="note-dropdown-menu dropdown-menu" ro
   }
 });
 
-var dropdownButtonContents = function dropdownButtonContents(contents) {
-  return contents;
+var dropdownButtonContents = function dropdownButtonContents(contents, options) {
+  return contents + ' ' + icon(options.icons.caret, 'span');
 };
 
-var dropdownCheck = renderer.create('<div class="note-dropdown-menu dropdown-menu note-check" role="list">', function ($node, options) {
+var dropdownCheck = renderer.create('<ul class="note-dropdown-menu dropdown-menu note-check"></ul>', function ($node, options) {
   var markup = Array.isArray(options.items) ? options.items.map(function (item) {
     var value = typeof item === 'string' ? item : item.value || '';
     var content = options.template ? options.template(item) : item;
-    return '<a class="dropdown-item" href="#" data-value="' + value + '" role="listitem" aria-label="' + item + '">' + icon(options.checkClassName) + ' ' + content + '</a>';
+    return '<li aria-label="' + item + '"><a href="#" data-value="' + value + '">' + icon(options.checkClassName) + ' ' + content + '</a></li>';
   }).join('') : options.items;
   $node.html(markup).attr({
     'aria-label': options.title
@@ -10080,7 +10074,7 @@ var dropdownCheck = renderer.create('<div class="note-dropdown-menu dropdown-men
     $node.addClass('note-codeview-keep');
   }
 });
-var dialog = renderer.create('<div class="modal note-modal" aria-hidden="false" tabindex="-1" role="dialog"/>', function ($node, options) {
+var dialog = renderer.create('<div class="modal note-modal" aria-hidden="false" tabindex="-1" role="dialog"></div>', function ($node, options) {
   if (options.fade) {
     $node.addClass('fade');
   }
@@ -10088,18 +10082,18 @@ var dialog = renderer.create('<div class="modal note-modal" aria-hidden="false" 
   $node.attr({
     'aria-label': options.title
   });
-  $node.html(['<div class="modal-dialog">', '<div class="modal-content">', options.title ? '<div class="modal-header">' + '<h4 class="modal-title">' + options.title + '</h4>' + '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-hidden="true"></button>' + '</div>' : '', '<div class="modal-body">' + options.body + '</div>', options.footer ? '<div class="modal-footer">' + options.footer + '</div>' : '', '</div>', '</div>'].join(''));
+  $node.html(['<div class="modal-dialog">', '<div class="modal-content">', options.title ? '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">&times;</button>' + '<h4 class="modal-title">' + options.title + '</h4>' + '</div>' : '', '<div class="modal-body">' + options.body + '</div>', options.footer ? '<div class="modal-footer">' + options.footer + '</div>' : '', '</div>', '</div>'].join(''));
 });
-var popover = renderer.create(['<div class="note-popover popover show">', '<div class="popover-arrow"></div>', '<div class="popover-body note-children-container"></div>', '</div>'].join(''), function ($node, options) {
+var popover = renderer.create(['<div class="note-popover popover in">', '<div class="arrow"></div>', '<div class="popover-content note-children-container"></div>', '</div>'].join(''), function ($node, options) {
   var direction = typeof options.direction !== 'undefined' ? options.direction : 'bottom';
-  $node.attr('data-bs-placement', direction);
+  $node.addClass(direction);
 
   if (options.hideArrow) {
-    $node.find('.popover-arrow').hide();
+    $node.find('.arrow').hide();
   }
 });
-var summernote_bs5_checkbox = renderer.create('<div class="form-check"></div>', function ($node, options) {
-  $node.html(['<label class="form-check-label"' + (options.id ? ' for="note-' + options.id + '"' : '') + '>', '<input type="checkbox" class="form-check-input"' + (options.id ? ' id="note-' + options.id + '"' : ''), options.checked ? ' checked' : '', ' aria-label="' + (options.text ? options.text : '') + '"', ' aria-checked="' + (options.checked ? 'true' : 'false') + '"/>', ' ' + (options.text ? options.text : '') + '</label>'].join(''));
+var summernote_bs3_checkbox = renderer.create('<div class="checkbox"></div>', function ($node, options) {
+  $node.html(['<label' + (options.id ? ' for="note-' + options.id + '"' : '') + '>', '<input type="checkbox"' + (options.id ? ' id="note-' + options.id + '"' : ''), options.checked ? ' checked' : '', ' aria-checked="' + (options.checked ? 'true' : 'false') + '"/>', options.text ? options.text : '', '</label>'].join(''));
 });
 
 var icon = function icon(iconClassName, tagName) {
@@ -10127,11 +10121,11 @@ var ui = function ui(editorOptions) {
     dropdownCheck: dropdownCheck,
     dialog: dialog,
     popover: popover,
+    checkbox: summernote_bs3_checkbox,
     icon: icon,
-    checkbox: summernote_bs5_checkbox,
     options: editorOptions,
     palette: function palette($node, options) {
-      return renderer.create('<div class="note-color-palette"/>', function ($node, options) {
+      return renderer.create('<div class="note-color-palette"></div>', function ($node, options) {
         var contents = [];
 
         for (var row = 0, rowSize = options.colors.length; row < rowSize; row++) {
@@ -10161,7 +10155,7 @@ var ui = function ui(editorOptions) {
       })($node, options);
     },
     button: function button($node, options) {
-      return renderer.create('<button type="button" class="note-btn btn btn-light btn-sm" tabindex="-1">', function ($node, options) {
+      return renderer.create('<button type="button" class="note-btn btn btn-default btn-sm" tabindex="-1"></button>', function ($node, options) {
         if (options && options.tooltip) {
           $node.attr({
             title: options.tooltip,
@@ -10222,14 +10216,8 @@ var ui = function ui(editorOptions) {
 
 (external_jQuery_default()).summernote = external_jQuery_default().extend((external_jQuery_default()).summernote, {
   ui_template: ui,
-  "interface": 'bs5'
+  "interface": 'bs3'
 });
-(external_jQuery_default()).summernote.options.styleTags = ['p', {
-  title: 'Blockquote',
-  tag: 'blockquote',
-  className: 'blockquote',
-  value: 'blockquote'
-}, 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 })();
 
 /******/ 	return __webpack_exports__;

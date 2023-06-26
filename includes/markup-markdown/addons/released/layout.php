@@ -182,7 +182,9 @@ class LayoutAddon {
 	 * @return Array The updated link attributes
 	 */
 	public function attachment_link_attributes_filter( $attributes, $post_ID ) {
-		$attributes[ 'data-lightbox' ] = 'gallery' . $this->gal;
+		if ( isset( $attributes[ 'href' ] ) && strpos( $attributes[ 'href' ], 'attachment' ) === FALSE ) :
+			$attributes[ 'data-lightbox' ] = 'gallery' . $this->gal;
+		endif;
 		return $attributes;
 	}
 

@@ -2,20 +2,32 @@
 (function( $ ) {
 
 
-	function MarkupMarkdown( textarea ) {
+	var mediaFrame = {};
+		activeWidget = {};
+
+
+	function MarkupMarkdownWidget( textarea ) {
 		this.todo = [];
 		this.updating = false;
 		this.home_url = '';
 		this.instance = {};
+		this.galleryCounter = 0;
 		this.init( textarea );
 	}
 
 
-	MarkupMarkdown.prototype.cleanupMMD = function( html ) {
-		var htmlContent = html.replace( /&[amp;]+#(\d+);/g, '&#$1;' )
-			.replace( /<li><p>/g, '<li>' )
-			.replace( /<\/p><\/li>/g, '</li>' )
-			.replace( /<br><\/p>/g, '</p>' );
+	MarkupMarkdownWidget.prototype.cleanupMMD = function( html ) {
+		var _self = this,
+			htmlContent = html.replace( /&[amp;]+#(\d+);/g, '&#$1;' )
+				.replace( /<li><p>/g, '<li>' )
+				.replace( /<\/p><\/li>/g, '</li>' )
+				.replace( /<br><\/p>/g, '</p>' );
+		htmlContent = htmlContent.replace( /\[gallery([^\]]*)\]/g, function( wpGallery ) {
+			_self.galleryCounter++;
+			var myGallery = '<div id="tmp_gallery-' + _self.galleryCounter + '"></div>';
+			_self.renderGallery( wpGallery, _self.galleryCounter );
+			return myGallery;
+		});
 		var extraMarkup = htmlContent.replace( /\n|\r/, '' )
 			.replace( /<pre>.*?<\/pre>/, '' )
 			.match( />[^>]+<\/[\w]+>{.*?}/g );
@@ -40,7 +52,7 @@
 	};
 
 
-	MarkupMarkdown.prototype.updateHTML = function( ) {
+	MarkupMarkdownWidget.prototype.updateHTML = function( ) {
 		var _self = this,
 			_myTodo = _self.todo || [];
 		while ( _myTodo.length ) {
@@ -77,14 +89,12 @@
 	 * @param HTML_Node node the current html node used inside the WYSIWYG
 	 * @returns Integer 1 if an update was made or 0 if nothing was done
 	 */
-	MarkupMarkdown.prototype.checkMedias = function( val, node ) {
+	MarkupMarkdownWidget.prototype.checkMedias = function( val, node ) {
 		var _self = this;
 		if ( /^[+]{2}\s/.test( val ) ) {
-			_self.singleFrame.open();
-			return 1;
-		}
-		if ( /^[+]{3}\s/.test( val ) ) {
-			_self.multiFrame.open();
+			activeWidget = _self;
+			activeWidget.node = node;
+			mediaFrame.open();
 			return 1;
 		}
 		return 0;
@@ -99,7 +109,7 @@
 	 * @param HTML_Node node the current html node used inside the WYSIWYG
 	 * @returns Integer 1 if an update was made or 0 if nothing was done
 	 */
-	MarkupMarkdown.prototype.checkHeadlines = function( val, node ) {
+	MarkupMarkdownWidget.prototype.checkHeadlines = function( val, node ) {
 		var _self = this;
 		// Check that '#' are at the beginning and there are at least 2 other chars
 		if ( ! /^[#]+[^#]{1}/.test( val ) ) return -1;
@@ -131,7 +141,7 @@
 	 * @param HTML_Node node the current html node used inside the WYSIWYG
 	 * @returns Integer 1 if an update was made or 0 if nothing was done
 	 */
-	MarkupMarkdown.prototype.checkCodeSnippets = function( val, node ) {
+	MarkupMarkdownWidget.prototype.checkCodeSnippets = function( val, node ) {
 		var _self = this;
 		// Check that '`' or '!' are at the beginning and there are at least 2 other chars
 		if ( ! /^[`\!1]{3}[^`\!1]{1}/.test( val ) ) return -1;
@@ -159,7 +169,7 @@
 	 * @param HTML_Node node the current html node used inside the WYSIWYG
 	 * @returns Integer 1 if an update was made or 0 if nothing was done
 	 */
-	MarkupMarkdown.prototype.checkListItems = function( val, node ) {
+	MarkupMarkdownWidget.prototype.checkListItems = function( val, node ) {
 		var _self = this;
 		// Check that - or * or + is specified by the user
 		if ( ! /^([-*+]{1}|\d{1}\.)\s/.test( val ) ) return -1;
@@ -189,7 +199,7 @@
 	 * @param {HTML_Node} node the current html node used inside the WYSIWYG
 	 * @returns Integer 1 if an update was made or 0 if nothing was done
 	 */
-	MarkupMarkdown.prototype.checkBlockquote = function( val, node ) {
+	MarkupMarkdownWidget.prototype.checkBlockquote = function( val, node ) {
 		var _self = this;
 		// Check that - or * or + is specified by the user
 		if ( ! /^\>\s/.test( val ) ) return -1;
@@ -231,7 +241,7 @@
 	 * @param HTML_Node node the current html node used inside the WYSIWYG
 	 * @return TRUE in case of modifications or FALSE if nothing was modified
 	 */
-	MarkupMarkdown.prototype.formatContent = function( node ) {
+	MarkupMarkdownWidget.prototype.formatContent = function( node ) {
 		if ( ! node || ! node.nodeName ) {
 			return false;
 		}
@@ -281,7 +291,7 @@
 	 *
 	 * @returns TurndownService
 	 */
-	MarkupMarkdown.prototype.html2mmdToolkit = function() {
+	MarkupMarkdownWidget.prototype.html2mmdToolkit = function() {
 		var myService = new TurndownService();
 		// Special transform rules for the code tag
 		myService.addRule("code-transorm", {
@@ -314,6 +324,15 @@
 				// return '[' + content + '](' + href + title + '){:xn: target="_blank" rel="nofollow noreferrer noopener"}'
 			}
 		});
+		myService.addRule('wp-gallery', {
+			filter: function( node ) {
+				return node.nodeName.toUpperCase() === 'DIV' && /tmp_gallery/.test( node.id || '' );
+			},
+			replacement: function( content, node, options ) {
+				return window.decodeURIComponent( node.firstChild.getAttribute( 'data-shortcode' ) || '' );
+			}
+		});
+		/*
 		myService.addRule("figure-transorm", {
 			filter: function( node ) {
 				return node.nodeName.toUpperCase() === "FIGURE";
@@ -332,6 +351,7 @@
 				return mmd;
 			}
 		});
+		*/
 		return myService;
 	};
 
@@ -342,7 +362,7 @@
 	 *
 	 * @returns {showdown.Converter}
 	 */
-	MarkupMarkdown.prototype.mmd2htmlToolkit = function() {
+	MarkupMarkdownWidget.prototype.mmd2htmlToolkit = function() {
 		var myService = new showdown.Converter();
 		return myService;
 	};
@@ -353,7 +373,7 @@
 	 *
 	 * @returns Void
 	 */
-	MarkupMarkdown.prototype.switchEditor = function( textarea ) {
+	MarkupMarkdownWidget.prototype.switchEditor = function( textarea ) {
 		var _self = this;
 		// Clone the original Wordpress Textarea and hide it
 		$originalEditor = $( textarea ),
@@ -362,13 +382,33 @@
 		$newEditor.removeAttr( 'name' ).removeAttr( 'class' );
 		$originalEditor.after( $newEditor );
 		$originalEditor.parent().addClass( 'wp-editor-container' );
+		// Media Frame
+		var wpMediaFrame = function( context ) {
+			var ui = $.summernote.ui,
+				button = ui.button({
+					contents: '<i class="note-icon-picture"></i>',
+					tooltip: 'Image',
+					click: function () {
+						activeWidget = _self;
+						activeWidget.context = context;
+						mediaFrame.open();
+					}
+				});
+			return button.render();
+		};
 		// Run Summernote !
 		_self.instance.editor = $newEditor.summernote({
-			airMode: false,
-			toolbar: [
-				[ 'style', [ 'bold', 'italic', 'underline', 'clear' ] ],
-				[ 'para', [ 'ul', 'ol', 'paragraph' ] ]
-			],
+			airMode: true,
+			popover: {
+				air: [
+					[ 'style', [ 'bold', 'italic', 'underline', 'clear' ] ],
+					[ 'media', [ 'wpMedia' ] ],
+					[ 'para', [ 'ul', 'ol', 'paragraph' ] ]					
+				]
+			},
+			buttons: {
+				wpMedia: wpMediaFrame
+			},
 			disableDragAndDrop: true,
 			dialogsInBody: false,
 			tabDisable: true
@@ -394,7 +434,7 @@
 	 *
 	 * @returns Void
 	 */
-	MarkupMarkdown.prototype.restoreContent = function() {
+	MarkupMarkdownWidget.prototype.restoreContent = function() {
 		var _self = this;
 		// Initialize with proper HTML
 		var initialMMD = $originalEditor.val(),
@@ -416,7 +456,7 @@
 	 *
 	 * @returns Boolean TRUE in case of success or FALSE in case or error
 	 */
-	MarkupMarkdown.prototype.insertMedia = function( ops ) {
+	MarkupMarkdownWidget.prototype.insertMedia = function( ops ) {
 		var _self = this;
 		if ( ! _self.currNode ) {
 			return false;
@@ -436,7 +476,7 @@
 	 *
 	 * @returns Boolean TRUE in case of success or FALSE in case or error
 	 */
-	MarkupMarkdown.prototype.insertMedias = function( pics ) {
+	MarkupMarkdownWidget.prototype.insertMedias = function( pics ) {
 		var _self = this;
 		if ( ! _self.currNode ) {
 			return false;
@@ -464,106 +504,189 @@
 
 
 	/**
-	 * Initialize Wordpress Media Frame to upload or add a unique media item
+	 * Add the gallery shortcode
 	 *
 	 * @returns Void
 	 */
-	MarkupMarkdown.prototype.singleMediaUploader = function() {
-		var _self = this;
-		_self.singleFrame = wp.media({
-			title: 'Media',
-			button: {
-				text: 'OK'
-			},
-			multiple: false
-		});
-		_self.singleFrame.on( 'select', function() {
-			// Get media attachment details from the frame state
-			var sel = _self.singleFrame.state().get( 'selection' );
-			return sel.map(function( item ) {
-				var attachment = item.toJSON(),
-					alt = attachment.alt || '', // Wordpress attachment alternative text
-					url = attachment.url.replace( _self.home_url, '' ); // Wordpress attachment url
-				if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
-					url = '/' + url;
+	MarkupMarkdownWidget.prototype.addMediaFromWidget = function( frameState ) {
+		var myState = frameState ? frameState : false;
+		if ( ! myState ) {
+			return false;
+		}
+		var gal = myState.get( 'library' );
+		if ( gal ) {
+			var galShortCode = wp.media.gallery.shortcode( gal ).string();
+			if ( galShortCode && galShortCode.length ) {
+				activeWidget.galleryCounter++;
+				var myGallery = '<div id="tmp_gallery-' + activeWidget.galleryCounter + '"></div>';
+				if ( activeWidget.node ) {
+					activeWidget.todo.push({
+						action: 'pasteHTML',
+						node: activeWidget.node,
+						html: myGallery
+					});
+					activeWidget.updateHTML();
+					activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
 				}
-				_self.insertMedia({
-					url: url,
-					alt: alt
+				else if ( activeWidget.context ) {
+					activeWidget.context.invoke( 'editor.pasteHTML', myGallery );
+				}
+				activeWidget.renderGallery( galShortCode, activeWidget.galleryCounter );
+			}
+		}
+	}
+
+
+	/**
+	 * Gallery Preview
+	 *
+	 * @returns Void
+	 */
+	MarkupMarkdownWidget.prototype.renderGallery = function( wpGallery, galleryNumber ) {
+		var mediaIds = ( wpGallery || '' ).match( /ids\=\"(.*?)\"/ );
+		if ( ! mediaIds || ! mediaIds[ 1 ] ) {
+			return '';
+		}
+		var galleryOptions = {
+				size: 'thumbnail',
+				columns: 3,
+				link: 'none'
+			},
+			htmlGallery = function( imageIds ) {
+				var html = [
+					[
+						'<div id="gallery-' + galleryNumber + '"',
+						' class="gallery galleryid-' + galleryNumber,
+						' gallery-columns-' + galleryOptions.columns,
+						' gallery-size-' + galleryOptions.size,
+						'" data-shortcode="' + encodeURIComponent( wpGallery ) + '">'
+					].join( '' )
+				];
+				for ( var j = 0; j < imageIds.length; j++ ) {
+					html.push( htmlGalleryItem( wp.media.attachment( imageIds[ j ] ).attributes ) );
+				}
+				html.push( '</div>' );
+				return html;
+			},
+			htmlGalleryItem = function( item ) {
+				if ( ! item || ! item.sizes ) {
+					return '';
+				}
+				var fig = [ '<figure class="gallery-item">' ];
+				fig.push( '<div class="gallery-icon ' + ( item.width > item.height ? 'landscape' : 'portrait' ) + '">' );
+				if ( galleryOptions.link !== 'none' ) {
+					fig.push( '<a href="' + ( galleryOptions.link === 'file' ? item.url : item.link ) + '" target="_blank">' );
+				}
+				fig.push([
+					'<img src="' + ( item.sizes[ galleryOptions.size ] ? item.sizes[ galleryOptions.size ].url : item.sizes.thumbnail.url ) + '"',
+					' alt="' + ( item.alt || item.title ) + '"',
+					' width="' + ( item.sizes[ galleryOptions.size ].width ? item.sizes[ galleryOptions.size ].width : item.width ) + '"',
+					' height="' + ( item.sizes[ galleryOptions.size ].height ? item.sizes[ galleryOptions.size ].height : item.height ) + '"',
+					item.caption ? ' aria-describedby="gallery-' + galleryNumber + '-' + item.id + '"' : '',
+					'">'
+				].join(''));
+				if ( galleryOptions.link !== 'none' ) {
+					fig.push( '</a>' );
+				}
+				fig.push( '</div>' );
+				if ( item.caption ) {
+					fig.push([
+						'<figcaption class="wp-caption-text gallery-caption" id="gallery-' + galleryNumber + '-' + item.id + '">',
+							item.caption,
+						'</figcaption>'
+					].join( '' ) );
+				}
+				fig.push( '</figure>' );
+				return fig.join( '' );
+			};
+		if ( /columns/.test( wpGallery ) ) {
+			var columns = wpGallery.match( /columns\=\"(.*?)\"/ ) || [];
+			if ( columns && columns[ 1 ] && ! isNaN( +columns[ 1 ] ) ) {
+				galleryOptions.columns = +columns[ 1 ];
+			}
+		}
+		if ( /size/.test( wpGallery ) ) {
+			var sizes = wpGallery.match( /size\=\"(.*?)\"/ ) || [];
+			if ( sizes && sizes[ 1 ] && new RegExp( sizes[ 1 ].toLowerCase() ).test( 'small medium large full' ) ) {
+				galleryOptions.size = sizes[ 1 ].toLowerCase();
+			}
+		}
+		if ( /link/.test( wpGallery ) ) {
+			var links = wpGallery.match( /link\=\"(.*?)\"/ ) || [];
+			if ( links && links[ 1 ] && new RegExp( links[ 1 ].toLowerCase() ).test( 'post file none' ) ) {
+				galleryOptions.link = links[ 1 ].toLowerCase();
+			}
+		}
+		var imageIds = mediaIds[ 1 ].split( ',' ),
+			attachmentLoaded = imageIds.length;
+		for ( var i = 0; i < imageIds.length; i++) {
+			imageIds[ i ] = +imageIds[ i ]; // parseInt( imageIds[ i ], 10 );
+			if ( ! wp.media.attachment( imageIds[ i ] ) || ! wp.media.attachment( imageIds[ i ] ).attributes || ! wp.media.attachment( imageIds[ i ] ).attributes.sizes ) {
+				attachmentLoaded--;
+			}
+		}
+		if ( attachmentLoaded !== imageIds.length ) {
+			// All attachment info are not available yet
+			wp.media.query({ post__in: imageIds })
+				.more().then(function() {
+					var galleryHTML = htmlGallery( imageIds );
+					setTimeout(function() {
+						var galleryNode = document.getElementById( 'tmp_gallery-' + galleryNumber ) || false;
+						if ( galleryNode ) {
+							galleryNode.innerHTML = galleryHTML.join( '' );
+						}
+					}, 500);
 				});
-			});
-		});
+		}
+		else {
+			var galleryHTML = htmlGallery( imageIds );
+			setTimeout(function() {
+				var galleryNode = document.getElementById( 'tmp_gallery-' + galleryNumber ) || false;
+				if ( galleryNode ) {
+					galleryNode.innerHTML = galleryHTML.join( '' );
+				}
+				activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
+				activeWidget = {};
+			}, 500);
+		}
 	};
 
 
 	/**
-	 * Initialize Wordpress Media Frame to upload or add a group of media items
+	 * Initialize Wordpress Media Frame to upload or add a unique media item
 	 *
 	 * @returns Void
 	 */
-	MarkupMarkdown.prototype.multipleMediaUploader = function() {
-		var _self = this,
-			gal = Math.floor(Math.random() * (9999 - 100) + 100);
-		_self.multiFrame = wp.media({
-			title: 'Media',
-			button: {
-				text: 'OK'
-			},
-			multiple: true
+	MarkupMarkdownWidget.prototype.mediaUploader = function() {
+		if ( mediaFrame && mediaFrame.title ) {
+			return false;
+		}
+		// Pictures : https://codex.wordpress.org/Javascript_Reference/wp.media
+		mediaFrame = wp.media({
+			frame: 'post',
+			type: 'image',
+			multiple: true,
+			title: 'Media'
+			// button: { text: 'OK' },
 		});
-		_self.multiFrame.on( 'select', function() {
-			// Get media attachment details from the frame state
-			var sel = _self.multiFrame.state().get( 'selection' );
-			if ( sel.length === 1 ) {
-				sel.map(function( item ) {
-					var attachment = item.toJSON(),
-						alt = attachment.alt || '', // WP attachment alternative text
-						tit = /[^[a-zA-Z0-9-_%]]*/.test( attachment.title ) ? attachment.title : attachment.caption, // WP attachment title text - exclude defaut image name
-						url = attachment.url.replace( _self.home_url, '' ), // WP attachment url
-						src = attachment.sizes.large ? attachment.sizes.large.url : ( attachment.sizes.medium ? attachment.sizes.medium.url : attachment.sizes.thumbnail.url); // Large size image
-						src = src.replace( _self.home_url, '' );
-					if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
-						url = '/' + url;
-					}
-					_self.insertMedia({
-						url: url,
-						alt: alt
-					});
-				});
-				return true;
+		mediaFrame.on( 'update', function() {
+			// **Update** event is triggered when the user presses the "Create the {widget}"
+			// from the media modal (example: generating a gallery)
+			if ( activeWidget ) {
+				activeWidget.addMediaFromWidget( mediaFrame.state() )
 			}
-			else {
-				gal++;
-				var pics = [];
-				sel.map(function( item ) {
-					var attachment = item.toJSON(),
-						alt = attachment.alt || '',
-						tit = /[^[a-zA-Z0-9-_%]]*/.test( attachment.title ) ? attachment.title : attachment.caption,
-						url = attachment.url.replace( _self.home_url, '' ),
-						src = attachment.sizes.large ? attachment.sizes.large.url : ( attachment.sizes.medium ? attachment.sizes.medium.url : attachment.sizes.thumbnail.url);
-					if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
-						url = '/' + url;
-					}
-					src = src.replace( _self.home_url, '' );
-					if ( src.charAt( 0 ) !== '/' && src.indexOf( 'http' ) === -1 ) {
-						src = '/' + src;
-					}
-					pics.push({
-						alt: alt,
-						tit: tit,
-						gal: gal,
-						url: url,
-						src: src
-					});
-				});
-				_self.insertMedias( pics );
-				return true;
+		});
+		mediaFrame.on( 'insert', function() {
+			// **Insert** event is trigerred when the user presses the "Insert into post"
+			// inside the media modal (one or multiples images are propably selected)
+			if ( activeWidget ) {
+				activeWidget.addMediaFromSel( mediaFrame.state() );
 			}
 		});
 	};
 
 
-	MarkupMarkdown.prototype.core = function( textarea ) {
+	MarkupMarkdownWidget.prototype.core = function( textarea ) {
 		if ( ! textarea || ! $( textarea ).length ) {
 			return false;
 		}
@@ -617,12 +740,11 @@
 			_self.instance.editor.trigger( 'summernote.mmd_change' );
 		});
 		// Let the user upload contents
-		_self.singleMediaUploader();
-		_self.multipleMediaUploader();
+		_self.mediaUploader();
 	};
 
 
-	MarkupMarkdown.prototype.init = function( textarea ) {
+	MarkupMarkdownWidget.prototype.init = function( textarea ) {
 		var _self = this;
 		_self.core( textarea );
 	};
@@ -631,11 +753,11 @@
 	$( document ).ready(function() {
 		$( 'body' ).addClass( 'summernote' );
 		$( '#wp-content-editor-container .wp-editor-area' ).each(function() {
-			new MarkupMarkdown( this );
+			new MarkupMarkdownWidget( this );
 		});
 	});
 
-	window.MarkupMarkdown = MarkupMarkdown;
+	window.MarkupMarkdown = MarkupMarkdownWidget;
 
 
 
