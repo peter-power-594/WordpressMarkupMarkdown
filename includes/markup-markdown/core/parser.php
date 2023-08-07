@@ -112,6 +112,7 @@ class Parser {
 		if ( ! isset( $this->parser ) || empty( $this->parser ) ) :
 			$this->custom_parser();
 		endif;
+		$content = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", $content );
 		return $this->parser->text( $content );
 	}
 
