@@ -1,6 +1,6 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.2.2
+Stable Tag: 2.2.3
 Version: 2.2.2
 Requires at least: 4.9
 Tested up to: 6.2.2
@@ -58,6 +58,11 @@ like that:
 `echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );
 
 == Changelog ==
+
+= 2.2.3 =
+
+Bug fix:
+- Quick fix to render html tags when breaklines were missing in the source code, preventing the parser to work properly
 
 = 2.2.2 =
 
