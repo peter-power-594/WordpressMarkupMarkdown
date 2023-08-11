@@ -3,7 +3,7 @@ Tags: Editor, Markdown
 Stable Tag: 2.3.0
 Version: 2.3.0
 Requires at least: 4.9
-Tested up to: 6.2.2
+Tested up to: 6.3.0
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
