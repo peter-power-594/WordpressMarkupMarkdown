@@ -4,7 +4,7 @@
  *
  * Plugin Name: Markup Markdown
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
- * Version:     2.2.2
+ * Version:     2.3.0
  * Author:      Pierre-Henri Lavigne
  * Author URI:  https://red.phutu.red/plugins/markup-markdown/
  * License:     GPLv2 or later

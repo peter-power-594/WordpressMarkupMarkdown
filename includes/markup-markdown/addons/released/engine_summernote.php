@@ -21,6 +21,10 @@ class EngineSummerNote {
 		endif;
 		if ( is_admin() ) :
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_engine_assets' ) );
+		else :
+			remove_filter( 'the_excerpt', 'wpautop' );
+			remove_filter( 'the_content', 'wpautop' );
+			add_filter( 'post_markdown2html', array( $this, 'format_enhanced_blockquote' ), 5, 1 );
 		endif;
 	}
 
@@ -55,10 +59,49 @@ class EngineSummerNote {
 		# 2. Load markdown related scripts
 		wp_enqueue_script( 'markup_markdown__bootstrap_bundle', $plugin_uri . 'assets/summernote/bootstrap-5.0.2.bundle.min.js', [], '5.0.2' );
 		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/summernote/summernote-0.8.20-bs5.js', [ 'markup_markdown__bootstrap_bundle' ], '0.8.21', true );
-		wp_enqueue_script( 'markup_markdown__showdown', $plugin_uri . 'assets/showdown/showdown-2.1.0.min.js', [ 'markup_markdown__jsengine_editor' ], '2.1.0', true );
+		wp_enqueue_script( 'markup_markdown__showdown', 'https://unpkg.com/showdown@2.1.0/dist/showdown.js', [ 'markup_markdown__jsengine_editor' ], '2.1.0', true );
 		wp_enqueue_script( 'markup_markdown__turndown', 'https://unpkg.com/turndown@7.1.2/dist/turndown.js', [ 'markup_markdown__showdown' ], '7.1.2', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-summernote.js', [ 'markup_markdown__turndown' ], '1.1.72', true );		
 	}
 
+
+	/**
+	 * Filter to output the blockquote as the cleaned html version explained here:
+	 * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote
+	 *
+	 * @access public
+	 *
+	 * @param String $content the markdown to be parsed
+	 * @return Text
+	 */
+	public function format_enhanced_blockquote( $content = '' ) {
+		$blockquotes = array();
+		$all_blockquotes = preg_match_all( '#\>\s.*?\n\>\s.*?\n#', $content, $blockquotes );
+		if ( ! $all_blockquotes ) :
+			return $content;
+		endif;
+		foreach( $blockquotes[ 0 ] as $blockquote ) :
+			$strip = str_replace( array( "\r", "\n" ), '', $blockquote );
+			$strip = preg_replace( '#\>\s*#', '', $strip );
+			$lim = array();
+			preg_match( '#[—-]+\s*#', $strip, $lim );
+			if ( ! isset( $lim ) || count( $lim ) < 1 ) :
+				continue;
+			endif;
+			$text = explode( $lim[ 0 ], $strip );
+			$quote = $text[ 0 ];
+			$reference = ( isset( $text[ 1 ] ) && strlen( $text[ 1 ] ) > 2 ) ? preg_replace( '#^.*?\,#', '', $text[ 1 ] ) : '';
+			$author = ( isset( $text[ 1 ] ) && strlen( $text[ 1 ] ) > 2 ) ? explode( ',', $text[ 1 ] )[ 0 ] : '';
+			$html = '<figure>'
+					. '<blockquote><p>' . $quote . '</p></blockquote>'
+					. ( strlen( $author ) > 0 || strlen( $reference ) > 0 ? '<figcaption>' . $lim[ 0 ]: '' )
+						. ( strlen( $author ) > 0 ? $author . ', ' : '' )
+						. ( strlen( $reference ) > 0 ? '<cite>' . $reference . '</cite>' : '' )
+					. ( strlen( $author ) > 0 || strlen( $reference ) > 0 ? '</figcaption>' : ''  )
+				. '</figure>';
+			$content = str_replace( $blockquote, $html . "\n", $content );
+		endforeach;
+		return $content;
+	}
 
 }

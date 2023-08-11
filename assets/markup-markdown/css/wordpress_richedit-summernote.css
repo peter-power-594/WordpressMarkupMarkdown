@@ -36,7 +36,8 @@
 /* SUMMERNOTE
  ------------------------------------------ */
 .summernote .wp-editor-container {
-    border: 1px solid #dcdcde;
+    border: 0; /* 1px solid #dcdcde; */
+    background: transparent;
 }
 .wp-editor-container #wpcontent {
     background: var(--bs-white);
@@ -48,25 +49,27 @@
 .wp-editor-container .wp-heading-inline + .page-title-action {
     display: none;
 }
-.wp-editor-container #titlediv {
+.summernote #titlediv {
     padding-left: 50px;
 }
-.wp-editor-container #titlediv #title {
+.summernote #titlediv #title {
     border-radius: 0;
     border-left: 0;
     border-right: 0;
     border-top: 0;
     font-size: calc(1.375rem + 1.5vw) !important;
+    background: transparent;
 }
 @media (min-width: 1200px) {
-    .wp-editor-container #titlediv {
-        padding-right: 60px;
+    .summernote #titlediv {
+        padding-left: 50px;
+        padding-right: 50px;
     }
-    .wp-editor-container #titlediv #title {
+    .summernote #titlediv #title {
         font-size: 2.5rem !important;
         position: relative;
     }
-    .wp-editor-container #titlediv #title:focus {
+    .summernote #titlediv #title:focus {
         border-left: 0;
         border-right: 0;
         border-top: 0;
@@ -88,8 +91,7 @@
 @media (min-width: 1200px) {
     .wp-editor-container .note-editor.note-frame .note-editing-area .note-editable,
     .wp-editor-container .note-editor.note-airframe .note-editing-area .note-editable {
-        padding-right: 60px;
-        padding-left: 50px;
+        padding: 40px 60px 40px 50px;
         position: relative;
     }
     .wp-editor-container .note-editor.note-frame .note-editing-area .note-editable:after,
@@ -233,6 +235,11 @@
 }
 .wp-editor-container .note-editable > ul {
     list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+.wp-editor-container .note-editable > ol {
+    margin-left: 0;
     padding-left: 0;
 }
 .wp-editor-container .note-editable > ul > li:before {

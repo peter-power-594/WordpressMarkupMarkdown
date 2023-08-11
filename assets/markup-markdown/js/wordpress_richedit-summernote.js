@@ -59,9 +59,31 @@
 			var todo = _myTodo.shift();
 			if ( todo.node && todo.node.previousSibling ) {
 				// Make the cursor to the node before removing or inserting nodes to avoid side effets
-				_self.instance.editor.summernote('editor.setLastRange', $.summernote.range.createFromNodeAfter(todo.node.previousSibling).select());
-				todo.node.parentNode.removeChild( todo.node );
-				_self.instance.editor.summernote( todo.action, todo.html );
+				if ( todo.action === 'insertNode' ) {
+					_self.instance.editor.summernote( 'editor.setLastRange', $.summernote.range.createFromNodeAfter(todo.node.previousSibling).select() );
+					var parentNode = todo.node.parentNode;
+					parentNode.insertBefore( todo.html, todo.node );
+					var myP = document.createElement( 'p' ),
+						myBR = document.createElement( 'br' );
+					myP.appendChild( myBR ); 
+					parentNode.insertBefore( myP, todo.node );
+					parentNode.removeChild( todo.node );
+					_self.instance.editor.summernote( 'editor.setLastRange', $.summernote.range.createFromNode( myBR ).select() );
+					/*
+					var parentNode = todo.node.parentNode;
+					parentNode.insertBefore( todo.html, todo.node );
+					parentNode.removeChild( todo.node );
+					var freshParagraph = document.createElement( 'p' );
+					freshParagraph.appendChild( document.createTextNode( ' ' ) );
+					parentNode.appendChild( freshParagraph );
+					// _self.instance.editor.summernote( 'editor.setLastRange', $.summernote.range.createFromNodeAfter( freshParagraph ).select() );
+					*/
+				}
+				else if ( todo.action === 'pasteHTML' ) {
+					_self.instance.editor.summernote( 'editor.setLastRange', $.summernote.range.createFromNodeAfter(todo.node.previousSibling).select() );
+					todo.node.parentNode.removeChild( todo.node );
+					_self.instance.editor.summernote( todo.action, todo.html );
+				}
 			}
 			else {
 				var tmp = document.createElement( 'p' );
@@ -112,20 +134,20 @@
 	MarkupMarkdownWidget.prototype.checkHeadlines = function( val, node ) {
 		var _self = this;
 		// Check that '#' are at the beginning and there are at least 2 other chars
-		if ( ! /^[#]+[^#]{1}/.test( val ) ) return -1;
+		if ( ! /^[#]+[^#]{1}|[#]+[^#]{1}$/.test( val ) ) return -1;
 		// At this point we are sure that the string contains the '#' character
-		var titLvl = val.match( /^([#]+)/ )[ 1 ].length;
+		var titLvl = val.match( /(^[#]+|[#]+[^#]{1}$)/ )[ 1 ].replace( /[^#]+/, '' ).length;
 		// Make sure the level of headline is between 1 and 6 included
 		if ( titLvl < 1 || titLvl > 6 ) return -2;
 		// Use a space as trigger if the user types the # after typing the title
-		if ( val.length > titLvl + 1 && ! /^[#]+\s/.test( val ) ) return -3;
+		if ( val.length > titLvl + 1 && ! /^[#]+\s|[#]+\s$/.test( val ) ) return -3;
 		// All good
 		_self.todo.push({
 			action: 'pasteHTML',
 			node: node,
 			html: [
 			'<h' + titLvl + '>',
-			( node.firstChild && node.firstChild.nodeValue ? node.firstChild.nodeValue : ' ' ).replace( /^[#]+\s*/, '' ),
+			( node.firstChild && node.firstChild.nodeValue ? node.firstChild.nodeValue : ' ' ).replace( /^[#]+\s*|[#]+\s*/, '' ),
 			'</h' + titLvl + '>'
 			].join( '' )
 		});
@@ -172,10 +194,11 @@
 	MarkupMarkdownWidget.prototype.checkListItems = function( val, node ) {
 		var _self = this;
 		// Check that - or * or + is specified by the user
-		if ( ! /^([-*+]{1}|\d{1}\.)\s/.test( val ) ) return -1;
-		var html = '<li>' + ( node.firstChild.nodeValue || ' ' ).replace( /^([-*+]{1}|\d{1}\.)\s/, '' ) + '</li>';
+		if ( ! /^([-*+]{1}|\d{1}\.)\s|(\.[-*+]{1}\s|\.\d{1})$/.test( val ) ) return -1;
+		var text = ( node.firstChild.nodeValue || ' ' ).replace( /^([-*+]{1}|\d{1}\.)\s|(\.[-*+]{1}\s|\.\d{1})$/, '' ),
+			html = '<li>' + ( text.length > 1 ? text : '<br>' ) + '</li>';
 		if ( ! /OL|UL/.test( ( node.parentNode.tagName || '' ).toUpperCase() ) ) {
-			if ( /^\d/.test( val ) ) {
+			if ( /^\d|\.\d$/.test( val ) ) {
 				html = [ '<ol>', html, '</ol>' ];
 			}
 			else {
@@ -202,11 +225,11 @@
 	MarkupMarkdownWidget.prototype.checkBlockquote = function( val, node ) {
 		var _self = this;
 		// Check that - or * or + is specified by the user
-		if ( ! /^\>\s/.test( val ) ) return -1;
-		var text = ( node.firstChild.nodeValue || ' ' ).replace( /^\>\s/, '' ).split( /—|-|--/ ),
+		if ( ! /^\>\s|\>\s$/.test( val ) ) return -1;
+		var text = ( node.firstChild.nodeValue || ' ' ).replace( /^\>\s|\>\s$/, '' ).split( /[—-]+/ ),
 			quote = text[ 0 ].length > 1 ? text[ 0 ] : 'Lorem Ipsum Dolor Imet',
-			reference = text.length > 2 ? text[ text.length - 1 ] : 'Anonymous Book',
-			author = text.length > 2 ? text[ text.length - 2 ] : ( text.length > 1 ? text.length - 1 : 'Jane Doe' ),
+			reference = text[ 1 ] && text[ 1 ].length > 2 ? text[ 1 ].replace( /^.*?\,/, '' ) : 'Anonymous Book',
+			author = text[ 1 ] && text[ 1 ].length > 2 ? text[ 1 ].split( ',' )[ 0 ] : 'Jane Doe',
 			// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote
 			html = [
 				'<figure>',
@@ -215,7 +238,7 @@
 							quote,
 						'</p>',
 					'</blockquote>',
-					'<figcaption>—',
+					'<figcaption>— ',
 						author.replace( /[\s*|\b]$/, '' ) + ', ',
 						'<cite>',
 							reference,
@@ -257,20 +280,20 @@
 		}
 		var myNodeContent = node.innerHTML || '',
 			updated = 0;
-		if ( /\s\*\*.*?\*\*/.test( myNodeContent ) ) { //**Bold text**
-			node.innerHTML = myNodeContent.replace( /\s\*\*(.*?)\*\*/, ' <strong>$1</strong>' );
+		if ( /\s\*\*[^*]+\*\*/.test( myNodeContent ) ) { //**Bold text**
+			node.innerHTML = myNodeContent.replace( /\s\*\*([^*]+)\*\*/, ' <strong>$1</strong>&nbsp;' );
 			updated = 1;
 		}
-		else if ( /\s\_\_.*?\_\_/.test( myNodeContent ) ) { // __Bold text__
-			node.innerHTML = myNodeContent.replace( /\s\_\_(.*?)\_\_/, ' <strong>$1</strong>' );
+		else if ( /\s\_\_[^_]+\_\_/.test( myNodeContent ) ) { // __Bold text__
+			node.innerHTML = myNodeContent.replace( /\s\_\_([^_]+)\_\_/, ' <strong>$1</strong>&nbsp;' );
 			updated = 1;
 		}
-		else if ( /\s\*.*?\*/.test( myNodeContent ) ) { // *Emphasize text*
-			node.innerHTML = myNodeContent.replace( /\s\*(.*?)\*/, ' <em>$1</em>' );
+		else if ( /\s\*[^*]+\*/.test( myNodeContent ) ) { // *Emphasize text*
+			node.innerHTML = myNodeContent.replace( /\s\*([^*]+)\*/, ' <em>$1</em>&nbsp;' );
 			updated = 1;
 		}
-		else if ( /\s\_.*?\_/.test( myNodeContent ) ) { // _Emphasize text_
-			node.innerHTML = myNodeContent.replace( /\s\_(.*?)\_/, ' <em>$1</em>' );
+		else if ( /\s\_[^_]+\_/.test( myNodeContent ) ) { // _Emphasize text_
+			node.innerHTML = myNodeContent.replace( /\s\_([^_]+)\_/, ' <em>$1</em>&nbsp;' );
 			updated = 1;
 		}
 		else if ( /[^!]*\[.*?\]\((http|https):\/\/.*?\)/.test( myNodeContent ) ) { // [Link](https://www.example.com)
@@ -332,26 +355,36 @@
 				return window.decodeURIComponent( node.firstChild.getAttribute( 'data-shortcode' ) || '' );
 			}
 		});
-		/*
 		myService.addRule("figure-transorm", {
 			filter: function( node ) {
-				return node.nodeName.toUpperCase() === "FIGURE";
+				if ( node.nodeName.toUpperCase() === "FIGURE" ) {
+					if ( ! node.firstChild || ! node.firstChild.nodeName || node.firstChild.nodeName.toUpperCase() !== 'BLOCKQUOTE' ) {
+						return false;
+					}
+					return true;
+				}
+				else {
+					return false;
+				}
 			},
 			replacement: function( content, node, options ) {
 				var firstChild = node.firstChild || {},
-				html = node.innerHTML.replace( /<[\/]*figure>/, '' ),
-				mmd = '<figure>';
+				html = node.innerHTML.replace( /<[\/]*figure>/g, '' ),
+				mmd = '';
 				if ( firstChild && /^BLOCKQUOTE/.test( ( firstChild.nodeName || '' ).toUpperCase() ) ) {
-					mmd += html.replace( /\n/, "" )
-						.replace( /<br>/, '' )
+					html = firstChild.innerHTML;
+					mmd += html.replace( /\n/, '' )
+						.replace( /<br>/, '  \n' )
 						.replace( '</p><p>', "\n" )
-						.replace( "<blockquote><p>(.*?)</p></blockquote>", '> $1' );
+						.replace( /<p>(.*?)<\/p>/, "> $1" );
 				}
-				mmd += '</figure>';
+				if ( firstChild.nextSibling && /^FIGCAPTION/.test( ( firstChild.nextSibling.nodeName || '' ).toUpperCase() ) ) {
+					html = firstChild.nextSibling.innerHTML.replace( /<[\/]*cite>/g, '' )
+					mmd += "\n> " + html;
+				}
 				return mmd;
 			}
 		});
-		*/
 		return myService;
 	};
 
@@ -363,7 +396,30 @@
 	 * @returns {showdown.Converter}
 	 */
 	MarkupMarkdownWidget.prototype.mmd2htmlToolkit = function() {
-		var myService = new showdown.Converter();
+		var mmd_blockquote = {
+			type: 'lang',
+			filter: function( myText, myConverter, myOptions ) {
+				return myText.replace( /\>\s.*?\n\>\s.*?\n/g, function( myQuote ) {
+					var text = myQuote.replace( /\>\s*|\n/g, '' ).split( /[—-]+\s*/ );
+						quote = text[ 0 ],
+						reference = text[ 1 ] && text[ 1 ].length > 2 ? text[ 1 ].replace( /^.*?\,/, '' ) : '',
+						author = text[ 1 ] && text[ 1 ].length > 2 ? text[ 1 ].split( ',' )[ 0 ] : '';
+					return [
+						'<figure>',
+							'<blockquote><p>' + quote + '</p></blockquote>',
+							( author.length || reference.length ) ? '<figcaption>' + myQuote.match( /([—-]+\s*)/ )[ 1 ] + ' ' : '',
+								author.length ? author.replace( /[\s*|\b]$/, '' ) + ', ' : '',
+								reference.length ? '<cite>' + reference + '</cite>' : '',
+							( author.length || reference.length ) ? '</figcaption>' : '',
+						'</figure>'
+					].join( '' );
+				});
+			}
+		};
+		showdown.extension( 'mmd_blockquote', mmd_blockquote );
+		var myService = new showdown.Converter({
+			extensions: [ 'mmd_blockquote' ]
+		});
 		return myService;
 	};
 
@@ -402,7 +458,7 @@
 			popover: {
 				air: [
 					[ 'style', [ 'bold', 'italic', 'underline', 'clear' ] ],
-					[ 'media', [ 'wpMedia' ] ],
+					[ 'media', [ 'link', 'wpMedia' ] ],
 					[ 'para', [ 'ul', 'ol', 'paragraph' ] ]					
 				]
 			},

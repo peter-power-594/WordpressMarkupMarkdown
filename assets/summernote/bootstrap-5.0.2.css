@@ -52,7 +52,7 @@
 .wp-editor-container body {
   margin: 0;
   font-family: var(--bs-font-sans-serif);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
@@ -143,17 +143,17 @@
 
 .wp-editor-container h6,
 .wp-editor-container .h6 {
-  font-size: 1rem !important;
+  font-size: 1.1rem !important;
 }
 
 .wp-editor-container p {
-  font-size: 1rem !important;
+  font-size: 1.1rem !important;
   margin-top: 0;
   margin-bottom: 1rem;
 }
 
 .wp-editor-container li {
-  font-size: 1rem !important;
+  font-size: 1.1rem !important;
 }
 
 .wp-editor-container abbr[title],
@@ -210,6 +210,9 @@
 
 .wp-editor-container blockquote {
   margin: 0 0 1rem;
+}
+.wp-editor-container figure blockquote {
+    margin: 0;
 }
 
 .wp-editor-container b,
@@ -268,7 +271,7 @@
 
 .wp-editor-container samp {
   font-family: var(--bs-font-monospace);
-  font-size: 1em;
+  font-size: 1.1rem;
   direction: ltr /* rtl:ignore */;
   unicode-bidi: bidi-override;
 }
@@ -278,7 +281,7 @@
   margin-top: 0;
   margin-bottom: 1rem;
   overflow: auto;
-  font-size: 0.875em;
+  font-size: 1.1rem;
 }
 .wp-editor-container pr {
   font-size: inherit;
@@ -287,7 +290,7 @@
 }
 
 .wp-editor-container code {
-  font-size: 0.875em;
+  font-size: 1.1rem;
   color: #d63384;
   display: block;
   white-space: pre;
@@ -300,14 +303,14 @@
 
 .wp-editor-container kbd {
   padding: 0.2rem 0.4rem;
-  font-size: 0.875em;
+  font-size: 1.1rem;
   color: #fff;
   background-color: #212529;
   border-radius: 0.2rem;
 }
 .wp-editor-container kbd kbd {
   padding: 0;
-  font-size: 1em;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -615,7 +618,7 @@
 }
 
 .wp-editor-container .initialism {
-  font-size: 0.875em;
+  font-size: 1.1rem;
   text-transform: uppercase;
 }
 
