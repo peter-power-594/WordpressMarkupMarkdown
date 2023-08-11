@@ -12,7 +12,7 @@
  * Text Domain: markup-markdown
  * Domain Path: /languages
  * Requires at least: 4.9
- * Tested up to: 6.3
+ * Tested up to: 6.3.0
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2, as published by the Free Software Foundation. You may NOT assume
