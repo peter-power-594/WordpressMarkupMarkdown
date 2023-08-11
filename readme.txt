@@ -62,7 +62,7 @@ like that:
 
 = 2.3.0 =
 
-Improvement:
+Improvements:
 - New beta interface based on HTML markups for better accessibility
 - A few dependencies are now loaded from the UNPKG CDN (https://unpkg.com/)
 
