@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.3.0
-Version: 2.3.0
+Stable Tag: 2.4.0
+Version: 2.4.0
 Requires at least: 4.9
-Tested up to: 6.3.0
+Tested up to: 6.3.1
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,6 +17,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- Audio & Video playlist support added since 2.4
 - New beta interface since 2.3
 - Possible to enable or disable specific addons since 2.2
 - Gallery shortcode support since 2.1
@@ -36,13 +37,12 @@ That's pretty all you should know. It's under active development, keep in touch 
 
 The same as usual:
 
-1. Just download and upload the zip file to your wordpress instance. Or install
-directly by simply searching from the WP plugin panel.
+1. Just download and upload the zip file to your wordpress instance. Or install directly by simply searching from the WP plugin panel.
 2. Activate the extension.
 
-All done ! That's all you should do.
+All done! That's all you should do.
 
-= Is it still compatible with Gutenberg or any other builder ?
+= Is it still compatible with Gutenberg or any other builder?
 
 **Yes but you can't use both at the same time ;-)**  
 Data are saved as pure markdown code in the database, for the other editors on the market data are saved as HTML or custom markups like shortcodes. Currently data are still saved but won't be converted or rendered correctly if you revert back or switch between editors.
@@ -56,9 +56,29 @@ Any block editor will be disabled for **all the users** of your Wordpress instan
 
 Sure, developers & designers can access the public properties & methods of the instance inside their templates through the global _mmd_ function. For example let's say you want to use it with a custom field called 'foo_bar'. You can use something
 like that:
-`echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );
+``echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );``
+
+= What's the deal with the beta interface? =
+
+The default editor is based on EasyMDE so you can write in markdown and use Wordpress feature at the same time.  
+The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. It's a custom version so you can get a live rendering when typing your content or adding medias. It's working quiet well actually but if something's wrong, you may have to edit directly the code from the builder or from the database so for the production environment I would advise to stick with the default options with EasyMDE. To find you more check my article here: https://red.phutu.red/blog/wordpress-plugins/dynamic-input-method-markdown/
 
 == Changelog ==
+
+= 2.4.0 =
+
+Improvements:
+Possible to do the following actions from the media uploader
+- Adding an audio file
+- Adding a video file
+- Creating an audio playlist
+- Creating a video playlist
+
+Bug fixes:
+- Music or movies was not usable
+- Inserting multiples images at once or creating a gallery should work properly
+- Solve an issue to avoid duplicate ids with images when using custom fields
+- Better performance with a unique media wizard per page instead of one media wizard per custom field
 
 = 2.3.0 =
 

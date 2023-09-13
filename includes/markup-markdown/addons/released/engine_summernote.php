@@ -51,6 +51,8 @@ class EngineSummerNote {
 			return TRUE;
 		endif;
 		wp_enqueue_media();
+		wp_playlist_scripts( 'audio' );
+		wp_playlist_scripts( 'video' );
 		$plugin_uri = mmd()->plugin_uri;
 		# 1. Load editor related stylesheets
 		wp_enqueue_style( 'markup_markdown__bootstrap_bundle',  $plugin_uri . 'assets/summernote/bootstrap-5.0.2.css', [], '0.8.20' );
@@ -61,7 +63,9 @@ class EngineSummerNote {
 		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/summernote/summernote-0.8.20-bs5.js', [ 'markup_markdown__bootstrap_bundle' ], '0.8.21', true );
 		wp_enqueue_script( 'markup_markdown__showdown', 'https://unpkg.com/showdown@2.1.0/dist/showdown.js', [ 'markup_markdown__jsengine_editor' ], '2.1.0', true );
 		wp_enqueue_script( 'markup_markdown__turndown', 'https://unpkg.com/turndown@7.1.2/dist/turndown.js', [ 'markup_markdown__showdown' ], '7.1.2', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-summernote.js', [ 'markup_markdown__turndown' ], '1.1.72', true );		
+		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__turndown' ], '1.0.1', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.5', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-summernote.js', [ 'markup_markdown__wordpress_media' ], '1.1.74', true );		
 	}
 
 

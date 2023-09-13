@@ -4,7 +4,7 @@
  *
  * Plugin Name: Markup Markdown
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
- * Version:     2.3.0
+ * Version:     2.4.0
  * Author:      Pierre-Henri Lavigne
  * Author URI:  https://red.phutu.red/plugins/markup-markdown/
  * License:     GPLv2 or later
@@ -12,7 +12,7 @@
  * Text Domain: markup-markdown
  * Domain Path: /languages
  * Requires at least: 4.9
- * Tested up to: 6.3.0
+ * Tested up to: 6.3.1
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2, as published by the Free Software Foundation. You may NOT assume
@@ -85,8 +85,17 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		}
 
 
+		/**
+		 *  @since 1.0
+		 *  @access public
+		 *  
+		 *  @param String $content The markdown code
+		 *  @returns String The html content
+		 */
 		public function markdown2html( $content ) {
-			return apply_filters( 'field_markdown2html', $content );
+			$html = apply_filters( 'field_markdown2html', $content );
+			$html = htmlspecialchars_decode( $html, ENT_COMPAT );
+			return do_shortcode( $html );
 		}
 
 

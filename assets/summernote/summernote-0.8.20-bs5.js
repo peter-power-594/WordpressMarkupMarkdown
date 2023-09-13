@@ -9,6 +9,8 @@
  *
  * Date: 2021-10-14T21:15Z
  *
+ * Custom
+ * - The FIGURE tag is set a block element
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -909,7 +911,7 @@ var isTable = makePredByNodeName('TABLE');
 var isData = makePredByNodeName('DATA');
 
 function isInline(node) {
-  return !isBodyContainer(node) && !isList(node) && !isHr(node) && !isPara(node) && !isTable(node) && !isBlockquote(node) && !isData(node);
+  return !isBodyContainer(node) && !isList(node) && !isHr(node) && !isPara(node) && !isTable(node) && !isBlockquote(node) && !isData(node) && !isFigure(node);
 }
 
 function isList(node) {
@@ -936,6 +938,10 @@ function isParaInline(node) {
 
 function isBodyInline(node) {
   return isInline(node) && !ancestor(node, isPara);
+}
+
+function isFigure(node) {
+  return node && /^FIGURE/.test(node.nodeName.toUpperCase());
 }
 
 var isBody = makePredByNodeName('BODY');

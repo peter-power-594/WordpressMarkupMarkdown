@@ -413,13 +413,12 @@
   -webkit-appearance: button;
 }
 .wp-editor-container button:not(:disabled),
-
 .wp-editor-container [type=button]:not(:disabled),
-
 .wp-editor-container [type=reset]:not(:disabled),
-
 .wp-editor-container [type=submit]:not(:disabled) {
   cursor: pointer;
+  border: 0;
+  width: auto;
 }
 
 .wp-editor-container ::-moz-focus-inner {
