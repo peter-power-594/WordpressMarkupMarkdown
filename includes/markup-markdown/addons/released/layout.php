@@ -256,16 +256,29 @@ class LayoutAddon {
 	 */
 	public function render_lightbox_masonry( $content = '' ) {
 		# Adjust lightbox for image sets with masonry
+		# Old versions with no *figure* and *figcaption* tags
 		$content = preg_replace(
-			"#<li><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset\d*)\s(.*?)</li>#u",
+			"#<li><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u",
 			"<div class=\"grid-item\"><a data-lightbox=\"$3\" href=\"$1\" title=\"$4</div>",
 			$content
 		);
 		$content = preg_replace(
-			"#<ul>\n<div class=\"grid-item\"><a data-lightbox=\"(.*?)\"#u",
-			"<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><a data-lightbox=\"$1\"",
+			"#<ul>\n<div class=\"grid-item\"><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u",
+			"<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><a data-lightbox=\"$1\" href=\"$2\"",
 			$content
 		);
+		# New version with *figure* and *figcaption*
+		$content = preg_replace(
+			"#<li><figure([^>]+)><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u",
+			"<div class=\"grid-item\"><figure$1><a data-lightbox=\"$4\" href=\"$2\" title=\"$5</div>",
+			$content
+		);
+		$content = preg_replace(
+			"#<ul>\n<div class=\"grid-item\"><figure([^>]+)><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u",
+			"<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><figure$1><a data-lightbox=\"$2\" href=\"$3\"",
+			$content
+		);
+		# Safety clean
 		$content = preg_replace(
 			"#</div>\n</ul>#u",
 			"</div>\n</div>",
@@ -274,7 +287,7 @@ class LayoutAddon {
 		# Adjust lightbox for single images
 		$content = preg_replace(
 			"#<a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\"#u",
-			"<a data-lightbox=\"mygallery\" href=\"$1\"",
+			"<a href=\"$1\" data-lightbox=\"mygallery\"",
 			$content
 		);
 		return $content;

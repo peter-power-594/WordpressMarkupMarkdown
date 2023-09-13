@@ -25,7 +25,7 @@ class ImageAddon {
 			return FALSE; # Addon has been desactivated
 		endif;
 		if ( ! is_admin() ) :
-			add_filter( 'addon_markdown2html', array( $this, 'render_responsive_image' ) );
+			add_filter( 'addon_markdown2html', array( $this, 'render_responsive_image' ), 9, 1 );
 		endif;
 	}
 
@@ -69,11 +69,15 @@ class ImageAddon {
 				if ( strpos( $ops[ 'url' ], $this->home_url ) === FALSE ) :
 					$html .= $ops[ 'url' ] . '" target="_blank" rel="noopener noreferrer">';
 				else :
-					$html .= '/' . str_replace( $this->home_url, '', $ops[ 'url' ] ) . '">';
+					$html .= '/' . str_replace( $this->home_url, '', $ops[ 'url' ] ) . '"';
 				endif;
 			else :
-				$html .= $ops[ 'url' ] . '">';
+				$html .= $ops[ 'url' ] . '"';
 			endif;
+			if ( isset( $ops[ 'title' ] ) && ! empty( $ops[ 'title' ] ) ) :
+				$html .= $ops[ 'title' ];
+			endif;
+			$html .= '>';
 		endif;
 		$html .= '<img decoding="async" loading="lazy" ';
 		# Image source
@@ -130,14 +134,14 @@ class ImageAddon {
 			$html .= ' sizes="(max-width: ' . $width . 'px) 100vw, ' . $width . 'px"';
 		endif;
 		# Image alternative text
-		$html .= ' alt="' . $alt . '"';
+		$html .= ' alt="' . trim( $alt ) . '"';
 		$html .= '>';
 		if ( isset( $ops[ 'url' ] ) ) :
 			$html .= '</a>';
 		endif;
 		if ( ! empty( $caption ) ) :
 			$html .= '<figcaption id="caption-attachment-mmd' . $ops[ 'idx' ]
-				. '" class="wp-caption-text">' . $caption . '</figcaption>';
+				. '" class="wp-caption-text">' . trim( $caption ) . '</figcaption>';
 		endif;
 		$html .= '</figure>';
 		return $html;
@@ -165,20 +169,21 @@ class ImageAddon {
 			];
 		endif;
 		# Replace linked images
-		preg_match_all( '#<a href="(.*?)"><img src="/(.*?)-(\d+)x(\d+)\.([a-zA-Z]+)"(.*?)></a>#', $content, $wp_imgs );
+		preg_match_all( '#<a href="(.*?)"([^>]*)><img src="/(.*?)-(\d+)x(\d+)\.([a-zA-Z]+)"(.*?)></a>#', $content, $wp_imgs );
 		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
-			preg_match( '#alt="(.*?)"#', $wp_imgs[ 6 ][ $idx ], $img_label );
-			preg_match( '#align([a-z]+)#', $wp_imgs[ 6 ][ $idx ], $img_align );
+			preg_match( '#alt="(.*?)"#', $wp_imgs[ 7 ][ $idx ], $img_label );
+			preg_match( '#align([a-z]+)#', $wp_imgs[ 7 ][ $idx ], $img_align );
 			$new_img_tag = $this->wp_image(array(
 				'idx'	=> $idx,
 				'url'	=> $wp_imgs[ 1 ][ $idx ],
+				'title' => $wp_imgs[ 2 ][ $idx ],
 				'label' => $img_label,
 				'align' => $img_align,
-				'src'	=> '/' . $wp_imgs[ 2 ][ $idx ] . '-'
-						. $wp_imgs[ 3 ][ $idx ] . 'x' . $wp_imgs[ 4 ][ $idx ]
-						. '.' . $wp_imgs[ 5 ][ $idx ],
-				'width' => $wp_imgs[ 3 ][ $idx ],
-				'height' => $wp_imgs[ 4 ][ $idx ],
+				'src'	=> '/' . $wp_imgs[ 3 ][ $idx ] . '-'
+						. $wp_imgs[ 4 ][ $idx ] . 'x' . $wp_imgs[ 5 ][ $idx ]
+						. '.' . $wp_imgs[ 6 ][ $idx ],
+				'width' => $wp_imgs[ 4 ][ $idx ],
+				'height' => $wp_imgs[ 5 ][ $idx ],
 			));
 			if ( ! empty( $new_img_tag ) ) :
 				$content = str_replace( $img_tag, $new_img_tag, $content );

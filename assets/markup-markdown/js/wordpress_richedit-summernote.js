@@ -3,7 +3,9 @@
 
 
 	var mediaFrame = {};
-		activeWidget = {};
+		mediaPreview = {},
+		activeWidget = {},
+		fieldNumber = 0;
 
 
 	function MarkupMarkdownWidget( textarea ) {
@@ -11,7 +13,7 @@
 		this.updating = false;
 		this.home_url = '';
 		this.instance = {};
-		this.galleryCounter = 0;
+		this.widgetCounter = 0;
 		this.init( textarea );
 	}
 
@@ -21,12 +23,30 @@
 			htmlContent = html.replace( /&[amp;]+#(\d+);/g, '&#$1;' )
 				.replace( /<li><p>/g, '<li>' )
 				.replace( /<\/p><\/li>/g, '</li>' )
+				.replace( /<p><figure/g, '<figure' )
+				.replace( /<\/figure><\/p>/g, '</figure>' )
+				.replace( /<p><\/p>/g, '' )
+				.replace( /<p>(\[[a-z+][^\]]*\])<\/p>/g, '$1' ) 
 				.replace( /<br><\/p>/g, '</p>' );
+		// We have to render dynamically the media shortcodes if need be
 		htmlContent = htmlContent.replace( /\[gallery([^\]]*)\]/g, function( wpGallery ) {
-			_self.galleryCounter++;
-			var myGallery = '<div id="tmp_gallery-' + _self.galleryCounter + '"></div>';
-			_self.renderGallery( wpGallery, _self.galleryCounter );
+			_self.widgetCounter++;
+			var myGallery = '<div id="tmp_gallery-' + _self.widgetCounter + '"></div>';
+			mediaPreview.gallery( wpGallery, _self.widgetCounter );
 			return myGallery;
+		});
+		htmlContent = htmlContent.replace( /\[playlist([^\]]*)\]/g, function( wpPlaylist ) {
+			_self.widgetCounter++;
+			if ( /type\=\"video\"/.test( wpPlaylist ) ) {
+				var myPlaylist = '<div id="tmp_video_playlist-' + _self.widgetCounter + '"></div>';
+				mediaPreview.videoPlaylist( wpPlaylist, _self.widgetCounter );
+				return myPlaylist;
+			}
+			else {
+				var myPlaylist = '<div id="tmp_audio_playlist-' + _self.widgetCounter + '"></div>';
+				mediaPreview.audioPlaylist( wpPlaylist, _self.widgetCounter );
+				return myPlaylist;
+			}
 		});
 		var extraMarkup = htmlContent.replace( /\n|\r/, '' )
 			.replace( /<pre>.*?<\/pre>/, '' )
@@ -37,7 +57,6 @@
 		for ( var mk = extraMarkup, lim = mk.length, attr = '', i = 0; i < lim; i++ ) {
 			var mt = mk[ i ].match( />(.*?)<\/([\w]+)>{(.*?)}/ ),
 				attr = mt[ 3 ] || false;
-			console.log( mt );
 			if ( ! attr ) continue;
 			attr = attr.replace( '#', 'id=' ).replace( '.', 'class=' )
 				.replace( /\=([^\b\s]+)/, '="$1"' );
@@ -355,32 +374,53 @@
 				return window.decodeURIComponent( node.firstChild.getAttribute( 'data-shortcode' ) || '' );
 			}
 		});
-		myService.addRule("figure-transorm", {
+		myService.addRule('wp-playlist', {
 			filter: function( node ) {
-				if ( node.nodeName.toUpperCase() === "FIGURE" ) {
-					if ( ! node.firstChild || ! node.firstChild.nodeName || node.firstChild.nodeName.toUpperCase() !== 'BLOCKQUOTE' ) {
-						return false;
+				return node.nodeName.toUpperCase() === 'DIV' && /tmp_(audio|video)_playlist/.test( node.id || '' );
+			},
+			replacement: function( content, node, options ) {
+				return window.decodeURIComponent( node.firstChild.getAttribute( 'data-shortcode' ) || '' );
+			}
+		});
+		myService.addRule('wp-medias', {
+			filter: function( node ) {
+				return node.nodeName.toUpperCase() === 'DIV' && /tmp_(images|audios|videos)/.test( node.className || '' );
+			},
+			replacement: function( content, node, options ) {
+				return window.decodeURIComponent( node.getAttribute( 'data-shortcode' ) || '' );
+			}
+		});
+		myService.addRule('figure-transform', {
+			filter: function( node ) {
+				if ( node.nodeName.toUpperCase() === 'FIGURE' ) {
+					if ( node.getAttribute( 'data-shortcode' ) ) {
+						return true;
 					}
-					return true;
+					else if ( node.getElementsByTagName( 'blockquote' ).length || node.getElementsByTagName( 'img' ).length ) {
+						return true;
+					}
+					return false;
 				}
 				else {
 					return false;
 				}
 			},
 			replacement: function( content, node, options ) {
-				var firstChild = node.firstChild || {},
-				html = node.innerHTML.replace( /<[\/]*figure>/g, '' ),
-				mmd = '';
-				if ( firstChild && /^BLOCKQUOTE/.test( ( firstChild.nodeName || '' ).toUpperCase() ) ) {
-					html = firstChild.innerHTML;
+				var firstChild = node.firstChild || false,
+					mmd = '';
+				if ( node.getAttribute( 'data-shortcode' ) ) {
+					return window.decodeURIComponent( node.getAttribute( 'data-shortcode' ) );
+				}
+				else if ( firstChild && /^BLOCKQUOTE/.test( ( firstChild.nodeName || '' ).toUpperCase() ) ) {
+					var html = firstChild.innerHTML;
 					mmd += html.replace( /\n/, '' )
 						.replace( /<br>/, '  \n' )
 						.replace( '</p><p>', "\n" )
 						.replace( /<p>(.*?)<\/p>/, "> $1" );
-				}
-				if ( firstChild.nextSibling && /^FIGCAPTION/.test( ( firstChild.nextSibling.nodeName || '' ).toUpperCase() ) ) {
-					html = firstChild.nextSibling.innerHTML.replace( /<[\/]*cite>/g, '' )
-					mmd += "\n> " + html;
+					if ( firstChild.nextSibling && /^FIGCAPTION/.test( ( firstChild.nextSibling.nodeName || '' ).toUpperCase() ) ) {
+						html = firstChild.nextSibling.innerHTML.replace( /<[\/]*cite>/g, '' )
+						mmd += "\n> " + html;
+					}
 				}
 				return mmd;
 			}
@@ -470,14 +510,6 @@
 			tabDisable: true
 		});
 		_self.instance.textarea = $originalEditor;
-		// Base Dir
-		if ( wp && wp.pluginMarkupMarkdown && wp.pluginMarkupMarkdown.homeURL ) {
-			_self.home_url = wp.pluginMarkupMarkdown.homeURL;
-		}
-		else {
-			var args = decodeURIComponent( jQuery( 'script[src*="wordpress_richedit"]' ).attr( 'src' ) ); 
-			_self.home_url = /home_url/.test( args ) ? args.replace( /.*?home_url=/, '' ).replace( /&.*?$/, '' ) : '/';
-		}
 		if ( ! wp.pluginMarkupMarkdown.instances ) {
 			wp.pluginMarkupMarkdown.instances = [];
 		}
@@ -488,222 +520,194 @@
 	/**
 	 * Restore the post content if need available
 	 *
-	 * @returns Void
+	 * @returns Boolean TRUE if a content was set or false if default content is used
 	 */
 	MarkupMarkdownWidget.prototype.restoreContent = function() {
 		var _self = this;
 		// Initialize with proper HTML
-		var initialMMD = $originalEditor.val(),
-			initialHTML = initialMMD || '';
+		var text = $originalEditor.val(),
+			initialHTML = text || '';
 		if ( ! initialHTML.length ) {
-			initialHTML = '<p>Let\'s begin!</p>';
+			initialHTML = '<p>Let\'s begin!</p><p><br /></p>';
+			_self.instance.editor.summernote( 'code', initialHTML );
+			return false;
 		}
-		else {
-			// Service to convert Markdown to HTML
-			var mmd2html = _self.mmd2htmlToolkit();
-			initialHTML = _self.cleanupMMD( mmd2html.makeHtml( initialMMD ) );
+		var mediaCounters = initialHTML.match( /\"myset.*?\s/g );
+		if ( mediaCounters && mediaCounters.length ) {
+			var startCounter = 0;
+			for ( var c = 0, tmp; c < mediaCounters.length; c++ ) {
+				tmp = parseInt( mediaCounters[ c ].replace( /\d_/, '' ).replace( /[^\d]+/, '' ), 10 );
+				if ( tmp > startCounter ) {
+					startCounter = tmp;
+				}
+			}
+			_self.widgetCounter = startCounter + 1;
+		}
+		text = text + "\n\n";
+		// Render single image
+		text = text.replace( /\n([\[]*\!\[.*)/g, function( singleImage ) {
+			singleImage = singleImage.replace( "\n", '' );
+			return [
+				"\n" + '<div class="tmp_images" data-shortcode="' + encodeURIComponent( singleImage ) + '">',
+					mediaPreview.convertImage( _self.mmd2html.makeHtml( singleImage ) ),
+				'</div>'
+			].join( '' );
+		});
+		text = text.replace( /\n\n- [\[]*\!\[[\s\S]*?(\n\n)/g, function( imagesList ) {
+			imagesList = imagesList.replace( /\n\n/g, '' );
+			return [
+				"\n\n" + '<div class="tmp_images" data-shortcode="' + encodeURIComponent( imagesList ) + '">',
+					_self.cleanupMMD( mediaPreview.convertImage( _self.mmd2html.makeHtml( imagesList ) ) ),
+				'</div>' + "\n\n"
+			].join( '' );
+		});
+		// Render the audio shortcodes
+		var audCounter = 0;
+		text = text.replace( /\n(\[audio[^\]]*\]\[\/audio\])/g, function( wpAudio ) {
+			wpAudio = wpAudio.replace( "\n", '' );
+			return [
+				"\n" + '<div class="tmp_audios" data-shortcode="' + encodeURIComponent( wpAudio ) + '">',
+					mediaPreview.convertAudio( wpAudio, audCounter++ ),
+				'</div>'
+			].join( '' );
+		});
+		// Render the video shortcodes
+		var vidCounter = 0;
+		text = text.replace( /\n\[video([^\]]*)\]\[\/video\]/g, function( wpVideo ) {
+			wpVideo = wpVideo.replace( "\n", '' );
+			return [
+				"\n" + '<div class="tmp_videos" data-shortcode="' + encodeURIComponent( wpVideo ) + '">',
+					mediaPreview.convertVideo( wpVideo, vidCounter++ ),
+				'</div>'
+			].join( '' );
+		});
+		initialHTML = _self.cleanupMMD( mediaPreview.convertImage( _self.mmd2html.makeHtml( text ) ) );
+		if ( ! /<\/p>/.test( ( initialHTML.match( /[\S]+$/ ) || [ '' ] )[ 0 ] ) ) {
+			// Make the last line editable if the last element is a block
+			initialHTML += '<p><br /></p>';
 		}
 		_self.instance.editor.summernote( 'code', initialHTML );
+		return true;
 	};
 
 
 	/**
-	 * Insert an image inside the WYSIWYG editor
-	 *
-	 * @returns Boolean TRUE in case of success or FALSE in case or error
+	 *  @param String markdownCode The new markdown media content
+	 *  
+	 *  @return Object The Code Editor document updated with the media markdown
 	 */
-	MarkupMarkdownWidget.prototype.insertMedia = function( ops ) {
-		var _self = this;
-		if ( ! _self.currNode ) {
-			return false;
+	MarkupMarkdownWidget.prototype.mediaMultiselCallBack = function( markdownCode ) {
+		var _self = this,
+			tmp = document.createElement( 'div' );
+		if ( /\!\[/.test( markdownCode ) ) { // Images
+			if ( /myset\%d/.test( markdownCode ) ) {
+				activeWidget.widgetCounter++;
+				markdownCode = markdownCode.replace( /myset\%d/g, 'myset' + activeWidget.fieldNumber + '_' + activeWidget.widgetCounter );
+			}
+			tmp.className = 'tmp_images';
+			tmp.innerHTML = _self.cleanupMMD( mediaPreview.convertImage( _self.mmd2html.makeHtml( markdownCode ) ) );
+			tmp.setAttribute( 'data-shortcode', encodeURIComponent( markdownCode ) );
+			activeWidget.todo.push({
+				action: 'insertNode',
+				node: activeWidget.node,
+				html: tmp
+			});
+			activeWidget.updateHTML();
+			activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
 		}
-		var myNodeContent = _self.currNode.innerHTML || '';
-		_self.currNode.innerHTML = myNodeContent.replace(
-			/[+]{2}/,
-			'<img src="' + ops.url + '" alt="' + ops.alt + '" />'
-		);
-		_self.instance.editor.summernote('editor.setLastRange', $.summernote.range.createFromNodeAfter(_self.currNode).select());
-		_self.instance.editor.trigger( 'summernote.mmd_change' );
+		else if ( /\[audio/.test( markdownCode ) ) { // Audio
+			var html = markdownCode.replace( /\[audio([^\]]*)\]\[\/audio\]/g, function( wpAudio ) {
+				activeWidget.widgetCounter++;
+				return mediaPreview.convertAudio( wpAudio, activeWidget.widgetCounter );
+			});
+			tmp.className = 'tmp_audios';
+			tmp.innerHTML = html;
+			tmp.setAttribute( 'data-shortcode', encodeURIComponent( markdownCode ) );
+			activeWidget.todo.push({
+				action: 'insertNode',
+				node: activeWidget.node,
+				html: tmp
+			});
+			activeWidget.updateHTML();
+			activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
+		}
+		else if ( /\[video/.test( markdownCode ) ) { // Video
+			var html = markdownCode.replace( /\[video([^\]]*)\]\[\/video\]/g, function( wpVideo ) {
+				activeWidget.widgetCounter++;
+				return mediaPreview.convertVideo( wpVideo, activeWidget.widgetCounter );
+			});
+			tmp.className = 'tmp_videos';
+			tmp.innerHTML = html;
+			tmp.setAttribute( 'data-shortcode', encodeURIComponent( markdownCode ) );
+			activeWidget.todo.push({
+				action: 'insertNode',
+				node: activeWidget.node,
+				html: tmp
+			});
+			activeWidget.updateHTML();
+			activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
+		}
 	};
 
 
 	/**
-	 * Insert a group of images inside the WYSIWYG editor
-	 *
-	 * @returns Boolean TRUE in case of success or FALSE in case or error
+	 *  @param String widgetShortCode The Gallery / Playlist shortcode
+	 *  
+	 *  @return Object The Code Editor document updated with the widget shortcodes
 	 */
-	MarkupMarkdownWidget.prototype.insertMedias = function( pics ) {
-		var _self = this;
-		if ( ! _self.currNode ) {
-			return false;
+	MarkupMarkdownWidget.prototype.mediaWidgetCallBack = function( widgetShortCode ) {
+		activeWidget.widgetCounter++;
+		if ( /gallery/.test( widgetShortCode ) ) {
+			var myGallery = document.createElement( 'div' );
+			myGallery.id = 'tmp_gallery-' + activeWidget.widgetCounter;
+			if ( activeWidget.node ) {
+				activeWidget.todo.push({
+					action: 'insertNode',
+					node: activeWidget.node,
+					html: myGallery
+				});
+				activeWidget.updateHTML();
+				activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
+			}
+			else if ( activeWidget.context ) {
+				activeWidget.context.invoke( 'editor.pasteHTML', myGallery );
+			}
+			mediaPreview.gallery( widgetShortCode, activeWidget.widgetCounter );
 		}
-		var html = [ '<ul>' ];
-		for ( var p = 0, pic; p < pics.length; p++ ) {
-			pic = pics[ p ];
-			html.push([
-				'<li>',
-					'<a href="' + pic.url + '" title="myset' + pic.gal  + ' ' + ( pic.tit.length ? pic.tit : '' )  + '">',
-						'<img src="' + pic.src + '" alt="' + pic.alt + '" />',
-					'</a>',
-				'</li>'
-			].join(''))
-		}
-		html.push( '</ul>' );
-		_self.todo.push({
-			action: 'pasteHTML',
-			node: _self.currNode,
-			html: html.join( '' )
-		});
-		_self.updateHTML();
-		_self.instance.editor.trigger( 'summernote.mmd_change' );
-	};
-
-
-	/**
-	 * Add the gallery shortcode
-	 *
-	 * @returns Void
-	 */
-	MarkupMarkdownWidget.prototype.addMediaFromWidget = function( frameState ) {
-		var myState = frameState ? frameState : false;
-		if ( ! myState ) {
-			return false;
-		}
-		var gal = myState.get( 'library' );
-		if ( gal ) {
-			var galShortCode = wp.media.gallery.shortcode( gal ).string();
-			if ( galShortCode && galShortCode.length ) {
-				activeWidget.galleryCounter++;
-				var myGallery = '<div id="tmp_gallery-' + activeWidget.galleryCounter + '"></div>';
+		else if ( /playlist/.test( widgetShortCode ) ) {
+			var myPlayList = document.createElement( 'div' );
+			if ( /video/.test( widgetShortCode ) ) {
+				myPlayList.id = 'tmp_video_playlist-' + activeWidget.widgetCounter;
 				if ( activeWidget.node ) {
 					activeWidget.todo.push({
-						action: 'pasteHTML',
+						action: 'insertNode',
 						node: activeWidget.node,
-						html: myGallery
+						html: myPlayList
 					});
 					activeWidget.updateHTML();
 					activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
 				}
 				else if ( activeWidget.context ) {
-					activeWidget.context.invoke( 'editor.pasteHTML', myGallery );
+					activeWidget.context.invoke( 'editor.pasteHTML', myPlayList );
 				}
-				activeWidget.renderGallery( galShortCode, activeWidget.galleryCounter );
+				mediaPreview.videoPlaylist( widgetShortCode, activeWidget.widgetCounter );
 			}
-		}
-	}
-
-
-	/**
-	 * Gallery Preview
-	 *
-	 * @returns Void
-	 */
-	MarkupMarkdownWidget.prototype.renderGallery = function( wpGallery, galleryNumber ) {
-		var mediaIds = ( wpGallery || '' ).match( /ids\=\"(.*?)\"/ );
-		if ( ! mediaIds || ! mediaIds[ 1 ] ) {
-			return '';
-		}
-		var galleryOptions = {
-				size: 'thumbnail',
-				columns: 3,
-				link: 'none'
-			},
-			htmlGallery = function( imageIds ) {
-				var html = [
-					[
-						'<div id="gallery-' + galleryNumber + '"',
-						' class="gallery galleryid-' + galleryNumber,
-						' gallery-columns-' + galleryOptions.columns,
-						' gallery-size-' + galleryOptions.size,
-						'" data-shortcode="' + encodeURIComponent( wpGallery ) + '">'
-					].join( '' )
-				];
-				for ( var j = 0; j < imageIds.length; j++ ) {
-					html.push( htmlGalleryItem( wp.media.attachment( imageIds[ j ] ).attributes ) );
+			else {
+				myPlayList.id = 'tmp_audio_playlist-' + activeWidget.widgetCounter;
+				if ( activeWidget.node ) {
+					activeWidget.todo.push({
+						action: 'insertNode',
+						node: activeWidget.node,
+						html: myPlayList
+					});
+					activeWidget.updateHTML();
+					activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
 				}
-				html.push( '</div>' );
-				return html;
-			},
-			htmlGalleryItem = function( item ) {
-				if ( ! item || ! item.sizes ) {
-					return '';
+				else if ( activeWidget.context ) {
+					activeWidget.context.invoke( 'editor.pasteHTML', myPlayList );
 				}
-				var fig = [ '<figure class="gallery-item">' ];
-				fig.push( '<div class="gallery-icon ' + ( item.width > item.height ? 'landscape' : 'portrait' ) + '">' );
-				if ( galleryOptions.link !== 'none' ) {
-					fig.push( '<a href="' + ( galleryOptions.link === 'file' ? item.url : item.link ) + '" target="_blank">' );
-				}
-				fig.push([
-					'<img src="' + ( item.sizes[ galleryOptions.size ] ? item.sizes[ galleryOptions.size ].url : item.sizes.thumbnail.url ) + '"',
-					' alt="' + ( item.alt || item.title ) + '"',
-					' width="' + ( item.sizes[ galleryOptions.size ].width ? item.sizes[ galleryOptions.size ].width : item.width ) + '"',
-					' height="' + ( item.sizes[ galleryOptions.size ].height ? item.sizes[ galleryOptions.size ].height : item.height ) + '"',
-					item.caption ? ' aria-describedby="gallery-' + galleryNumber + '-' + item.id + '"' : '',
-					'">'
-				].join(''));
-				if ( galleryOptions.link !== 'none' ) {
-					fig.push( '</a>' );
-				}
-				fig.push( '</div>' );
-				if ( item.caption ) {
-					fig.push([
-						'<figcaption class="wp-caption-text gallery-caption" id="gallery-' + galleryNumber + '-' + item.id + '">',
-							item.caption,
-						'</figcaption>'
-					].join( '' ) );
-				}
-				fig.push( '</figure>' );
-				return fig.join( '' );
-			};
-		if ( /columns/.test( wpGallery ) ) {
-			var columns = wpGallery.match( /columns\=\"(.*?)\"/ ) || [];
-			if ( columns && columns[ 1 ] && ! isNaN( +columns[ 1 ] ) ) {
-				galleryOptions.columns = +columns[ 1 ];
+				mediaPreview.audioPlaylist( widgetShortCode, activeWidget.widgetCounter );
 			}
-		}
-		if ( /size/.test( wpGallery ) ) {
-			var sizes = wpGallery.match( /size\=\"(.*?)\"/ ) || [];
-			if ( sizes && sizes[ 1 ] && new RegExp( sizes[ 1 ].toLowerCase() ).test( 'small medium large full' ) ) {
-				galleryOptions.size = sizes[ 1 ].toLowerCase();
-			}
-		}
-		if ( /link/.test( wpGallery ) ) {
-			var links = wpGallery.match( /link\=\"(.*?)\"/ ) || [];
-			if ( links && links[ 1 ] && new RegExp( links[ 1 ].toLowerCase() ).test( 'post file none' ) ) {
-				galleryOptions.link = links[ 1 ].toLowerCase();
-			}
-		}
-		var imageIds = mediaIds[ 1 ].split( ',' ),
-			attachmentLoaded = imageIds.length;
-		for ( var i = 0; i < imageIds.length; i++) {
-			imageIds[ i ] = +imageIds[ i ]; // parseInt( imageIds[ i ], 10 );
-			if ( ! wp.media.attachment( imageIds[ i ] ) || ! wp.media.attachment( imageIds[ i ] ).attributes || ! wp.media.attachment( imageIds[ i ] ).attributes.sizes ) {
-				attachmentLoaded--;
-			}
-		}
-		if ( attachmentLoaded !== imageIds.length ) {
-			// All attachment info are not available yet
-			wp.media.query({ post__in: imageIds })
-				.more().then(function() {
-					var galleryHTML = htmlGallery( imageIds );
-					setTimeout(function() {
-						var galleryNode = document.getElementById( 'tmp_gallery-' + galleryNumber ) || false;
-						if ( galleryNode ) {
-							galleryNode.innerHTML = galleryHTML.join( '' );
-						}
-					}, 500);
-				});
-		}
-		else {
-			var galleryHTML = htmlGallery( imageIds );
-			setTimeout(function() {
-				var galleryNode = document.getElementById( 'tmp_gallery-' + galleryNumber ) || false;
-				if ( galleryNode ) {
-					galleryNode.innerHTML = galleryHTML.join( '' );
-				}
-				activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
-				activeWidget = {};
-			}, 500);
 		}
 	};
 
@@ -717,26 +721,35 @@
 		if ( mediaFrame && mediaFrame.title ) {
 			return false;
 		}
-		// Pictures : https://codex.wordpress.org/Javascript_Reference/wp.media
-		mediaFrame = wp.media({
-			frame: 'post',
-			type: 'image',
-			multiple: true,
-			title: 'Media'
-			// button: { text: 'OK' },
-		});
-		mediaFrame.on( 'update', function() {
-			// **Update** event is triggered when the user presses the "Create the {widget}"
-			// from the media modal (example: generating a gallery)
-			if ( activeWidget ) {
-				activeWidget.addMediaFromWidget( mediaFrame.state() )
+		var _self = this;
+		mediaFrame = new MmdMedia({
+			base_url: _self.home_url,
+			callbacks:{
+				widget: function( wpShortCode ) {
+					if ( wpShortCode && wpShortCode.length ) {
+						_self.mediaWidgetCallBack( wpShortCode );
+					}
+				},
+				multisel: function( markdownCode ) {
+					if ( markdownCode && markdownCode.length ) {
+						_self.mediaMultiselCallBack( markdownCode );
+					}
+				}
 			}
 		});
-		mediaFrame.on( 'insert', function() {
-			// **Insert** event is trigerred when the user presses the "Insert into post"
-			// inside the media modal (one or multiples images are propably selected)
-			if ( activeWidget ) {
-				activeWidget.addMediaFromSel( mediaFrame.state() );
+		mediaPreview = new MmdPreview({
+			base_url: _self.home_url,
+			callbacks:{
+				widget: function() {
+					if ( activeWidget && activeWidget.instance && activeWidget.instance.editor ) {
+						activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
+					}
+				},
+				multisel: function() {
+					if ( activeWidget && activeWidget.instance && activeWidget.instance.editor ) {
+						activeWidget.instance.editor.trigger( 'summernote.mmd_change' );
+					}
+				}
 			}
 		});
 	};
@@ -747,6 +760,9 @@
 			return false;
 		}
 		var _self = this;
+		_self.fieldNumber = fieldNumber++; 
+		// Let the user upload contents
+		_self.mediaUploader();
 		_self.switchEditor( textarea );
 		_self.restoreContent();
 		// Service to convert HTML to Markdown
@@ -795,13 +811,22 @@
 			else if ( _self.formatContent( parentNode ) > 0 ) hasUpdate = 1;
 			_self.instance.editor.trigger( 'summernote.mmd_change' );
 		});
-		// Let the user upload contents
-		_self.mediaUploader();
 	};
 
 
 	MarkupMarkdownWidget.prototype.init = function( textarea ) {
-		var _self = this;
+		var _self = this,
+			home_url = '';
+		_self.mmd2html = _self.mmd2htmlToolkit();
+		// Base Dir
+		if ( wp && wp.pluginMarkupMarkdown && wp.pluginMarkupMarkdown.homeURL ) {
+			home_url = wp.pluginMarkupMarkdown.homeURL;
+		}
+		else {
+			var args = decodeURIComponent( jQuery( 'script[src*="wordpress_richedit-summernote"]' ).attr( 'src' ) ); 
+			home_url = /home_url/.test( args ) ? args.replace( /.*?home_url=/, '' ).replace( /&.*?$/, '' ) : '/';
+		}
+		_self.home_url = home_url.replace( /^(.*?)(\.[a-z]+\/).*?$/, '$1$2' );
 		_self.core( textarea );
 	};
 
