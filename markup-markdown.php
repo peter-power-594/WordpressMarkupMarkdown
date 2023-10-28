@@ -12,7 +12,7 @@
  * Text Domain: markup-markdown
  * Domain Path: /languages
  * Requires at least: 4.9
- * Tested up to: 6.2.2
+ * Tested up to: 6.3.2
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2, as published by the Free Software Foundation. You may NOT assume
@@ -86,6 +86,13 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		}
 
 
+		/**
+		 *  @since 1.0
+		 *  @access public
+		 *  
+		 *  @param String $content The markdown code
+		 *  @returns String The html content
+		 */
 		public function markdown2html( $content ) {
 			$filtered = apply_filters( 'field_markdown2html', $content );
 			$html = htmlspecialchars_decode( $filtered, ENT_COMPAT );

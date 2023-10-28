@@ -396,7 +396,7 @@ class ParsedownExtra extends Parsedown
             ),
         );
 
-        uasort($this->DefinitionData['Footnote'], 'self::sortFootnotes');
+        uasort($this->DefinitionData['Footnote'], [$this, 'sortFootnotes']);
 
         foreach ($this->DefinitionData['Footnote'] as $definitionId => $DefinitionData)
         {
@@ -479,7 +479,14 @@ class ParsedownExtra extends Parsedown
         $DOMDocument = new DOMDocument;
 
         # http://stackoverflow.com/q/11309194/200145
-        $elementMarkup = mb_convert_encoding($elementMarkup, 'HTML-ENTITIES', 'UTF-8');
+        # $elementMarkup = mb_convert_encoding($elementMarkup, 'HTML-ENTITIES', 'UTF-8');
+		# Modified with https://github.com/erusev/parsedown-extra/pull/176/files to enable PHP8.2
+
+		# https://www.php.net/manual/en/function.mb-convert-encoding.php#127529
+		$elementMarkup = mb_encode_numericentity( $elementMarkup, [0x80, 0x10FFFF, 0, ~0], 'UTF-8' );
+
+		# https://www.php.net/manual/en/domdocument.loadhtml.php#95251
+		$DOMDocument->loadHTML('<?xml encoding="UTF-8"?>' . $elementMarkup);
 
         # http://stackoverflow.com/q/4879946/200145
         $DOMDocument->loadHTML($elementMarkup);

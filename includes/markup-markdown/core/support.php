@@ -11,7 +11,7 @@ class CustomPostSupport {
 
 	/**
 	 * @property Boolean $mmd_syntax To know if markdown syntax was enabled - or not
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access private
 	 */
@@ -30,10 +30,10 @@ class CustomPostSupport {
 
 	/**
 	 * Add markdown support to every public custom post type
-	 * 
+	 *
 	 * @since 1.7.0
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function add_markdown_support() {
@@ -52,10 +52,10 @@ class CustomPostSupport {
 	/**
 	 * Get Current Post Type in the WordPress Admin Area
 	 * @source https://wp-mix.com/get-current-post-type-wordpress/
-	 * 
+	 *
 	 * @since 1.7.0
 	 * @access public
-	 * 
+	 *
 	 * @return String Post type in use or FALSE
 	 */
 	private function get_current_post_type() {
@@ -78,10 +78,10 @@ class CustomPostSupport {
 
 	/**
 	 * Prepare the Markdown editor
-	 * 
+	 *
 	 * @since 1.7.0
 	 * @access public
-	 * 
+	 *
 	 * @return Boolean TRUE if Markdown was activated of FALSE if disabled
 	 */
 	public function prepare_markdown_editor() {
@@ -108,8 +108,7 @@ class CustomPostSupport {
 		}, 10, 2 );
 		# Disable Gutenberg
 		$this->remove_gutenberg_hooks();
-		# Enable Markdown Editor
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_assets' ) );
+		# WYSIWYG loading assets has moved to includes/markup-markdown/addons
 		return TRUE;
 	}
 
@@ -123,33 +122,6 @@ class CustomPostSupport {
 		if ( function_exists( 'opcache_invalidate' ) ) :
 			opcache_invalidate( $cache_content );
 		endif;
-	}
-
-
-	/**
-	 * Trigger the loading of stylesheets and scripts if and only if we are 
-	 * on the edit screen of a post / page using the markdown version of wysiwyg
-	 * 
-	 * @access public
-	 * 
-	 * @params String $hook the current hook in use
-	 * @return Void
-	 */
-	public function load_assets( $hook ) {
-		if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
-			return TRUE;
-		endif;
-		wp_enqueue_media();
-		$plugin_uri = mmd()->plugin_uri;
-		# 1. Load editor related stylesheets
-		wp_enqueue_style( 'markup_markdown__cssengine_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.18.100' );
-		wp_enqueue_style( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/github.css', [ 'markup_markdown__cssengine_editor' ], '8.9.1' );
-		wp_enqueue_style( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/css/wordpress_richedit.css', [ 'markup_markdown__highlightjs_snippets' ], '1.0.11' );
-		# 2. Load markdown related scripts
-		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.0', true );
-		wp_enqueue_script( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/highlightjs.min.js', [ 'markup_markdown__jsengine_editor' ], '8.9.1', true );
-		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__highlightjs_snippets' ], '1.1.3', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.2.2', true );		
 	}
 
 
@@ -219,10 +191,10 @@ class CustomPostSupport {
 
 	/**
 	 * Enable or disable the filters regards to the WP_MMD_RAW_DATA constant
-	 * 
+	 *
 	 * @since 1.7.4
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function set_content_filters() {
