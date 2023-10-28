@@ -13,7 +13,8 @@ class ACFAddon {
 	private $prop = array(
 		'slug' => 'acf',
 		'label' => '<abbr title="Advanced Custom Fields">ACF</abbr>',
-		'desc' => 'This addon enable the "Markup Markdown" <em>content</em> type so you can use the markdown editor with custom fields in ACF.'
+		'desc' => 'This addon enable a new content type so you can write directly markdown with the "Markup Markdown" custom field from ACF.',
+		'release' => 'beta'
 	);
 
 

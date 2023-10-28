@@ -21,7 +21,7 @@ class PluginOptions {
 	 *
 	 * @var Array $addons The addons properties
 	 */
-	 public $addons = [];
+	public $addons = [];
 
 	public function __construct( $addons ) {
 		$this->addons = $addons;
@@ -220,6 +220,9 @@ class PluginOptions {
 		endif;
 		$php_code[] = "\n\t]);";
 		if ( file_put_contents( $my_cnf_screen, implode( '', $php_code ) ) ) :
+			if ( function_exists( 'opcache_invalidate' ) ) :
+				opcache_invalidate( $my_cnf_screen );
+			endif;
 			$redirect_url = \menu_page_url( 'markup-markdown-admin', false )
 				. '&options_saved=' . ( $this->updated > 0 ? '1' : '0' );
 				\wp_redirect( $redirect_url, 302 );
@@ -285,17 +288,22 @@ class PluginOptions {
 		endif;
 		$html = '<fieldset class="metabox-prefs">';
 		$html .= '<legend>Addons Used</legend>';
-		$html .= '<p>' . __( 'You can manually activate addons or force some addons to be desactivated' ) . '</p>';
+		$html .= '<style>.dashicons-mmd-helpers{margin:5px 0 0 5px}.mmd-addon-helper{display:inline}</style>';
+		$html .= '<p>' . __( 'You can manually activate or desactivate specific addons.' ) . ' ' . __( 'Addons marked with <sup>*</sup> should be used with caution.' ) . '</p>';
+		$html .= '<ul>';
 		foreach ( $this->addons->setup as $slug ) :
 			if ( ! $this->addons->inst[ $slug ] ) :
 				continue;
 			endif;
-			$inst = $this->addons->inst[ $slug ];
-			$html .= '<label for="mmd_addon-' . $slug . '">';
+			$addon_inst = $this->addons->inst[ $slug ];
+			$html .= '<li class="mmd-addon-helper"><label for="mmd_addon-' . $slug . '">';
 			$html .= '<input class="enable-' . $slug . '-addon" name="mmd_addons[]" id="mmd_addon-' . $slug . '" type="checkbox" value="' . $slug . '"'
-			. ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $slug, MMD_ADDONS ) ) ? ' checked="checked"' : '' )
-			. ' /> ' . $inst->label . '</label>';
+				. ( ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $slug, MMD_ADDONS ) ) ) ? ' checked="checked"' : '' ) . ' /> ';
+			$html .= $addon_inst->label . ( $addon_inst->release !== 'stable' ? ' <sup>*</sup>' : '' );
+			$html .= '<span class="dashicons dashicons-editor-help dashicons-mmd-helpers" title="' . htmlspecialchars( $addon_inst->desc ) . '"></span>';
+			$html .= '</label></li>';
 		endforeach;
+		$html .= '</ul>';
 		$html .= '</fieldset>';
 		return $panel . $html;
 	}

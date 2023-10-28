@@ -10,7 +10,8 @@ class ImageAddon {
 	private $prop = array(
 		'slug' => 'Image',
 		'label' => 'Responsive Image',
-		'desc' => 'Add basic html code syntax for responsive media.'
+		'desc' => 'Add basic html code syntax for responsive media.',
+		'release' => 'stable'
 	);
 
 

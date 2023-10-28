@@ -11,7 +11,8 @@ class LayoutAddon {
 	private $prop = array(
 		'slug' => 'layout',
 		'label' => 'Layout',
-		'desc' => 'A few tools to help you enhancing your layout.'
+		'desc' => 'A few tools to help you enhancing your layout. (Lightbox, Masonry, etc...)',
+		'release' => 'stable'
 	);
 
 

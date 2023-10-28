@@ -13,7 +13,8 @@ class MediaYoutubeAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 	private $prop = array(
 		'slug' => 'youtube',
 		'label' => 'Youtube',
-		'desc' => 'Convert automaticall Youtube links to an embedded iframe.'
+		'desc' => 'Convert automatically Youtube links to an embedded iframe.',
+		'release' => 'stable'
 	);
 
 

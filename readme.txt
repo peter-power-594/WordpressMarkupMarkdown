@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.4.0
-Version: 2.4.0
+Stable Tag: 2.5.0
+Version: 2.5.0
 Requires at least: 4.9
-Tested up to: 6.3.1
+Tested up to: 6.3.2
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -49,7 +49,7 @@ Data are saved as pure markdown code in the database, for the other editors on t
 
 = Can I switch between editors or allow the markdown editor for specific users ? =
 
-**Yes, please keep in mind it's a global switch for now. You need to stick to one editor with one post type.**  
+**Yes, please keep in mind it's a global switch for every user. You need to stick to one editor with one post type.**  
 Any block editor will be disabled for **all the users** of your Wordpress instance. _filters_ are available to disable the markdown editor for specific custom post types at a global level. For example you can do a setup to use _Divi_ or _Elementor_ to edit your pages and _Markdown_ to edit your blog'posts. Please refer to the forum to know how to do it.
 
 = Can I use it with custom fields? (Or within my theme) =
@@ -64,6 +64,11 @@ The default editor is based on EasyMDE so you can write in markdown and use Word
 The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. It's a custom version so you can get a live rendering when typing your content or adding medias. It's working quiet well actually but if something's wrong, you may have to edit directly the code from the builder or from the database so for the production environment I would advise to stick with the default options with EasyMDE. To find you more check my article here: https://red.phutu.red/blog/wordpress-plugins/dynamic-input-method-markdown/
 
 == Changelog ==
+
+= 2.5.0 =
+
+Improvement:
+- Adding option to disable the static html cache
 
 = 2.4.0 =
 

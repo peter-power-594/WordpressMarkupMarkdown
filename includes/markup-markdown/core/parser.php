@@ -17,7 +17,8 @@ class Parser {
 		if ( MMD_SUPPORT_ENABLED > 0 ) :
 			# Add the filter so the markdown can be parsed and the html generated properly on the frontend
 			$this->preview = filter_input( INPUT_GET, 'preview', FILTER_SANITIZE_SPECIAL_CHARS );
-			add_filter( 'post_markdown2html', array( $this, 'cached_post_markdown2html' ) );
+			$cached_filter = defined( 'WP_MMD_OPCACHE' ) && WP_MMD_OPCACHE ? 'cached_' : '';
+			add_filter( 'post_markdown2html', array( $this, $cached_filter . 'post_markdown2html' ) );
 			add_filter( 'field_markdown2html', array( $this, 'post_markdown2html' ) );
 		else :
 			add_filter( 'post_markdown2html', array( $this, 'dummy_markdown' ) );

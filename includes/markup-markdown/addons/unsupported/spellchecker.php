@@ -10,7 +10,8 @@ class SpellCheckerAddon {
 	private $prop = array(
 		'slug' => 'hungspellchecker',
 		'label' => 'Hung Spell Checker',
-		'desc' => 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles'
+		'desc' => 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles.',
+		'release' => 'experimental'
 	);
 
 
