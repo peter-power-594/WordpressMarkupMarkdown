@@ -94,7 +94,9 @@ class CustomPostSupport {
 			return FALSE;
 		endif;
 		# Clear static cache when post is saved
-		add_action( 'save_post', array( $this, 'clear_post_cache' ), 10, 3 );
+		if ( ! defined( 'WP_MMD_OPCACHE' ) || WP_MMD_OPCACHE ) :
+			add_action( 'save_post', array( $this, 'clear_post_cache' ), 10, 3 );
+		endif;
 		# https://stackoverflow.com/questions/12648402/how-can-i-completely-remove-tinymce-in-wordpress/12648896
 		add_filter( 'user_can_richedit', '__return_false', 50 );
 		# https://wordpress.stackexchange.com/questions/72865/is-it-possible-to-remove-wysiwyg-for-a-certain-custom-post-type/72867
