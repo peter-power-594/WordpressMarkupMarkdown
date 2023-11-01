@@ -12,13 +12,15 @@ class EngineEasyMDE {
 		'slug' => 'engine__easymde',
 		'label' => 'EasyMde WYSIWYG',
 		'desc' => 'The default Markdown Editor.',
-		'release' => 'stable'
+		'release' => 'stable',
+		'active' => 1
 	);
 
 
 	public function __construct() {
 		if ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) !== FALSE ) :
-			return FALSE; # Addon has been desactivated
+			$this->prop[ 'active' ] = 0;
+			return FALSE; # Addon has been desactivated (SummerNote activated)
 		endif;
 		if ( is_admin() ) :
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_engine_assets' ) );
@@ -61,7 +63,7 @@ class EngineEasyMDE {
 		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__highlightjs_snippets' ], '1.1.3', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.1', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.5', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.2.3', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.2.4', true );
 	}
 
 

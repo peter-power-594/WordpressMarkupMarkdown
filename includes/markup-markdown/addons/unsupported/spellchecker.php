@@ -11,7 +11,8 @@ class SpellCheckerAddon {
 		'slug' => 'hungspellchecker',
 		'label' => 'Hung Spell Checker',
 		'desc' => 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles.',
-		'release' => 'experimental'
+		'release' => 'experimental',
+		'active' => 0
 	);
 
 
@@ -87,9 +88,11 @@ class SpellCheckerAddon {
 
 
 	public function __construct() {
-		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+		if ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) ) :
+			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
+		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_SPELL_CHECK' => array() );
 		$this->dict_dir = WP_CONTENT_DIR . "/mmd-dict/";
 		if ( is_admin() ) :

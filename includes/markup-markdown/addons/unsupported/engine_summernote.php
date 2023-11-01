@@ -12,14 +12,17 @@ class EngineSummerNote {
 		'slug' => 'engine__summernote',
 		'label' => 'SummerNote WYSIWYG',
 		'desc' => 'Custom HTML based markdown editor to used instead of EasyMDE.',
-		'release' => 'alpha'
+		'release' => 'alpha',
+		'active' => 0
 	);
 
 
 	public function __construct() {
-		if ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) === FALSE ) :
+		if ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) === FALSE ) ) :
+			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
+		$this->prop[ 'active' ] = 1;
 		if ( is_admin() ) :
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_engine_assets' ) );
 		else :
@@ -66,7 +69,7 @@ class EngineSummerNote {
 		wp_enqueue_script( 'markup_markdown__turndown', 'https://unpkg.com/turndown@7.1.2/dist/turndown.js', [ 'markup_markdown__showdown' ], '7.1.2', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__turndown' ], '1.0.1', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.5', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-summernote.js', [ 'markup_markdown__wordpress_media' ], '1.1.74', true );		
+		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-summernote.js', [ 'markup_markdown__wordpress_media' ], '1.1.75', true );		
 	}
 
 

@@ -298,7 +298,7 @@ class PluginOptions {
 			$addon_inst = $this->addons->inst[ $slug ];
 			$html .= '<li class="mmd-addon-helper"><label for="mmd_addon-' . $slug . '">';
 			$html .= '<input class="enable-' . $slug . '-addon" name="mmd_addons[]" id="mmd_addon-' . $slug . '" type="checkbox" value="' . $slug . '"'
-				. ( ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $slug, MMD_ADDONS ) ) ) ? ' checked="checked"' : '' ) . ' /> ';
+				. ( ( ( ! defined( 'MMD_ADDONS' ) && $addon_inst->active > 0 ) || ( defined( 'MMD_ADDONS' ) && in_array( $slug, MMD_ADDONS ) ) ) ? ' checked="checked"' : '' ) . ' /> ';
 			$html .= $addon_inst->label . ( $addon_inst->release !== 'stable' ? ' <sup>*</sup>' : '' );
 			$html .= '<span class="dashicons dashicons-editor-help dashicons-mmd-helpers" title="' . htmlspecialchars( $addon_inst->desc ) . '"></span>';
 			$html .= '</label></li>';

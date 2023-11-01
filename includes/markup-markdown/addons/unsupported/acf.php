@@ -14,12 +14,14 @@ class ACFAddon {
 		'slug' => 'acf',
 		'label' => '<abbr title="Advanced Custom Fields">ACF</abbr>',
 		'desc' => 'This addon enable a new content type so you can write directly markdown with the "Markup Markdown" custom field from ACF.',
-		'release' => 'beta'
+		'release' => 'beta',
+		'active' => 1
 	);
 
 
 	public function __construct() {
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
 		add_action( 'init', array( $this, 'mmd_include_acf_field_markdown' ) );

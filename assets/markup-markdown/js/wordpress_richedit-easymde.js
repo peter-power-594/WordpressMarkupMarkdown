@@ -154,6 +154,9 @@
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
 		}
 		_self.instance.editor = new EasyMDE( editorConfig );
+		if ( ! wp.pluginMarkupMarkdown ) {
+			wp.pluginMarkupMarkdown = {};
+		}
 		if ( ! wp.pluginMarkupMarkdown.instances ) {
 			wp.pluginMarkupMarkdown.instances = [];
 		}

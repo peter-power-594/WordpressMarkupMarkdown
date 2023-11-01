@@ -12,7 +12,8 @@ class LayoutAddon {
 		'slug' => 'layout',
 		'label' => 'Layout',
 		'desc' => 'A few tools to help you enhancing your layout. (Lightbox, Masonry, etc...)',
-		'release' => 'stable'
+		'release' => 'stable',
+		'active' => 1
 	);
 
 
@@ -24,6 +25,7 @@ class LayoutAddon {
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
 		if ( is_admin() ) :

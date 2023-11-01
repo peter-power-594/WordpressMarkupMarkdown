@@ -11,7 +11,8 @@ class ImageAddon {
 		'slug' => 'Image',
 		'label' => 'Responsive Image',
 		'desc' => 'Add basic html code syntax for responsive media.',
-		'release' => 'stable'
+		'release' => 'stable',
+		'active' => 1
 	);
 
 
@@ -23,6 +24,7 @@ class ImageAddon {
 
 	public function __construct( ) {
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
 		if ( ! is_admin() ) :

@@ -18,16 +18,16 @@ class PluginActivation {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_custom_metas' ), 10, 2 );
 		# Add options and allow setup from the admin and edit screen
 		define( 'MMD_PLUGIN_ACTIVATED', 1 );
-		$conf_file = mmd()->cache_dir . '/conf.php';
-		if ( file_exists( $conf_file ) ) :
-			require_once $conf_file;
+		$addon_options = mmd()->cache_dir . '/conf.php';
+		if ( file_exists( $addon_options ) ) :
+			require_once $addon_options;
 		endif;
 		$core_dir = mmd()->plugin_dir . '/includes/markup-markdown/core/';
 		# Load the conf.
-		$conf_file = mmd()->cache_dir . '/conf.php';
-		if ( file_exists( $conf_file ) ) :
+		$active_addons = mmd()->cache_dir . '/conf_screen.php';
+		if ( file_exists( $active_addons ) ) :
 			# If not present, wait for the addons to be loaded !
-			require_once $conf_file;
+			require_once $active_addons;
 		endif;
 		# Load core modules
 		require_once $core_dir . 'support.php';

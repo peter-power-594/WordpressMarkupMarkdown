@@ -4,7 +4,7 @@
  *
  * Plugin Name: Markup Markdown
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
- * Version:     2.5.0
+ * Version:     2.5.1
  * Author:      Pierre-Henri Lavigne
  * Author URI:  https://red.phutu.red/plugins/markup-markdown/
  * License:     GPLv2 or later
@@ -75,12 +75,12 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		 * @return Void
 		 */
 		public function __set( $name, $val ) {
-			if ( isset( $this->settings[ 'name' ] ) && is_array( $this->settings[ $name ] ) && is_array( $val ) ) :
-				$this->settings[ 'name' ] = array_merge( $this->settings[ 'name' ], $val );
+			if ( isset( $this->settings[ $name ] ) && is_array( $this->settings[ $name ] ) && is_array( $val ) ) :
+				$this->settings[ $name ] = array_merge( $this->settings[ $name ], $val );
 			else :
 				$fixed = array( 'plugin_uri', 'plugin_dir', 'plugin_slug', 'cache_dir', 'default_conf' );
 				if ( ! in_array( $name, $fixed ) ) :
-					$this->settings[ 'name' ] = $val;
+					$this->settings[ $name ] = $val;
 				endif;
 			endif;
 		}

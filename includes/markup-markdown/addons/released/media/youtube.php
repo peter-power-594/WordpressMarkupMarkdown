@@ -14,12 +14,14 @@ class MediaYoutubeAddon extends \MarkupMarkdown\OEmbedTinyAPI {
 		'slug' => 'youtube',
 		'label' => 'Youtube',
 		'desc' => 'Convert automatically Youtube links to an embedded iframe.',
-		'release' => 'stable'
+		'release' => 'stable',
+		'active' => 1
 	);
 
 
 	public function __construct() {
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
+			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
 		add_filter( 'addon_markdown2html', array( $this, 'youtube2html' ) );

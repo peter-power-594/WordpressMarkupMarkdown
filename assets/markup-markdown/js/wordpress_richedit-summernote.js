@@ -510,6 +510,9 @@
 			tabDisable: true
 		});
 		_self.instance.textarea = $originalEditor;
+		if ( ! wp.pluginMarkupMarkdown ) {
+			wp.pluginMarkupMarkdown = {};
+		}
 		if ( ! wp.pluginMarkupMarkdown.instances ) {
 			wp.pluginMarkupMarkdown.instances = [];
 		}
