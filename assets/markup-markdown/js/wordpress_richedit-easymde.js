@@ -278,7 +278,183 @@
 		});
 	});
 
+
 	window.MarkupMarkdown = MarkupMarkdownWidget;
 
 
 })( window.jQuery );
+
+
+(function( $, _win, _doc ) {
+
+
+	function MarkupMarkdownOptions() {
+		var _self = this,
+			userTimerId = 0,
+			$userPanel = $( '.mmd-easymde-prefs' );
+		_self.userOptions = _self.getUserOptions( $userPanel );
+		_self.stickyInst = [];
+		$userPanel.on( 'click', function() {
+			if ( userTimerId ) {
+				clearTimeout( userTimerId );
+			}
+			userTimerId = setTimeout(function() {
+				_self.saveUserOptions( $userPanel );
+				_self.setStickyToolbar();
+			}, 100 );
+		});
+		_self.setStickyToolbar();
+	}
+
+
+	/**
+	 * EasyMDE save user options edit preferences
+	 * @since 2.5
+	 * @param object $userPanel The jQuery Panel node
+	 * @returns object The user preferences
+	 */
+	MarkupMarkdownOptions.prototype.getUserOptions = function( $userPanel ) {
+		var userOptions = {}
+		$userPanel.find( 'input[type="checkbox"]' ).each(function() {
+			userOptions[ this.id || 'none' ] = this.checked ? this.value : 0;
+		});
+		return userOptions;
+	};
+
+
+	/**
+	 * Send a an ajax request to save the user edit preferences
+	 * @since 2.5
+	 * @param object $userPanel The jQuery Panel node
+	 * @returns void
+	 */
+	MarkupMarkdownOptions.prototype.saveUserOptions = function( $userPanel ) {
+		var _self = this;
+		_self.userOptions = _self.getUserOptions( $userPanel );
+		$.post( ajaxurl, {
+			action: 'mmduser-editoptions',
+			options: _self.userOptions,
+			mmdeditoptionsnonce: $( '#mmdeditoptionsnonce' ).val()
+		});
+	};
+
+
+	/**
+	 * Make EasyMDE toolbars sticky if the height of the panel is greater than the screen's height
+	 * @since 2.5
+	 * @returns Void
+	 */
+	MarkupMarkdownOptions.prototype.setStickyToolbar = function() {
+		var _self = this,
+			stickyToolbars = parseInt( _self.userOptions.mmd_sticky_toolbar || 0, 10 ),
+			minHeight = $( _win ).height() - ( $( '#wpadminbar ' ).height() || 0 ),
+			initSticky = function( $el ) {
+				if ( $el.hasClass( 'sicky-toolbar' ) ) {
+					return false;
+				}
+				var $toolbar = $el.find( '.editor-toolbar:eq(0)' ),
+					currHeight = $el.height() - $toolbar.height();
+				if ( currHeight < minHeight ) {
+					// Don't set to sticky if the field is shorter than the screen 
+					return false;
+				}
+				$el.addClass( 'sicky-toolbar' ); $toolbar.addClass( 'mmd-sticky' );
+				if ( ! $el.find( '.editor-endbar' ).length ) {
+					$el.append( $( '<div class="editor-endbar"></div>' ) );
+				}
+				_self.stickyInst.push( new Waypoint.Sticky({
+					element: $toolbar[ 0 ]
+				}) );
+				_self.stickyInst.push( new Waypoint({
+					element: $el.children( '.editor-endbar' )[ 0 ],
+					handler: function( direction ) {
+						if ( direction === 'down' ) {
+							$( this.element ).parent().addClass( 'mmd-sticky-end' );
+						}
+						else if ( direction === 'up' ) {
+							$( this.element ).parent().removeClass( 'mmd-sticky-end' );
+						}
+					},
+					offset: 'bottom-in-view'
+				}) );
+				return true;
+			}; 
+		if ( ! stickyToolbars ) {
+			// First unbind to avoid js errors
+			$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' )
+			$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' );
+			$( _win ).off( 'resize.mmd_win_sticky_toolbar' );
+			// Nest disable existing sticky toolbars if need be
+			_self.stickyInst = _self.stickyInst || [];
+			if ( _self.stickyInst.length ) {
+				Waypoint.destroyAll(); // Destroy all of them
+				_self.stickyInst = [];
+			}
+			// Cleanup remaining attributes or nodes
+			$( '.EasyMDEContainer ').each(function() {
+				var $container = $( this ).removeClass( 'sicky-toolbar' ).removeClass( 'mmd-sticky-end' );
+				$container.find( '.editor-toolbar' ).removeClass( 'mmd-sticky' ).each(function() {
+					$( this ).removeAttr( 'style' );
+					if ( $( this ).parent().hasClass( 'sticky-wrapper' ) ) {
+						$container.prepend( this );
+					}
+				});
+				$container.find( '.sticky-wrapper' ).remove();
+			});
+		}
+		else {
+			// Initialize existing sticky toolbars if need be
+			$( '.EasyMDEContainer' ).each(function() {
+				initSticky( $( this ) );
+			});
+			// Quick fix to keep the correct toolbar width
+			$( _win ).off( 'resize.mmd_win_sticky_toolbar' )
+				.on( 'resize.mmd_win_sticky_toolbar', function() {
+					$( '.EasyMDEContainer' ).each(function() {
+						$( this ).find( '.editor-toolbar.mmd-sticky' ).css({
+							width: Math.ceil( $( this ).width() ) - 22
+						});
+					});
+				}).trigger( 'resize.mmd_win_sticky_toolbar' );
+			// Quick fix to refresh trigger points with accordeaon like elements
+			var waypointTimerID = 0,
+				$clickedEditor;
+			$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' )
+				.on( 'click.mmd_body_sticky_toolbar', function( event ) {
+					if ( ! waypointTimerID ) {
+						waypointTimerID = setTimeout(function() {
+							Waypoint.refreshAll();
+							waypointTimerID = 0;
+						}, 450);
+					}
+					$clickedEditor = $( event.target ).closest( '.EasyMDEContainer' );
+				});
+			// Quick fix to initialize sticky when the height is growing
+			$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' )
+				.on( 'keyup.mmd_doc_sticky_toolbar', function( event ) {
+					if ( ! waypointTimerID ) {
+						waypointTimerID = setTimeout(function() {
+							Waypoint.refreshAll();
+							waypointTimerID = 0;
+						}, 450);
+					}
+					if ( event.keyCode && event.keyCode === 13 && $clickedEditor ) {
+						if ( $clickedEditor.length && ! $clickedEditor.hasClass( 'sicky-toolbar' ) ) {
+							setTimeout(function() {
+								minHeight = $( _win ).height() - ( $( '#wpadminbar ' ).height() || 0 );
+								initSticky( $clickedEditor );
+								$( _win ).trigger( 'resize.mmd_win_sticky_toolbar' );
+							}, 1000 );
+						}
+					}
+				});
+		}
+	};
+
+
+	$( document ).ready(function() {
+		new MarkupMarkdownOptions();
+	});
+
+
+})( window.jQuery, window, document );

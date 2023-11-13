@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.5.1
-Version: 2.5.1
+Stable Tag: 2.6.0
+Version: 2.6.0
 Requires at least: 4.9
-Tested up to: 6.3.2
+Tested up to: 6.4.1
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,6 +17,8 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- Sticky toolbar for the default editor since 2.6
+- Possible to disable OP Cache since 2.5
 - Audio & Video playlist support added since 2.4
 - New beta interface since 2.3
 - Possible to enable or disable specific addons since 2.2
@@ -64,6 +66,11 @@ The default editor is based on EasyMDE so you can write in markdown and use Word
 The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. It's a custom version so you can get a live rendering when typing your content or adding medias. It's working quiet well actually but if something's wrong, you may have to edit directly the code from the builder or from the database so for the production environment I would advise to stick with the default options with EasyMDE. To find you more check my article here: https://red.phutu.red/blog/wordpress-plugins/dynamic-input-method-markdown/
 
 == Changelog ==
+
+= 2.6.0 =
+
+Improvement:
+- Adding option to make the default EasyMDE toolbar sticky
 
 = 2.5.1 =
 
