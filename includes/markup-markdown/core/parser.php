@@ -95,7 +95,17 @@ class Parser {
 		endif;
 		require_once( mmd()->plugin_dir . '/includes/parsedown/Parsedown.php' ); # 1.7.4
 		require_once( mmd()->plugin_dir . '/includes/parsedown-extra/ParsedownExtra.php' ); # 0.8.1
-		$this->parser = new \ParsedownExtra();
+		require_once( mmd()->plugin_dir . '/includes/parsedown-extra-plugin/ParsedownExtraPlugin.php' ); # 1.3.11
+		$this->parser = new \ParsedownExtraPlugin();
+		$this->parser->linkAttributes = function( $Text, $Attributes, &$Element, $Internal ) {
+			if ( ! $Internal ) {
+				return [
+					'rel' => 'nofollow',
+					'target' => '_blank'
+				];
+			}
+			return [];
+		};
 		return TRUE;
 	}
 
