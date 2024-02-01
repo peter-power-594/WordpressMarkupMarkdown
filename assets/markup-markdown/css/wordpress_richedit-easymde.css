@@ -156,15 +156,15 @@
 	left: 0;
 	margin: 0;
 	width: 100%;
-  min-height: 2rem;
+	min-height: 2rem;
 	padding: 0.25rem 0.5rem;
 	background-color: rgba(0, 0, 0, 0.7);
-  box-shadow: 0 -10px 15px #000 inset;
+	box-shadow: 0 -10px 15px #000 inset;
 	box-sizing: border-box;
 	color: #fff;
 	font-size: 14px;
 	line-height: 1.3;
-  text-align: left;
+	text-align: left;
 }
 
 /* Gallery styles fom the default theme in 2013 */

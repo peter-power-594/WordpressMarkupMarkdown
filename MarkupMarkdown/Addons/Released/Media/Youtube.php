@@ -1,13 +1,13 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Released\Media;
 
 defined( 'ABSPATH' ) || exit;
 
-require_once mmd()->plugin_dir . '/includes/markup-markdown/abstracts/oembed.php';
+require_once mmd()->plugin_dir . '/MarkupMarkdown/Abstracts/OEmbedTinyAPI.php';
 
 
-class MediaYoutubeAddon extends \MarkupMarkdown\OEmbedTinyAPI {
+class Youtube extends \MarkupMarkdown\Abstracts\OEmbedTinyAPI {
 
 
 	private $prop = array(

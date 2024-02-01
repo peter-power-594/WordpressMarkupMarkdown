@@ -1,10 +1,10 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Unsupported;
 
 defined( 'ABSPATH' ) || exit;
 
-class SpellCheckerAddon {
+class SpellChecker {
 
 
 	private $prop = array(
@@ -209,11 +209,8 @@ class SpellCheckerAddon {
 	 * @returns string inline easymde configuration tool
 	 */
 	public function add_inline_editor_conf() {
-		$home_url = get_home_url();
-		$js = "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
-		$js .= "wp.pluginMarkupMarkdown.homeURL = \"" . $home_url . "\";\n";
 		$my_dict = $this->check_dict_preferences( defined( 'MMD_SPELL_CHECK' ) ? MMD_SPELL_CHECK : [] );
-		$js .= "wp.pluginMarkupMarkdown.spellChecker = {\n";
+		$js = "wp.pluginMarkupMarkdown.spellChecker = {\n";
 		$n = 0; $dict_base_uri = str_replace( '/plugins/markup-markdown/', '/mmd-dict/', mmd()->plugin_uri );
 		foreach ( $my_dict as $dict ) :
 			if ( ! isset( $this->dictionaries[ $dict ] ) ) :

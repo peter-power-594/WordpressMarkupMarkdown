@@ -1,5 +1,7 @@
 <?php
 
+namespace MarkupMarkdown\Parsedown;
+
 defined( 'ABSPATH' ) || exit;
 
 #
@@ -15,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 #
 #
 
-class ParsedownExtra extends Parsedown
+class Extra extends \MarkupMarkdown\Parsedown\Parsedown
 {
     # ~
 

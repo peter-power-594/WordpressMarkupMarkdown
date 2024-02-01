@@ -1,13 +1,13 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Unsupported;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Registration logic for the new ACF field type.
  */
-class ACFAddon {
+class AdvancedCustomField {
 
 
 	private $prop = array(
@@ -40,7 +40,7 @@ class ACFAddon {
 		if ( ! function_exists( 'acf_register_field_type' ) ) :
 			return;
 		endif;
-		require_once mmd()->plugin_dir . 'includes/markup-markdown/addons/unsupported/acf/class-mmd-acf-field-markdown.php';
+		require_once mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomField/mmd_acf_field_markdown.php';
 		acf_register_field_type( 'mmd_acf_field_markdown' );
 	}
 

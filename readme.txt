@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 2.6.1
-Version: 2.6.1
+Stable Tag: 3.0.0
+Version: 3.0.0
 Requires at least: 4.9
-Tested up to: 6.4.1
+Tested up to: 6.4.3
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

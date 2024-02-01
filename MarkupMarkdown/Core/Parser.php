@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Core;
 
 defined( 'ABSPATH' ) || exit;
 defined( 'MMD_SUPPORT_ENABLED' ) || exit;
@@ -33,8 +33,8 @@ class Parser {
 	 * @access public
 	 * @since 2.0.0
 	 *
-	 * @param   string $content The html to be parsed.
-	 * @returns string The html rendered.
+	 * @param   string $content The HTML to be parsed.
+	 * @returns string The HTML rendered.
 	 */
 	public function dummy_markdown( $content ) {
 		return $content;
@@ -47,8 +47,8 @@ class Parser {
 	 * @access public
 	 * @since 2.0.0
 	 *
-	 * @param string $content the html to be parsed
-	 * @returns string html rendered from the markdown
+	 * @param string $content the HTML to be parsed
+	 * @returns string HTML rendered from the markdown
 	 */
 	public function cached_post_markdown2html( $content ) {
 		$cache_content = mmd()->cache_dir . "/." . get_main_site_id() . '_' . get_the_id() . ".html";
@@ -67,13 +67,13 @@ class Parser {
 
 
 	/**
-	 * Method to ouput the html for (custom) post / page content
+	 * Method to output the HTML for (custom) post / page content
 	 *
 	 * @access public
 	 * @since 1.5.4
 	 *
-	 * @param string $content the html to be parsed
-	 * @returns string html rendered from the markdown
+	 * @param string $content the HTML to be parsed
+	 * @returns string HTML rendered from the markdown
 	 */
 	public function post_markdown2html( $content ) {
 		return apply_filters( 'addon_markdown2html', $this->markdown2html( $content ) );
@@ -93,9 +93,9 @@ class Parser {
 		if ( isset( $this->parser ) && method_exists( $this->parser, 'text' ) ) :
 			return FALSE;
 		endif;
-		require_once( mmd()->plugin_dir . '/includes/parsedown/Parsedown.php' ); # 1.7.4
-		require_once( mmd()->plugin_dir . '/includes/parsedown-extra/ParsedownExtra.php' ); # 0.8.1
-		$this->parser = new \ParsedownExtra();
+		require_once( mmd()->plugin_dir . '/MarkupMarkdown/Parsedown/Parsedown.php' );  # 1.7.4
+		require_once( mmd()->plugin_dir . '/MarkupMarkdown/Parsedown/Extra.php' ); # 0.8.1
+		$this->parser = new \MarkupMarkdown\Parsedown\Extra();
 		return TRUE;
 	}
 
@@ -113,10 +113,8 @@ class Parser {
 		if ( ! isset( $this->parser ) || empty( $this->parser ) ) :
 			$this->custom_parser();
 		endif;
-		$content = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", $content );
-		return $this->parser->text( $content );
+		$safe = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", $content );
+		return $this->parser->text( $safe );
 	}
 
 }
-
-new \MarkupMarkdown\Parser();

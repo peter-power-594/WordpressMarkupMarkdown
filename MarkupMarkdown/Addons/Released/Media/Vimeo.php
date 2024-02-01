@@ -1,13 +1,13 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Released\Media;
 
 defined( 'ABSPATH' ) || exit;
 
-require_once mmd()->plugin_dir . '/includes/markup-markdown/abstracts/oembed.php';
+require_once mmd()->plugin_dir . '/MarkupMarkdown/Abstracts/OEmbedTinyAPI.php';
 
 
-class MediaVimeoAddon extends \MarkupMarkdown\OEmbedTinyAPI {
+class Vimeo extends \MarkupMarkdown\Abstracts\OEmbedTinyAPI {
 
 
 	private $prop = array(

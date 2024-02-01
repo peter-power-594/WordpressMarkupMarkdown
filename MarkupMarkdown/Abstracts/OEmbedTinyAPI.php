@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ abstract class OEmbedTinyAPI {
 	 *   'endpoint' => String the target service endpoint
 	 *   'regexp'   => String the regular expression to use
 	 * ]
-	 * @returns string html with Vimeo iframes embed code
+	 * @returns string HTML with Vimeo iframes embed code
 	 */
 	protected function oembed_service( $ops = [] ) {
 		if ( ! isset( $ops[ 'regexp' ] ) || ! isset( $ops[ 'endpoint' ] ) || ! isset( $ops[ 'content' ] ) || empty( $ops[ 'content' ] ) ) :

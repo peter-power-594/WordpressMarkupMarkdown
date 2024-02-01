@@ -1,12 +1,12 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Core;
 
 defined( 'ABSPATH' ) || exit;
 defined( 'MMD_PLUGIN_ACTIVATED' ) || exit;
 
 
-class CustomPostSupport {
+class Support {
 
 
 	/**
@@ -205,7 +205,8 @@ class CustomPostSupport {
 			remove_all_filters( 'the_excerpt' );
 		else :
 			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax );
-			require_once mmd()->plugin_dir . '/includes/markup-markdown/core/parser.php';
+			require_once mmd()->plugin_dir . 'MarkupMarkdown/Core/Parser.php';
+			new \MarkupMarkdown\Core\Parser();
 			add_filter( 'the_content', array( $this, 'post_markdown2html' ), 1 , 9 );
 			add_filter( 'the_excerpt', array( $this, 'post_markdown2html' ), 1 , 9 );
 		endif;
@@ -213,5 +214,3 @@ class CustomPostSupport {
 
 
 }
-
-new \MarkupMarkdown\CustomPostSupport();

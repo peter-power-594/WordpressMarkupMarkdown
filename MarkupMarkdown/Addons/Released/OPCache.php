@@ -1,11 +1,11 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Released;
 
 defined( 'ABSPATH' ) || exit;
 
 
-class OPCacheAddon {
+class OPCache {
 
 
 	private $prop = array(

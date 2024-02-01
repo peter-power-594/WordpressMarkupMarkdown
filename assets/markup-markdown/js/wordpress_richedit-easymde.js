@@ -1,4 +1,4 @@
-(function( $ ) {
+(function( $, _win, _doc ) {
 
 	var mediaFrame = {};
 		mediaPreview = {},
@@ -23,8 +23,8 @@
 	MarkupMarkdownWidget.prototype.mediaUploader = function() {
 		var _self = this;
 		if ( ! homeURL.length ) {
-			if ( wp && wp.pluginMarkupMarkdown && wp.pluginMarkupMarkdown.homeURL ) {
-				homeURL = wp.pluginMarkupMarkdown.homeURL;
+			if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.homeURL ) {
+				homeURL = _win.wp.pluginMarkupMarkdown.homeURL;
 			}
 			else {
 				var args = decodeURIComponent( jQuery( 'script[src*="wordpress_richedit-easymde"]' ).attr( 'src' ) );
@@ -42,10 +42,8 @@
 		mediaPreview = new MmdPreview({
 			base_url: _self.home_url,
 			callbacks:{
-				widget: function() {
-				},
-				multisel: function() {
-				}
+				widget: function() {},
+				multisel: function() {}
 			}
 		});
 		mediaFrame = new MmdMedia({
@@ -73,66 +71,70 @@
 		var _self = this;
 		// Let the user upload contents
 		_self.mediaUploader();
+		// Build the toolbar
 		var spell_check = '',
-			toolbar = [ "bold", "italic", "heading" ];
-		if ( wp && wp.pluginMarkupMarkdown && wp.pluginMarkupMarkdown.spellChecker ) {
-			spell_check = wp.pluginMarkupMarkdown.spellChecker;
+			toolbar = [];
+		if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.spellChecker ) {
+			spell_check = _win.wp.pluginMarkupMarkdown.spellChecker;
 		}
-		n = 0;
-		$.each(spell_check, function( myLang ) {
-			n++;
-			if ( n <= 1 ) {
-			return true; // Skip first default language
+		var n = 0;
+		for ( var b = 0, slug = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
+			slug = buttons[ b ];
+			if ( slug === "pipe" ) {
+				toolbar.push( "|" );
 			}
-			if ( n === 2 ) {
-			toolbar.push( "|" );
-			}
-			var targetLang = spell_check[myLang];
-			toolbar.push({
-				name: "wpsi18n_" + targetLang.code,
-				action: function( editor ) {
-					var cm = _self.instance.editor.codemirror,
-					doc = cm.getDoc(),
-					sel = doc.getSelection() || false;
-					if ( sel && sel.length ) {
-						_self.instance.i18nAdded = 1;
-						return doc.replaceSelection(
-							'<span lang="' + targetLang.code + '">' + sel + '</span>'
-						);
+			else if ( /spell[-_]*check/.test( slug ) ) {
+				$.each(spell_check, function(myLang, targetLang) {
+					n++;
+					if ( n <= 1 ) {
+						return true; // Skip first default language
 					}
-				},
-				className: "i18n " + targetLang.code,
-				text: targetLang.code.toUpperCase(),
-				title: targetLang.label
-			});
-		});
+					if ( n === 2 ) {
+						toolbar.push( "|" );
+					}
+					toolbar.push({
+						name: "wpsi18n_" + targetLang.code,
+						action: function( editor ) {
+							var cm = _self.instance.editor.codemirror,
+							doc = cm.getDoc(),
+							sel = doc.getSelection() || false;
+							if ( sel && sel.length ) {
+								_self.instance.i18nAdded = 1;
+								return doc.replaceSelection(
+									'<span lang="' + targetLang.code + '">' + sel + '</span>'
+								);
+							}
+						},
+						className: "i18n " + targetLang.code,
+						text: targetLang.code.toUpperCase(),
+						title: targetLang.label
+					});
+				});
+			}
+			else if ( /wps[-_]*image/.test( slug ) ) {
+				toolbar.push({
+					name: "wpsimage",
+					action: function( editor ) {
+						activeWidget = _self;
+						if ( ! activeWidget.widgetCounter ) {
+							activeWidget.widgetCounter = 1;
+						}
+						mediaFrame.open();
+					},
+					className: "fa fa-images",
+					title: "Image"
+				});
+			}
+			else {
+				toolbar.push( slug.replace( '_', '-' ) );
+			}
+		}
 		if ( n < 1 ) {
 			spell_check = 'none';
 		}
-		toolbar.push( "|" );
-		toolbar.push( "quote" );
-		toolbar.push( "unordered-list" );
-		toolbar.push( "ordered-list" );
-		toolbar.push( "|" );
-		toolbar.push( "link" );
-		toolbar.push({
-			name: "wpsimage",
-			action: function( editor ) {
-				activeWidget = _self;
-				if ( ! activeWidget.widgetCounter ) {
-					activeWidget.widgetCounter = 1;
-				}
-				mediaFrame.open();
-			},
-			className: "fa fa-picture-o",
-			title: "Image"
-		});
-		toolbar.push( "table" );
-		toolbar.push( "|" );
-		toolbar.push( "guide" );
-		toolbar.push( "preview" );
 		// Editor config
 		var editorConfig = {
+			autoDownloadFontAwesome: false,
 			element: $( textarea )[ 0 ],
 			toolbar: toolbar,
 			renderingConfig: {
@@ -154,11 +156,11 @@
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
 		}
 		_self.instance.editor = new EasyMDE( editorConfig );
-		if ( ! wp.pluginMarkupMarkdown ) {
-			wp.pluginMarkupMarkdown = {};
+		if ( ! _win.wp.pluginMarkupMarkdown ) {
+			_win.wp.pluginMarkupMarkdown = {};
 		}
-		if ( ! wp.pluginMarkupMarkdown.instances ) {
-			wp.pluginMarkupMarkdown.instances = [];
+		if ( ! _win.wp.pluginMarkupMarkdown.instances ) {
+			_win.wp.pluginMarkupMarkdown.instances = [];
 		}
 		_self.fieldNumber = fieldNumber++; 
 		var mediaCounters = $( textarea ).val().match( /\"myset.*?\s/g );
@@ -172,13 +174,14 @@
 			}
 			_self.widgetCounter = startCounter + 1;
 		}
-		wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+		_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
 	};
 
 
 	/**
-	 *  @param String widgetShortCode The Gallery / Playlist shortcode
-	 *  @returns Object The Code Editor document updated with the widget shortcodes
+	 * Callback
+	 * @param widgetShortCode string The Gallery / Playlist shortcode
+	 * @returns Object The Code Editor document updated with the widget shortcodes
 	 */
 	MarkupMarkdownWidget.prototype.mediaWidgetCallBack = function( widgetShortCode ) {
 		activeWidget.widgetCounter++;
@@ -193,8 +196,9 @@
 
 
 	/**
-	 *  @param String markdownCode The new markdown media content
-	 *  @returns Object The Code Editor document updated with the media markdown
+	 * Iframe multiple selection callback
+	 * @param markdownCode string The new markdown media content
+	 * @returns Object The Code Editor document updated with the media markdown
 	 */
 	MarkupMarkdownWidget.prototype.mediaMultiselCallBack = function( markdownCode ) {
 		// Warning !
@@ -210,8 +214,8 @@
 	/**
 	 * EasyMDE custom preview callbacks to support WP specific features
 	 * @since 2.1
-	 * @param string text The source code used for the rendering
-	 * @param object The html node preview
+	 * @param text String The source code used for the rendering
+	 * @param preview Object The html node preview
 	 * @returns string The default text preview
 	 */
 	MarkupMarkdownWidget.prototype.previewRender = function( text, preview ) {
@@ -264,13 +268,24 @@
 
 	MarkupMarkdownWidget.prototype.init = function( textarea ) {
 		var _self = this;
+		if ( ( ! _self.toolbarButtons || ! _self.toolbarButtons.length ) && _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.toolbarButtons ) {
+			_self.toolbarButtons = _win.wp.pluginMarkupMarkdown.toolbarButtons;
+		}
+		else {
+			_self.toolbarButtons = [
+				"bold", "italic", "heading", "spell_checker", "pipe", "quote",
+				"unordered_list", "ordered_list", "pipe",
+				"link", "wpsimage", "table", "pipe",
+				"guide", "preview"
+			];
+		}
 		_self.core( textarea );
 	};
 
 
-	$( document ).ready(function() {
-		$( 'body' ).addClass( 'easymde' );
-		document.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
+	$( _doc ).ready(function() {
+		$( _doc.body ).addClass( 'easymde' );
+		_doc.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
 			$( '#wp-content-editor-container' ).addClass( 'ready' );
 		});
 		$( '#wp-content-editor-container .wp-editor-area' ).each(function() {
@@ -279,10 +294,10 @@
 	});
 
 
-	window.MarkupMarkdown = MarkupMarkdownWidget;
+	_win.MarkupMarkdown = MarkupMarkdownWidget;
 
 
-})( window.jQuery );
+})( window.jQuery, window, document );
 
 
 (function( $, _win, _doc ) {
@@ -310,11 +325,11 @@
 	/**
 	 * EasyMDE save user options edit preferences
 	 * @since 2.5
-	 * @param object $userPanel The jQuery Panel node
+	 * @param $userPanel object The jQuery Panel node
 	 * @returns object The user preferences
 	 */
 	MarkupMarkdownOptions.prototype.getUserOptions = function( $userPanel ) {
-		var userOptions = {}
+		var userOptions = {};
 		$userPanel.find( 'input[type="checkbox"]' ).each(function() {
 			userOptions[ this.id || 'none' ] = this.checked ? this.value : 0;
 		});
@@ -325,13 +340,13 @@
 	/**
 	 * Send a an ajax request to save the user edit preferences
 	 * @since 2.5
-	 * @param object $userPanel The jQuery Panel node
+	 * @param $userPanel Object The jQuery Panel node
 	 * @returns void
 	 */
 	MarkupMarkdownOptions.prototype.saveUserOptions = function( $userPanel ) {
 		var _self = this;
 		_self.userOptions = _self.getUserOptions( $userPanel );
-		$.post( ajaxurl, {
+		$.post( _win.ajaxurl, {
 			action: 'mmduser-editoptions',
 			options: _self.userOptions,
 			mmdeditoptionsnonce: $( '#mmdeditoptionsnonce' ).val()
@@ -362,10 +377,10 @@
 				if ( ! $el.find( '.editor-endbar' ).length ) {
 					$el.append( $( '<div class="editor-endbar"></div>' ) );
 				}
-				_self.stickyInst.push( new Waypoint.Sticky({
+				_self.stickyInst.push( new _win.Waypoint.Sticky({
 					element: $toolbar[ 0 ]
 				}) );
-				_self.stickyInst.push( new Waypoint({
+				_self.stickyInst.push( new _win.Waypoint({
 					element: $el.children( '.editor-endbar' )[ 0 ],
 					handler: function( direction ) {
 						if ( direction === 'down' ) {
@@ -381,13 +396,13 @@
 			}; 
 		if ( ! stickyToolbars ) {
 			// First unbind to avoid js errors
-			$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' )
+			$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' );
 			$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' );
 			$( _win ).off( 'resize.mmd_win_sticky_toolbar' );
 			// Nest disable existing sticky toolbars if need be
 			_self.stickyInst = _self.stickyInst || [];
 			if ( _self.stickyInst.length ) {
-				Waypoint.destroyAll(); // Destroy all of them
+				_win.Waypoint.destroyAll(); // Destroy all of them
 				_self.stickyInst = [];
 			}
 			// Cleanup remaining attributes or nodes
@@ -423,7 +438,7 @@
 				.on( 'click.mmd_body_sticky_toolbar', function( event ) {
 					if ( ! waypointTimerID ) {
 						waypointTimerID = setTimeout(function() {
-							Waypoint.refreshAll();
+							_win.Waypoint.refreshAll();
 							waypointTimerID = 0;
 						}, 450);
 					}
@@ -434,7 +449,7 @@
 				.on( 'keyup.mmd_doc_sticky_toolbar', function( event ) {
 					if ( ! waypointTimerID ) {
 						waypointTimerID = setTimeout(function() {
-							Waypoint.refreshAll();
+							_win.Waypoint.refreshAll();
 							waypointTimerID = 0;
 						}, 450);
 					}
@@ -452,7 +467,7 @@
 	};
 
 
-	$( document ).ready(function() {
+	$( _doc ).ready(function() {
 		new MarkupMarkdownOptions();
 	});
 

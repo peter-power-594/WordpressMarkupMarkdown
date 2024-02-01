@@ -1,11 +1,11 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Unsupported;
 
 defined( 'ABSPATH' ) || exit;
 
 
-class EngineSummerNote {
+class EngineSummernote {
 
 
 	private $prop = array(

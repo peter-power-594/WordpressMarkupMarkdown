@@ -1,10 +1,10 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Released\Media;
 
 defined( 'ABSPATH' ) || exit;
 
-class ImageAddon {
+class Image {
 
 
 	private $prop = array(

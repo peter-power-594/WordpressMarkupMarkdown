@@ -1,11 +1,11 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Released;
 
 defined( 'ABSPATH' ) || exit;
 
 
-class LayoutAddon {
+class Layout {
 
 
 	private $prop = array(
@@ -20,10 +20,15 @@ class LayoutAddon {
 	private $gal = 0;
 
 
+	private $toolbar_conf = '';
+
+
 	public function __construct() {
 		mmd()->default_conf = array( 'MMD_USE_LIGHTBOX' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
+		mmd()->default_conf = array( 'MMD_CUSTOM_TOOLBAR' => 0 );
+		$this->toolbar_conf = mmd()->cache_dir . '/conf_easymde_toolbar.json';
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
@@ -59,6 +64,7 @@ class LayoutAddon {
 		$my_cnf[ 'lightbox' ] = filter_input( INPUT_POST, 'mmd_lightbox', FILTER_VALIDATE_INT );
 		$my_cnf[ 'imagesloaded' ] = filter_input( INPUT_POST, 'mmd_imagesloaded', FILTER_VALIDATE_INT );
 		$my_cnf[ 'masonry' ] = filter_input( INPUT_POST, 'mmd_masonry', FILTER_VALIDATE_INT );
+		$my_cnf[ 'toolbar' ] = preg_replace( "#[^a-z0-9_,]#", "", filter_input( INPUT_POST, 'mmd_toolbar', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
@@ -68,6 +74,10 @@ class LayoutAddon {
 		unset( $my_cnf[ 'imagesloaded' ] );
 		$my_cnf[ 'MMD_USE_MASONRY' ] = isset( $my_cnf[ 'masonry' ] ) ? $my_cnf[ 'masonry' ] : 0;
 		unset( $my_cnf[ 'masonry' ] );
+		if ( isset( $my_cnf[ 'toolbar' ] ) > 0 ) :
+			file_put_contents( $this->toolbar_conf, '{"my_buttons":' . json_encode( explode( ",", $my_cnf[ 'toolbar' ] ) ) . '}' );
+			unset( $my_cnf[ 'toolbar' ] );
+		endif;
 		return $my_cnf;
 	}
 
@@ -106,54 +116,12 @@ class LayoutAddon {
 		if ( file_exists( $conf_file ) ) :
 			require_once $conf_file;
 		endif;
-		$my_cnf = array(
-			'lightbox' => defined( 'MMD_USE_LIGHTBOX' ) ? MMD_USE_LIGHTBOX : 1,
-			'masonry' => defined( 'MMD_USE_MASONRY' ) ? MMD_USE_MASONRY : 1,
-			'imagesloaded' => defined( 'MMD_USE_IMAGESLOADED' ) ? MMD_USE_IMAGESLOADED : 1
-		);
-?>
-					<div id="tab-layout">
-						<h2>Layout</h2>
-						<p>Here are a few settings you can change to modify the behavior of your blog posts.</p>
-						<table class="form-table" role="presentation">
-							<tbody>
-								<tr class="site-use-lightbox">
-									<th scope="row">
-										Use Lightbox
-									</th>
-									<td>
-										<label for="mmd_lightbox">
-											<input type="checkbox" name="mmd_lightbox" id="mmd_lightbox" value="1" <?php echo $my_cnf[ 'lightbox' ] > 0 ? 'checked="checked"' : ''; ?> />
-											An image inside a <em>post</em> or <em>page</em> that was linked to its original size will open in a modal (overlay on the same page) instead of a new window / tab.
-										</label>
-									</td>
-								</tr>
-								<tr class="site-use-masonry">
-									<th scope="row">
-										Use Masonry
-									</th>
-									<td>
-										<label for="mmd_masonry">
-											<input type="checkbox" name="mmd_masonry" id="mmd_masonry" value="1" <?php echo $my_cnf[ 'masonry' ] > 0 ? 'checked="checked"' : '';; ?>>
-											Transform a bullet list of images as a 2 waterfall column layout when the <em>photo gallery</em> post format is selected.
-										</label>
-									</td>
-									<tr class="site-use-imagesloaded">
-										<th scope="row">
-											Use Imagesloaded
-										</th>
-										<td>
-											<label for="mmd_imagesloaded">
-												<input type="checkbox" name="mmd_imagesloaded" id="mmd_imagesloaded" value="1" <?php echo $my_cnf[ 'imagesloaded' ] > 0 ? 'checked="checked"' : '';; ?> />
-												Trigger the update of the layout after all images are loaded. Can solve specific issues in case the layout is broken with the gallery.
-											</label>
-										</td>
-									</tr>
-								</tr>
-							</tbody>
-						</table>
-					</div><!-- #tab-layout -->
-<?php
+		$my_tmpl = mmd()->plugin_dir . '/MarkupMarkdown/Addons/Released/Templates/LayoutForm.php';
+		if ( file_exists( $my_tmpl ) ) :
+			mmd()->clear_cache( $my_tmpl );
+			$toolbar_conf = $this->toolbar_conf;
+			include $my_tmpl;
+		endif;
 	}
 
 
@@ -186,7 +154,7 @@ class LayoutAddon {
 	 */
 	public function attachment_link_attributes_filter( $attributes, $post_ID ) {
 		if ( isset( $attributes[ 'href' ] ) && strpos( $attributes[ 'href' ], 'attachment' ) === FALSE ) :
-			$attributes[ 'data-lightbox' ] = 'gallery' . $this->gal;
+			$attributes[ 'data-lightbox' ] = 'gallery' . $post_ID . '-' . $this->gal;
 		endif;
 		return $attributes;
 	}

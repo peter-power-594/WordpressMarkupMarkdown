@@ -1,5 +1,7 @@
 <?php
 
+namespace MarkupMarkdown\Parsedown;
+
 defined( 'ABSPATH' ) || exit;
 
 #

@@ -4,15 +4,15 @@
  *
  * Plugin Name: Markup Markdown
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
- * Version:     2.6.1
+ * Version:     3.0.0
  * Author:      Pierre-Henri Lavigne
- * Author URI:  https://red.phutu.red/plugins/markup-markdown/
+ * Author URI:  https://wordpress.markup-markdown.com
  * License:     GPLv2 or later
  * License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Text Domain: markup-markdown
  * Domain Path: /languages
  * Requires at least: 4.9
- * Tested up to: 6.4.1
+ * Tested up to: 6.4.3
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2, as published by the Free Software Foundation. You may NOT assume
@@ -32,7 +32,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		protected $parser;
 
 		protected $settings = array(
-			'version' => '2.5.0',
+			'version' => '3.0.0',
 			'plugin_uri' => '',
 			'plugin_dir' => '',
 			'plugin_slug' => '',
@@ -46,7 +46,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			$this->settings[ 'plugin_uri' ] = plugin_dir_url( __FILE__ );
 			$this->settings[ 'plugin_dir' ] = plugin_dir_path( __FILE__ );
 			$this->settings[ 'cache_dir' ] = WP_CONTENT_DIR . "/mmd-cache";
-			require_once $this->settings[ 'plugin_dir' ] . '/includes/markup-markdown/core/activation.php';
+			require_once $this->settings[ 'plugin_dir' ] . '/MarkupMarkdown/Core/Activation.php';
 		}
 
 
@@ -97,6 +97,22 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			$filtered = apply_filters( 'field_markdown2html', $content );
 			$html = htmlspecialchars_decode( $filtered, ENT_COMPAT );
 			return do_shortcode( $html );
+		}
+
+
+		/**
+		 *  @since 3.0
+		 *  @access public
+		 *  
+		 *  @param $file String Target file
+		 *  @returns Void
+		 */
+		public function clear_cache( $file = '' ) {
+			if ( function_exists( 'wp_opcache_invalidate' ) ) :
+				wp_opcache_invalidate( $file );
+			elseif ( function_exists( 'opcache_invalidate' ) ) :
+				opcache_invalidate( $file );
+			endif;
 		}
 
 

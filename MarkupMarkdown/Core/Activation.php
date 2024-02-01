@@ -1,12 +1,12 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Core;
 
 defined( 'ABSPATH' ) || exit;
 ! defined( 'MMD_PLUGIN_ACTIVATED' ) || exit;
 
 
-class PluginActivation {
+class Activation {
 
 
 	public function __construct() {
@@ -22,7 +22,7 @@ class PluginActivation {
 		if ( file_exists( $addon_options ) ) :
 			require_once $addon_options;
 		endif;
-		$core_dir = mmd()->plugin_dir . '/includes/markup-markdown/core/';
+		$core_dir = mmd()->plugin_dir . '/MarkupMarkdown/Core/';
 		# Load the conf.
 		$active_addons = mmd()->cache_dir . '/conf_screen.php';
 		if ( file_exists( $active_addons ) ) :
@@ -30,13 +30,14 @@ class PluginActivation {
 			require_once $active_addons;
 		endif;
 		# Load core modules
-		require_once $core_dir . 'support.php';
-		require_once $core_dir . 'addons.php';
-		$mmd_addons = new PluginAddons();
-		require_once $core_dir . 'settings.php';
-		$mmd_settings = new PluginOptions( $mmd_addons );
+		require_once $core_dir . 'Support.php';
+		$mmd_cpt = new \MarkupMarkdown\Core\Support();
+		require_once $core_dir . 'Addons.php';
+		$mmd_addons = new \MarkupMarkdown\Core\Addons( $mmd_cpt );
+		require_once $core_dir . 'Settings.php';
+		$mmd_settings = new \MarkupMarkdown\Core\Settings( $mmd_addons );
 		# Just in case
-		$this->prepare_cache();
+		$this->prepare_cache( $mmd_settings );
 	}
 
 
@@ -114,4 +115,4 @@ class PluginActivation {
 
 }
 
-new \MarkupMarkdown\PluginActivation();
+new \MarkupMarkdown\Core\Activation();

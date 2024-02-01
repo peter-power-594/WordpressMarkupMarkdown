@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown;
+namespace MarkupMarkdown\Addons\Released;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -74,9 +74,9 @@ class EngineEasyMDE {
 	 * @since 2.5.2
 	 * @access public
 	 *
-	 * @param String $panel The html code for the current panel
+	 * @param String $panel The HTML code for the current panel
 	 * @param \WP_Screen $screen The current screen settings objet.
-	 * @return String The modified html code for the current panel
+	 * @return String The modified HTML code for the current panel
 	 */
 	public function mmd_post_screen_options_settings( $panel, $screen ) {
 		$is_sticky = get_user_meta( get_current_user_id(), '_mmd_sticky_toolbar', true );
@@ -84,7 +84,7 @@ class EngineEasyMDE {
 			'<fieldset class="mmd-easymde-prefs">',
 				'<legend class="screen-mmd">Markup Markdown Options</legend>',
 				'<label for="mmd_sticky_toolbar">',
-					'<input class="sticky-toolbar-tog" name="mmd_sticky_toolbar" type="checkbox" id="mmd_sticky_toolbar" value="1"' . ( $is_sticky ? ' checked="checked"' : '' ) . '">',
+					'<input class="sticky-toolbar-tog" name="mmd_sticky_toolbar" type="checkbox" id="mmd_sticky_toolbar" value="1"' . ( $is_sticky ? ' checked="checked"' : '' ) . '>',
 					'Sticky Toolbar',
 				'</label>',
 				wp_nonce_field( 'mmdeditoptions', 'mmdeditoptionsnonce', false ), # Add a nonce
@@ -115,16 +115,38 @@ class EngineEasyMDE {
 		wp_enqueue_style( 'markup_markdown__cssengine_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.0' );
 		wp_enqueue_style( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/github.css', [ 'markup_markdown__cssengine_editor' ], '8.9.1' );
 		wp_enqueue_style( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/css/wordpress_richedit-easymde.css', [ 'markup_markdown__highlightjs_snippets' ], '1.1.0' );
+		wp_enqueue_style( 'markup_markdown__font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown__wordpress_richedit' ], '5.15.14' );
+		wp_enqueue_style( 'markup_markdown__font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown__font_awesome_regular' ], '5.15.14' );
 		# 2. Load markdown related scripts
 		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.0', true );
 		wp_enqueue_script( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/highlightjs.min.js', [ 'markup_markdown__jsengine_editor' ], '8.9.1', true );
 		wp_enqueue_script( 'markup_markdown__waypoints', 'https://unpkg.com/waypoints@4.0.1/lib/jquery.waypoints.min.js', [ 'markup_markdown__jsengine_editor' ], '4.0.1' );
 		wp_enqueue_script( 'markup_markdown__sticky', 'https://unpkg.com/waypoints@4.0.1/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1' );
-		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__highlightjs_snippets' ], '1.1.3', true );
+		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__sticky' ], '1.1.3', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.1', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.5', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.3.0', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.3.2', true );
+		wp_add_inline_script( 'markup_markdown__wordpress_media', $this->add_inline_editor_conf() );
 	}
 
+	/**
+	 * Method to add inline JavaScript setup variable to the admin edit screen
+	 *
+	 * @access public
+	 * @since 3.0.0
+	 *
+	 * @returns string inline easymde configuration tool
+	 */
+	public function add_inline_editor_conf() {
+		$home_url = get_home_url() . '/';
+		$js = "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
+		$js .= "wp.pluginMarkupMarkdown.homeURL = \"" . $home_url . "\";\n";
+		$json = mmd()->cache_dir . '/conf_easymde_toolbar.json';
+		if ( file_exists( $json ) ) :
+			$toolbarButtons = json_decode( preg_replace( "#[^a-z0-9-_\,\:\"\{\}\[\]]#", "", file_get_contents( $json ) ) );
+			$js .= "wp.pluginMarkupMarkdown.toolbarButtons = [ \"" . implode( "\",\"", str_replace( '_', '-', $toolbarButtons->my_buttons ) ) . "\" ];\n";
+		endif;
+		return $js;
+	}
 
 }
