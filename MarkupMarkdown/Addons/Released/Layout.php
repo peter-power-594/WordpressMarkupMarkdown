@@ -161,6 +161,88 @@ class Layout {
 
 
 	/**
+	 * Load Lightbox assets on the frontend
+	 *
+	 * @since 3.0.0
+	 * @access private
+	 *
+	 * @return Integer 1 if the framework is used or 0 if unused
+	 */
+	private function load_lighbox_framework() {
+		if ( defined( 'MMD_USE_LIGHTBOX' ) && MMD_USE_LIGHTBOX > 0 ) :
+			$plugin_uri = mmd()->plugin_uri;
+			wp_deregister_script( 'lightbox' );
+			wp_deregister_script( 'jquery-lightbox' );
+			wp_enqueue_style( 'lightbox', $plugin_uri . 'assets/lightbox2/css/lightbox.min.css', [], '2.11.4' );
+			wp_enqueue_script( 'lightbox', $plugin_uri . 'assets/lightbox2/js/lightbox.min.js', [ 'jquery' ], '2.11.4', true );
+			add_filter( 'gallery_style', array( $this, 'gallery_style_filter' ), 11, 1 );
+			add_filter( 'wp_get_attachment_link_attributes', array( $this, 'attachment_link_attributes_filter' ), 11, 2 );
+			return 1;
+		else :
+			return 0;
+		endif;
+	}
+
+
+	/**
+	 * Load ImageLoaded assets on the frontend
+	 *
+	 * @since 3.0.0
+	 * @access private
+	 * 
+	 * @param Integer $lightbox_used 1 if the Lightbox framework is used - just for the dependency
+	 *
+	 * @return Integer 1 if the framework is used or 0 if unused
+	 */
+	private function load_imagesloaded_framework( $lightbox_used = 0 ) {
+		if ( defined( 'MMD_USE_IMAGESLOADED' ) && MMD_USE_IMAGESLOADED > 0 ) :
+			$plugin_uri = mmd()->plugin_uri;
+			wp_deregister_script( 'imagesloaded' );
+			wp_deregister_script( 'jquery-imagesloaded' );
+			wp_enqueue_script( 'imagesloaded', $plugin_uri . 'assets/imagesloaded/js/imagesloaded.pkgd.min.js', $lightbox_used > 0 ? [ 'lightbox' ] : [], '5.0.0', true );
+			return 1;
+		else :
+			return 0;
+		endif;
+	}
+
+
+	/**
+	 * Load ImageLoaded assets on the frontend
+	 *
+	 * @since 3.0.0
+	 * @access private
+	 * 
+	 * @param Integer $lightbox_used 1 if the Lightbox framework is used - just for the dependency
+	 * @param Integer $imagesloaded_used 1 if the ImagesLoaded framework is used - just for the dependency
+	 *
+	 * @return Integer 1 if the framework is used or 0 if unused
+	 */
+	private function load_masonry_framework( $lightbox_used = 0, $imagesloaded_used = 0 ) {
+		if ( defined( 'MMD_USE_MASONRY' ) && MMD_USE_MASONRY > 0 ) :
+			if ( is_singular() && get_post_format() === 'gallery' ) :
+				$masonry_used = 1;
+			elseif ( is_archive() || is_category() || is_tag() || is_tax() ) :
+				$masonry_used = 1;
+			else :
+				return 0;
+			endif;
+			wp_deregister_script( 'masonry' );
+			wp_deregister_script( 'jquery-masonry' );
+			$plugin_uri = mmd()->plugin_uri;
+			wp_enqueue_script( 'masonry', $plugin_uri . 'assets/masonry-layout/js/masonry.pkgd.min.js', $imagesloaded_used > 0 ? [ 'imagesloaded' ] : ( $lightbox_used > 0 ? [ 'lightbox' ] : [] ), '4.2.2', true );
+			wp_add_inline_style( 'lightbox', '.lightbox-set { margin: 0 -8px } .grid-sizer, .grid-item { margin: 0 8px 16px 8px; width: calc(50% - 16px) } .grid-item a, .grid-item a img { display: block }' );
+			if ( $imagesloaded_used > 0 ) :
+				wp_add_inline_script( 'masonry', 'jQuery( document ).ready(function() { jQuery( \'.grid\' ).each(function() { var $grid = jQuery( this ); $grid.imagesLoaded().progress(function() { $grid.masonry( \'layout\' ); }); }); });' );
+			endif;
+			return $masonry_used;
+		else :
+			return 0;
+		endif;
+	}
+
+
+	/**
 	 * Trigger Masonry or lightbox assets on the frontend
 	 *
 	 * @since 2.0.0
@@ -173,47 +255,13 @@ class Layout {
 		if ( ! file_exists( $config ) ) :
 			return FALSE;
 		endif;
-		$plugin_uri = mmd()->plugin_uri;
 		require_once $config;
 		# Register and enqueue lightbox
-		$use_lightbox = 0;
-		if ( defined( 'MMD_USE_LIGHTBOX' ) && MMD_USE_LIGHTBOX > 0 ) :
-			$use_lightbox = 1;
-			wp_deregister_script( 'lightbox' );
-			wp_deregister_script( 'jquery-lightbox' );
-			wp_enqueue_style( 'lightbox', $plugin_uri . 'assets/lightbox2/css/lightbox.min.css', [], '2.11.4' );
-			wp_enqueue_script( 'lightbox', $plugin_uri . 'assets/lightbox2/js/lightbox.min.js', [ 'jquery' ], '2.11.4', true );
-			add_filter( 'gallery_style', array( $this, 'gallery_style_filter' ), 11, 1 );
-			add_filter( 'wp_get_attachment_link_attributes', array( $this, 'attachment_link_attributes_filter' ), 11, 2 );
-		endif;
+		$lightbox_used = $this->load_lighbox_framework();
 		# Register and enqueue lightbox
-		$use_imagesloaded = 0;
-		if ( defined( 'MMD_USE_IMAGESLOADED' ) && MMD_USE_IMAGESLOADED > 0 ) :
-			$use_imagesloaded = 1;
-			wp_deregister_script( 'imagesloaded' );
-			wp_deregister_script( 'jquery-imagesloaded' );
-			wp_enqueue_script( 'imagesloaded', $plugin_uri . 'assets/imagesloaded/js/imagesloaded.pkgd.min.js', $use_lightbox > 0 ? [ 'lightbox' ] : [], '5.0.0', true );
-		endif;
+		$imagesloaded_used = $this->load_imagesloaded_framework( $lightbox_used );
 		# Register and enqueue masonry
-		$use_masonry = 0;
-		if ( defined( 'MMD_USE_MASONRY' ) && MMD_USE_MASONRY > 0 ) :
-			wp_deregister_script( 'masonry' );
-			wp_deregister_script( 'jquery-masonry' );
-			if ( is_singular() && get_post_format() === 'gallery' ) :
-				$use_masonry = 1;
-			endif;
-			if ( is_archive() || is_category() || is_tag() || is_tax() ) :
-				$use_masonry = 1;
-			endif;
-			if ( ! $use_masonry ) :
-				return TRUE;
-			endif;
-			wp_enqueue_script( 'masonry', $plugin_uri . 'assets/masonry-layout/js/masonry.pkgd.min.js', $use_imagesloaded > 0 ? [ 'imagesloaded' ] : ( $use_lightbox > 0 ? [ 'lightbox' ] : [] ), '4.2.2', true );
-			wp_add_inline_style( 'lightbox', '.lightbox-set { margin: 0 -8px } .grid-sizer, .grid-item { margin: 0 8px 16px 8px; width: calc(50% - 16px) } .grid-item a, .grid-item a img { display: block }' );
-			if ( $use_imagesloaded > 0 ) :
-				wp_add_inline_script( 'masonry', 'jQuery( document ).ready(function() { jQuery( \'.grid\' ).each(function() { var $grid = jQuery( this ); $grid.imagesLoaded().progress(function() { $grid.masonry( \'layout\' ); }); }); });' );
-			endif;
-		endif;
+		$this->load_masonry_framework( $lightbox_used, $imagesloaded_used );
 	}
 
 
@@ -226,41 +274,22 @@ class Layout {
 	 * @return Void
 	 */
 	public function render_lightbox_masonry( $content = '' ) {
-		# Adjust lightbox for image sets with masonry
-		# Old versions with no *figure* and *figcaption* tags
-		$content = preg_replace(
-			"#<li><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u",
-			"<div class=\"grid-item\"><a data-lightbox=\"$3\" href=\"$1\" title=\"$4</div>",
-			$content
+		$replacers = array(
+			# Adjust lightbox for image sets with masonry
+			# Old versions with no *figure* and *figcaption* tags
+			[ "#<li><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u", "<div class=\"grid-item\"><a data-lightbox=\"$3\" href=\"$1\" title=\"$4</div>" ],
+			[ "#<ul>\n<div class=\"grid-item\"><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u", "<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><a data-lightbox=\"$1\" href=\"$2\"" ],
+			# New version with *figure* and *figcaption*
+			[ "#<li><figure([^>]+)><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u", "<div class=\"grid-item\"><figure$1><a data-lightbox=\"$4\" href=\"$2\" title=\"$5</div>" ],
+			[ "#<ul>\n<div class=\"grid-item\"><figure([^>]+)><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u", "<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><figure$1><a data-lightbox=\"$2\" href=\"$3\"" ],
+			# Safety clean
+			[ "#</div>\n</ul>#u", "</div>\n</div>" ],
+			# Adjust lightbox for single images
+			[ "#<a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\"#u", "<a href=\"$1\" data-lightbox=\"mygallery\"" ],
 		);
-		$content = preg_replace(
-			"#<ul>\n<div class=\"grid-item\"><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u",
-			"<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><a data-lightbox=\"$1\" href=\"$2\"",
-			$content
-		);
-		# New version with *figure* and *figcaption*
-		$content = preg_replace(
-			"#<li><figure([^>]+)><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u",
-			"<div class=\"grid-item\"><figure$1><a data-lightbox=\"$4\" href=\"$2\" title=\"$5</div>",
-			$content
-		);
-		$content = preg_replace(
-			"#<ul>\n<div class=\"grid-item\"><figure([^>]+)><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u",
-			"<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><figure$1><a data-lightbox=\"$2\" href=\"$3\"",
-			$content
-		);
-		# Safety clean
-		$content = preg_replace(
-			"#</div>\n</ul>#u",
-			"</div>\n</div>",
-			$content
-		);
-		# Adjust lightbox for single images
-		$content = preg_replace(
-			"#<a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\"#u",
-			"<a href=\"$1\" data-lightbox=\"mygallery\"",
-			$content
-		);
+		foreach( $replacers as $regexp ) :
+			$content = preg_replace( $regexp[ 0 ], $regexp[ 1 ], $content );
+		endforeach;
 		return $content;
 	}
 

@@ -91,7 +91,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		 *  @access public
 		 *  
 		 *  @param String $content The markdown code
-		 *  @returns String The html content
+		 *  @returns String The HTML content
 		 */
 		public function markdown2html( $content ) {
 			$filtered = apply_filters( 'field_markdown2html', $content );

@@ -67,6 +67,13 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. It's a custo
 
 == Changelog ==
 
+= 3.0.0 =
+
+Refactored !
+
+New feature:
+- Possible to select and sort the buttons displayed from the toolbars
+
 = 2.6.1 =
 
 Bug fix:

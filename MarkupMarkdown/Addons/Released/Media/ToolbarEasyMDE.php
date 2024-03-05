@@ -110,13 +110,13 @@ class ToolbarEasyMDE {
 				"tooltip" => "Insert or Upload Media",
 				"label" => "Media Library",
 				"icon" => "<i class=\"fa fa-images\" aria-hidden=\"true\"></i>"
-			),
+			),/*
 			"upload_image" => array(
 				"action" => "drawUploadedImage",
 				"tooltip" => "Raise browse-file window",
 				"label" => "Upload",
 				"icon" => "<i class=\"fa fa-images\" aria-hidden=\"true\"></i>"
-			),
+			),*/
 			"table" => array(
 				"action" => "drawTable",
 				"tooltip" => "Insert Table",
@@ -196,11 +196,7 @@ class ToolbarEasyMDE {
 		$toolbar_conf = json_decode( file_get_contents( $json ) );
 		$this->logger( ( ! isset( $toolbar_conf ) || ! $toolbar_conf ) ? "Unable to read the json file " . $json : '' );
 		foreach ( $toolbar_conf->my_buttons as $button_slug ) :
-			if ( ! in_array( $button_slug, $this->prop[ 'active_buttons' ] ) ) :
-				if ( ! isset( $this->prop[ 'default_buttons' ][ $button_slug ] ) ) :
-					$this->logger( 'No button associated with the slug' . $button_slug );
-					continue;
-				endif;
+			if ( ! in_array( $button_slug, $this->prop[ 'active_buttons' ] ) && isset( $this->prop[ 'default_buttons' ][ $button_slug ] ) ) :
 				$this->prop[ 'active_buttons' ][] = array_merge( [ "slug" => $button_slug ], $this->prop[ 'default_buttons' ][ $button_slug ] );
 			endif;
 		endforeach;
@@ -213,10 +209,7 @@ class ToolbarEasyMDE {
 
 
 	public function __get( $name ) {
-		if ( array_key_exists( $name, $this->prop ) ) {
-			return $this->prop[ $name ];
-		}
-		return 'mmd_undefined';
+		return array_key_exists( $name, $this->prop ) ? $this->prop[ $name ] : 'mmd_undefined';
 	}
 
 }

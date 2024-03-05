@@ -343,3 +343,64 @@
 		top: calc(100% - 100vh + 46px);
 	}
 }
+
+
+/* FullScreen */
+.admin-bar .editor-toolbar.fullscreen {
+	top: 32px;
+}
+.admin-bar .EasyMDEContainer .CodeMirror-fullscreen,
+.admin-bar .EasyMDEContainer .CodeMirror-fullscreen + .editor-preview-side {
+	top: 82px; /* 32 + 50 */
+}
+.editor-toolbar.fullscreen,
+.EasyMDEContainer .CodeMirror-fullscreen {
+	left: 160px;
+}
+.EasyMDEContainer .CodeMirror-sided,
+.EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+	width: calc(50% - 80px) !important;
+}
+.folded .editor-toolbar.fullscreen,
+.folded .EasyMDEContainer .CodeMirror-fullscreen {
+	left: 36px;
+}
+.folded .EasyMDEContainer .CodeMirror-sided,
+.folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+	width: calc(50% - 18px) !important;
+}
+@media only screen and (max-width: 960px) {
+	.auto-fold .editor-toolbar.fullscreen,
+	.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+		left: 36px;
+	}
+	.auto-fold .EasyMDEContainer .CodeMirror-sided,
+	.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+		width: calc(50% - 18px) !important;
+	}
+}
+@media screen and (max-width: 782px) {
+	.editor-toolbar.fullscreen,
+	.folded .editor-toolbar.fullscreen,
+	.EasyMDEContainer .CodeMirror-fullscreen,
+	.folded .EasyMDEContainer .CodeMirror-fullscreen,
+	.auto-fold .editor-toolbar.fullscreen,
+	.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+		left: 0;
+	}
+	.admin-bar .editor-toolbar.fullscreen {
+		top: 46px;
+	}
+	.admin-bar .EasyMDEContainer .CodeMirror-fullscreen,
+	.admin-bar .EasyMDEContainer .CodeMirror-fullscreen + .editor-preview-side {
+		top: 96px; /* 46 + 50 */
+	}
+	.admin-bar .EasyMDEContainer .CodeMirror-sided,
+	.admin-bar .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+		width: 50% !important;
+	}
+	.auto-fold .EasyMDEContainer .CodeMirror-sided
+	.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+		width: calc(50% - 18px) !important;
+	}
+}

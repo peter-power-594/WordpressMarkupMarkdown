@@ -328,7 +328,7 @@ class Settings {
 		foreach ( [ 'core', 'tabs', 'draggable', 'droppable', 'sortable', 'button' ] as $jq_component ) :
 			wp_enqueue_script( 'jquery-ui-' . $jq_component );
 		endforeach;
-		wp_enqueue_script( 'markup_markdown-options', $plugin_uri . '/assets/markup-markdown/js/plugin_options.js', [ 'jquery-ui-tabs' ], '1.0.4', true );
+		wp_enqueue_script( 'markup_markdown-options', $plugin_uri . '/assets/markup-markdown/js/plugin_options.js', [ 'jquery-ui-tabs' ], '1.0.5', true );
 	}
 
 

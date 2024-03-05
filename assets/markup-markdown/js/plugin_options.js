@@ -45,6 +45,8 @@
 		$my_buttons.on( 'click', function( event ) {
 			var $target = $( event.target );
 			if ( $target.closest( 'a.ui-trash-link' ).length ) {
+				event.preventDefault();
+				event.stopPropagation();
 				$target.closest( 'li' ).appendTo( $toolbar_buttons );
 			}
 			updateSetting();

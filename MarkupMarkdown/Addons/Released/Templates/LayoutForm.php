@@ -98,7 +98,13 @@
 								<li data-slug="<?php echo $button[ 'slug' ]; ?>" class="ui-widget-content button_<?php echo $button[ 'slug' ]; ?>">
 									<span class="ui-widget-item" title="<?php echo $button[ 'tooltip' ]; ?>">
 										<h5 class="ui-widget-header"><?php echo $button[ 'label' ]; ?></h5>
-										<?php if ( $button[ 'slug' ] === "pipe" ) : ?>|<?php else : echo $button[ 'icon' ]; endif; ?>
+									<?php
+										if ( $button[ 'slug' ] === "pipe" ) :
+											echo "|";
+										else :
+											echo "<button class=\"" . str_replace( '_', '-', $button[ 'slug' ] ) . "\">" . $button[ 'icon' ] . "</button>";
+										endif;
+									?>
 									</span>
 									<a href="#button_<?php echo $button[ 'slug' ]; ?>" class="ui-trash-link" title="Delete button"><i class="fa fa-times" aria-hidden="true"></i></a>
 								</li>

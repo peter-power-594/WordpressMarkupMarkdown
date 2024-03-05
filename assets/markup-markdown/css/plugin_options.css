@@ -183,3 +183,7 @@ h4.ui-widget-header + p {
 	border-style: dotted;
 	background: rgba(255,255,255,0.25);
 }
+#default_buttons .ui-widget-item button {
+	color: #3c434a;
+	opacity: 0.85;
+}
