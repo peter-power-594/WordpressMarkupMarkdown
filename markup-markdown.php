@@ -6,7 +6,7 @@
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
  * Version:     3.0.0
  * Author:      Pierre-Henri Lavigne
- * Author URI:  https://wordpress.markup-markdown.com
+ * Author URI:  https://www.markup-markdown.com
  * License:     GPLv2 or later
  * License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Text Domain: markup-markdown

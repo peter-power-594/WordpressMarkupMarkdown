@@ -478,7 +478,7 @@ class Extra extends \MarkupMarkdown\Parsedown\Parsedown
         # http://stackoverflow.com/q/1148928/200145
         libxml_use_internal_errors(true);
 
-        $DOMDocument = new DOMDocument;
+        $DOMDocument = new \DOMDocument;
 
         # http://stackoverflow.com/q/11309194/200145
         # $elementMarkup = mb_convert_encoding($elementMarkup, 'HTML-ENTITIES', 'UTF-8');
