@@ -189,7 +189,7 @@ class ToolbarEasyMDE {
 			return FALSE;
 		endif;
 		if ( ! file_exists( $json ) ) :
-			$toolbar_conf = [ "bold", "italic", "heading", "spell_check", "pipe", "quote", "unordered_list", "ordered_list", "pipe", "link", "wpsimage", "table", "pipe", "guide", "preview" ];
+			$toolbar_conf = [ "bold", "italic", "heading", "spell_check", "pipe", "quote", "unordered_list", "ordered_list", "pipe", "link", "wpsimage", "table", "pipe", "fullscreen", "side_by_side", "preview", "guide" ];
 			file_put_contents( $json, '{"my_buttons":' . json_encode( $toolbar_conf ) . '}' );
 		endif;
 		mmd()->clear_cache( $json );

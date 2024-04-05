@@ -83,6 +83,9 @@ abstract class OEmbedTinyAPI {
 	protected function format_medias( $ops ) {
 		$my_content = $ops[ 'content' ];
 		foreach( $ops[ 'medias' ] as $my_media ) :
+			if ( empty( $my_media ) ) :
+				continue;
+			endif;
 			$media = $this->check_url_parts( $my_media );
 			$data = $this->retrieve_media_info( $ops[ 'endpoint' ] . '?url=' . rawurlencode( $media[ 'url' ] ) . $media[ 'options' ] );
 			if ( isset( $data->html ) ) :

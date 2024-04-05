@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.0.1
-Version: 3.0.1
+Stable Tag: 3.2.0
+Version: 3.2.0
 Requires at least: 4.9
-Tested up to: 6.4.3
+Tested up to: 6.5.0
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -17,20 +17,22 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
-- Choose and sort the default toolbar buttons since 3.0
-- Sticky toolbar for the default editor since 2.6
-- Possible to disable OP Cache since 2.5
-- Audio & Video playlist support added since 2.4
-- New beta interface since 2.3
-- Possible to enable or disable specific addons since 2.2
-- Gallery shortcode support since 2.1
-- ACF markdown field since 2.0
-- Multilingual spell checking since 1.9
-- Disable markdown for specific custom post type since 1.7
-- Extra markdown syntax support since 1.4
-- Static cache files since 1.3
-- Autoconvert Youtube & Vimeo links to iframes since 1.2
-- Support with lightbox and masonry for the gallery layout since 1.1
+- v3.2: Support to enable markdown only for custom fields
+- v3.1: Preview panel
+- v3.0: Choose and sort the default toolbar buttons
+- v2.6: Sticky toolbar with the editor
+- v2.6: Possible to disable OP Cache
+- v2.5: Video playlist support added
+- v2.3: New beta interface
+- v2.2: Possible to enable or disable specific addons
+- v2.1: Gallery shortcode support
+- v2.0: ACF markdown field support
+- v1.9: Multilingual spell checking support
+- v1.7: Disable markdown for specific custom post type
+- v1.4: Extra markdown syntax added
+- v1.3: Static cache files with OP Cache enabled by default
+- v1.2: Autoconvert Youtube & Vimeo links to iframes
+- v1.1: Support with lightbox and masonry for the gallery layout
 
 That's pretty all you should know. It's under active development, keep in touch and feel free to drop a line on the forum, to let a rating or even support me by buying a coffee!
 
@@ -59,7 +61,12 @@ Any block editor will be disabled for **all the users** of your Wordpress instan
 
 Sure, developers & designers can access the public properties & methods of the instance inside their templates through the global _mmd_ function. For example let's say you want to use it with a custom field called 'foo_bar'. You can use something
 like that:
-``echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );``
+`<?php echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) ); ?>`
+
+With the plugin Advanced Custom Field (ACF), HTML content has been sanitized since v6.2.5. If you need to render iframes or others elements, instead of using:
+`<?php the_field( 'my_custom_field' ); ?>
+ use  
+`<?php echo echo mmd()->markdown2html( get_field( 'my_custom_field' ) ); ?>`
 
 = What's the deal with the beta interface? =
 
@@ -67,6 +74,20 @@ The default editor is based on EasyMDE so you can write in markdown and use Word
 The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. It's a custom version so you can get a live rendering when typing your content or adding medias. It's working quiet well actually but if something's wrong, you may have to edit directly the code from the builder or from the database so for the production environment I would advise to stick with the default options with EasyMDE. To find you more check my article here: https://red.phutu.red/blog/wordpress-plugins/dynamic-input-method-markdown/
 
 == Changelog ==
+
+= 3.2.0 =
+
+Bug fix:
+- Bug introduced with version 3 for the custom post type support filter has been fixed
+
+Improvement:
+- "ACF Markup Markdown" custom field with custom post type !
+
+= 3.1.0 =
+
+Improvements:
+- The preview panel has a tiny cache feature to avoid flickering issue when using the side panel view
+- Better support in responsive mode for the sticky toolbar and fullscreen mode
 
 = 3.0.1 =
 

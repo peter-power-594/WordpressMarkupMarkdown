@@ -162,17 +162,30 @@
 	 */
 	MmdMedia.prototype.addMediaAudio = function( att, dpy ) {
 		var _self = this,
-			mkd = ''; // Markdown code
-		att.url = att.url.replace( _self.base_url, '' );
+			mkd = '', // Markdown code
+			url = att.url.replace( _self.base_url, '' );
+		if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
+			url = '/' + url;
+		}
 		if ( ! dpy.link || ! dpy.link.length ) {
 			return '';
 		}
 		if ( dpy.link === 'embed' ) {
-			mkd = '[audio src="' + att.url + '"][/audio]';
+			mkd = '[audio src="' + url + '"][/audio]';
 		}
 		else {
-			mkd = '[' + att.title + ']';
-			mkd += '(' + ( dpy.link === 'file' ? att.url : att.link ) + ')';
+			mkd = '[' + att.title + '](';
+			if ( dpy.link === 'file' ) {
+				mkd += url;
+			}
+			else {
+				url = ( att.link || '' ).replace( _self.base_url, '' );
+				if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
+					url = '/' + url;
+				}
+				mkd += url;
+			}
+			mkd += ')';
 		}
 		return mkd;
 	};
@@ -189,17 +202,30 @@
 	 */
 	MmdMedia.prototype.addMediaVideo = function( att, dpy ) {
 		var _self = this,
-			mkd = ''; // Markdown code
-		att.url = att.url.replace( _self.base_url, '' );
+			mkd = '', // Markdown code
+			url = att.url.replace( _self.base_url, '' );
+		if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
+			url = '/' + url;
+		}
 		if ( ! dpy.link || ! dpy.link.length ) {
 			return '';
 		}
 		if ( dpy.link === 'embed' ) {
-			mkd = '[video width="' + att.width + '" height="' + att.height + '" src="' + att.url + '"][/video]';
+			mkd = '[video width="' + att.width + '" height="' + att.height + '" src="' + url + '"][/video]';
 		}
 		else {
-			mkd = '[' + att.title + ']';
-			mkd += '(' + ( dpy.link === 'file' ? att.url : att.link ) + ')';
+			mkd = '[' + att.title + '](';
+			if ( dpy.link === 'file' ) {
+				mkd += url;
+			}
+			else {
+				url = ( att.link || '' ).replace( _self.base_url, '' );
+				if ( url.charAt( 0 ) !== '/' && url.indexOf( 'http' ) === -1 ) {
+					url = '/' + url;
+				}
+				mkd += url;
+			}
+			mkd += ')';
 		}
 		return mkd;
 	};

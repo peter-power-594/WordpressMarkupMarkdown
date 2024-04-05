@@ -5,8 +5,17 @@
 		$( document ).ready(function() {
 			_self.tabOptions();
 			_self.toolbarButtons();
+			_self.toggleButtons();
 		});
 	}
+
+
+	MarkupMarkdownApp.prototype.toggleButtons = function() {
+		$( '#wrap a.toggler' ).on( 'click', function( event ) {
+			event.preventDefault();
+			$( '#' + this.href.replace( /.*?#/, '' ) ).trigger( 'click' );
+		});
+	};
 
 
 	MarkupMarkdownApp.prototype.tabOptions = function() {

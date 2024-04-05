@@ -141,7 +141,7 @@ class SpellChecker {
 
 	public function load_spellchecker_assets( $hook ) {
 		if ( 'post.php' === $hook || 'post-new.php' === $hook ) :
-			wp_add_inline_script( 'markup_markdown__wordpress_richedit', $this->add_inline_editor_conf() );
+			add_action( 'admin_footer', array( $this, 'load_engine_assets' ) );
 		elseif ( 'settings_page_markup-markdown-admin' === $hook ) :
 			add_action( 'mmd_before_options', array( $this, 'install_spell_checker' ) );
 			add_action( 'mmd_tabmenu_options', array( $this, 'add_tabmenu' ) );
@@ -149,6 +149,19 @@ class SpellChecker {
 		endif;
 	}
 
+
+	/**
+	 * Method to add the javascript inline settings for the spell checkers
+	 * Hooked to the head previously, now hooked to the footer
+	 * 
+	 * @access public
+	 * @since 3.0
+	 * 
+	 * @return Void
+	 */
+	public function load_engine_assets() {
+		wp_add_inline_script( 'markup_markdown__wordpress_richedit', $this->add_inline_editor_conf() );
+	}
 
 
 	/**
@@ -318,29 +331,45 @@ class SpellChecker {
 ?>
 					<div id="tab-spellchecker">
 						<h3>Spell Checker</h3>
+
 						<p>
 							Dictionaries available from your browser (Firefox, Chrome, Edge, ...) or your operating system (Linux, Macintosh, Windows, etc...) can't be used or accessed as it, you need to select and install specific dictionaries so they can be downloaded on your server and used with the markdown editor while you input your text.
-							<br />
 							Data are borrowed from 3rd parties software (Sublime, OpenOffice, Mozilla, etc...), some languages are not available and some variants probably missing. Data are free to use (*GPL or similar licenses), try to contribute to the original project mostly done by volunteers if you want better spell checking.
 						</p>
-						<h4>Monolingual: Usable, performances are ok.</h4>
-						<h4>Bilingual: Unstable, try with caution.</h4>
+
+						<h4>
+							Performances
+						</h4>
+						<p>
+							<strong>Monolingual: Usable, performances are correct.</strong><br />
+							<strong>Bilingual: Depends on your machine, can be unstable so try to use it with caution.</strong>
+						</p>
 						<p>
 							When possible I would advise using dictionaries embedded in two languages like Russian-English.<br />
 							In case you need to activate multiple languages, please read the following disclaimers carefully:
 						</p>
+
+						<h4>
+							Disclaimer 1: <em>Size matters! I don't recommend to activate more than 2 languages</em>
+						</h4>
 						<p>
-							Disclaimer 1: <em>Size matters! I don't recommend to activate more than 2 languages</em><br />
 							Remember the related files (a few megabytes) will be loaded in the memory of your browser so depending on the weight of the related files AND the specification/ status of your computer, the editor might freeze for a few seconds, especially when accessing the edit screen. Please be gentle and patient... In the worst case well you won't be able to use it and will need to disable it. Can't do better on my side.
 						</p>
+
+						<h4>
+							Disclaimer 2: <em>There is no automatic language detection for spell checking</em>
+						</h4>
 						<p>
-							Disclaimer 2: <em>There is no automatic language detection for spell checking</em><br />
 							If you activate more than one dictionary, you have to set one as the default. Then in the editor, new buttons for the alternative languages will be shown in the toolbar so you can select the text and flag it as a different language. Following the markdown specification, it will be displayed as pure custom HTML. The code in your content is gonna look like this: &lt;span lang="XXX"&gt;My text in another language&lt;/span&gt; where XXX is the code of the language as listed below. It might not be the easiest approach, regards accessibilities specifications you should already define the language in case you are using multiple languages on the same page!
 						</p>
+
+						<h4>
+							Disclaimer 3: <em>One specific dictionary per language</em>
+						</h4>
 						<p>
-							Disclaimer 3: <em>One specific dictionary per language</em><br />
 							Sounds obvious, multilingual means multiple languages on the same medium. With the current interface you <em>could</em> try activating two variants of the same parent language, for exemple American English and British English, that won't work of course!!! (Or they will be really odd side effects)
 						</p>
+
 						<table class="form-table" role="presentation">
 							<tbody>
 <?php

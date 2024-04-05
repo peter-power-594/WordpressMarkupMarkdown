@@ -14,6 +14,6 @@
 	background: rgba(255,255,255,0.85) url(../../../../../../../../../wp-includes/images/spinner-2x.gif) no-repeat 50% 50%;
 }
 
-.acf-field-markupmarkdown.ready .acf-input:after {
+.acf-field-markupmarkdown .acf-input.ready:after {
   display: none;
 }

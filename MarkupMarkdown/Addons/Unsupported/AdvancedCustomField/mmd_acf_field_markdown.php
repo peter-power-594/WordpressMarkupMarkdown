@@ -67,7 +67,7 @@ class mmd_acf_field_markdown extends \acf_field {
 
 		$this->env = array(
 			'url'     => site_url( str_replace( ABSPATH, '', __DIR__ ) ), // URL to the acf-FIELD-NAME directory.
-			'version' => '1.0', // Replace this with your theme or plugin version constant.
+			'version' => '1.0.5', // Replace this with your theme or plugin version constant.
 		);
 
 		parent::__construct();
@@ -109,17 +109,19 @@ class mmd_acf_field_markdown extends \acf_field {
 	/**
 	 * HTML content to show when a publisher edits the field on the edit screen.
 	 *
-	 * @param array $field The field settings and values.
-	 * @return void
+	 * @param Array $field The field settings and values.
+	 * @return Void
 	 */
 	public function render_field( $field ) {
-	/*
-		Debug output to show what field data is available.
-		echo '<pre>';
-		print_r( $field );
-		echo '</pre>';	
-	*/
-
+		/*
+			Debug output to show what field data is available.
+			echo '<pre>';
+			print_r( $field );
+			echo '</pre>';	
+		*/
+		if ( ! defined( 'MMD_CUSTOM_FIELD' ) ) :
+			define( 'MMD_CUSTOM_FIELD', 1 );
+		endif;
 		// Display an input field that uses the 'font_size' setting.
 ?><textarea class="wp-editor-area" style="height: 300px" cols="40" name="<?php echo esc_attr( $field[ 'name' ] ); ?>"><?php
 	echo $field[ 'value' ];
