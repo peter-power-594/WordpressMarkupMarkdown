@@ -21,8 +21,10 @@ class Support {
 	public function __construct() {
 		# Add Support
 		add_action( 'init', array( $this, 'add_markdown_support' ), 10 );
-		# Check then enable or disable the markdown editor
-		add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 );
+		# Check then enable or disable the markdown editor on the backend
+		if ( is_admin() ) :
+			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 );
+		endif;
 		# Enable or disable the post filters
 		add_action( 'wp_loaded', array( $this, 'set_content_filters' ), 10 );
 	}
@@ -86,13 +88,16 @@ class Support {
 	 */
 	public function prepare_markdown_editor() {
 		if ( ! $this->mmd_syntax ) :
-			return FALSE;
-		endif;
-		$my_post_type = $this->get_current_post_type();
-		if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
 			$this->mmd_syntax = 0;
 			return FALSE;
+		else :
+			$my_post_type = $this->get_current_post_type();
+			if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
+				$this->mmd_syntax = 0;
+				return FALSE;
+			endif;
 		endif;
+		# Markdown can be used with custom fields, so only disable TinyMCE / Guternberg hooks when support is enabled
 		# Clear static cache when post is saved
 		if ( ! defined( 'WP_MMD_OPCACHE' ) || WP_MMD_OPCACHE ) :
 			add_action( 'save_post', array( $this, 'clear_post_cache' ), 10, 3 );
@@ -184,8 +189,28 @@ class Support {
 	}
 
 
+
+	/**
+	 * Tiny switch to apply or not the markdown filters
+	 * Since 3.0: Checking the post type inside the loop
+	 * https://developer.wordpress.org/reference/hooks/the_content/
+	 * 
+	 * @access public
+	 * @since 2.0
+	 * 
+	 * @return HTML $content The modified content
+	 */
+
 	public function post_markdown2html( $content ) {
-		return apply_filters( 'post_markdown2html', $content );
+		if ( is_singular() && in_the_loop() && is_main_query() ) :
+			if ( post_type_supports( get_post_type(), 'markup_markdown' ) ) :
+				return apply_filters( 'post_markdown2html', $content );
+			else :
+				return $content;
+			endif;
+		else :
+			return $content;
+		endif;
 	}
 
 
@@ -204,7 +229,7 @@ class Support {
 			remove_all_filters( 'the_content' );
 			remove_all_filters( 'the_excerpt' );
 		else :
-			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax );
+			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 );
 			require_once mmd()->plugin_dir . 'MarkupMarkdown/Core/Parser.php';
 			new \MarkupMarkdown\Core\Parser();
 			add_filter( 'the_content', array( $this, 'post_markdown2html' ), 1 , 9 );

@@ -19,11 +19,10 @@ class Parser {
 			$this->preview = filter_input( INPUT_GET, 'preview', FILTER_SANITIZE_SPECIAL_CHARS );
 			$cached_filter = defined( 'WP_MMD_OPCACHE' ) && WP_MMD_OPCACHE ? 'cached_' : '';
 			add_filter( 'post_markdown2html', array( $this, $cached_filter . 'post_markdown2html' ) );
-			add_filter( 'field_markdown2html', array( $this, 'post_markdown2html' ) );
 		else :
 			add_filter( 'post_markdown2html', array( $this, 'dummy_markdown' ) );
-			add_filter( 'field_markdown2html', array( $this, 'dummy_markdown' ) );
 		endif;
+		add_filter( 'field_markdown2html', array( $this, 'post_markdown2html' ) );
 	}
 
 
@@ -113,7 +112,7 @@ class Parser {
 		if ( ! isset( $this->parser ) || empty( $this->parser ) ) :
 			$this->custom_parser();
 		endif;
-		$safe = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", $content );
+		$safe = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", isset( $content ) ? $content : '' );
 		return $this->parser->text( $safe );
 	}
 

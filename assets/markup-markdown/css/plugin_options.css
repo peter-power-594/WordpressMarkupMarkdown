@@ -35,6 +35,21 @@
 	text-decoration: none;
 	text-transform: capitalize;
 }
+.ui-tabs-panel, .ui-tabs-nav {
+	padding-right: 36px;
+}
+@media only screen and (max-width: 960px) {
+	.ui-tabs-panel,
+	.ui-tabs-nav {
+		padding-right: 36px;
+	}
+}
+@media screen and (max-width: 782px) {
+	.auto-fold .ui-tabs-panel,
+	.ui-tabs-nav {
+		padding-right: 10px;
+	}
+}
 .ui-tabs .ui-tabs-active {
 	margin-bottom: -1px;
 	padding-bottom: 1px;
@@ -145,7 +160,8 @@ h4.ui-widget-header + p {
 	padding: 0;
 	position: relative;
 }
-#my_toolbar li.button_preview:last-child {
+#my_toolbar li.button_preview:last-child,
+#my_toolbar li.button_guide:last-child {
 	margin-left: auto;
 }
 #my_toolbar li:hover .ui-trash-link {

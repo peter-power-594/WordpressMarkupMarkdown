@@ -1,15 +1,19 @@
+/* global wp */
+
 (function( $, _win, _doc ) {
 
 	var mediaFrame = {};
 		mediaPreview = {},
 		activeWidget = {},
 		fieldNumber = 0,
-		homeURL = '';
+		homeURL = '',
+		spellCheckerReady = 0;
 
 
 	function MarkupMarkdownWidget( textarea ) {
 		this.todo = [];
 		this.updating = false;
+		this.isRendering = false;
 		this.instance = {};
 		this.init( textarea );
 	}
@@ -18,7 +22,7 @@
 	/**
 	 * Initialize Wordpress Media Frame to upload or add a unique media item
 	 *
-	 * @returns Void
+	 * @returns {Void}
 	 */
 	MarkupMarkdownWidget.prototype.mediaUploader = function() {
 		var _self = this;
@@ -141,7 +145,13 @@
 				codeSyntaxHighlighting: true
 			},
 			previewRender: function( text, preview ) {
-				return _self.previewRender( text, preview );
+				mediaPreview.flushQueue();
+				text = _self.previewRender( text, preview );
+				setTimeout(function() {
+					mediaPreview.runQueue();
+					$( _win ).trigger( 'resize.mmd_win_sticky_toolbar' );
+				}, 10);
+				return text;
 			}
 		};
 		if ( spell_check && spell_check !== 'none' ) {
@@ -153,7 +163,6 @@
 		}
 		else {
 			editorConfig.spellChecker = false;
-			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
 		}
 		_self.instance.editor = new EasyMDE( editorConfig );
 		if ( ! _win.wp.pluginMarkupMarkdown ) {
@@ -175,13 +184,17 @@
 			_self.widgetCounter = startCounter + 1;
 		}
 		_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+		if ( ! spell_check || spell_check === 'none' ) {
+			// Event need to be triggered manually
+			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
+		}
 	};
 
 
 	/**
 	 * Callback
-	 * @param widgetShortCode string The Gallery / Playlist shortcode
-	 * @returns Object The Code Editor document updated with the widget shortcodes
+	 * @param {String} widgetShortCode The Gallery / Playlist shortcode
+	 * @returns {Object} The Code Editor document updated with the widget shortcodes
 	 */
 	MarkupMarkdownWidget.prototype.mediaWidgetCallBack = function( widgetShortCode ) {
 		activeWidget.widgetCounter++;
@@ -197,8 +210,8 @@
 
 	/**
 	 * Iframe multiple selection callback
-	 * @param markdownCode string The new markdown media content
-	 * @returns Object The Code Editor document updated with the media markdown
+	 * @param {String} markdownCode  The new markdown media content
+	 * @returns {Object} The Code Editor document updated with the media markdown
 	 */
 	MarkupMarkdownWidget.prototype.mediaMultiselCallBack = function( markdownCode ) {
 		// Warning !
@@ -214,54 +227,58 @@
 	/**
 	 * EasyMDE custom preview callbacks to support WP specific features
 	 * @since 2.1
-	 * @param text String The source code used for the rendering
-	 * @param preview Object The html node preview
-	 * @returns string The default text preview
+	 * @param {String} text The source code used for the rendering
+	 * @param {Object} preview The html node preview
+	 * @returns {string} The default text preview
 	 */
 	MarkupMarkdownWidget.prototype.previewRender = function( text, preview ) {
 		var _self = this;
 		text = _self.instance.editor.markdown( text );
 		// Render the gallery shortcode. Ref /wp-includes/js/tinymce/plugins/wpgallery/plugin.js
-		var galCounter = 0;
+		var galCounter = 0,
+			getRandomNodeID = function( min, max ) {
+				return ( 'tmp_node' + ( Math.random() * 999999999 ) ).replace( /\.|\,/, '' );
+			};
 		text = text.replace( /\[gallery([^\]]*)\]/g, function( wpGallery ) {
 			galCounter++;
-			var myGallery = '<div id="tmp_gallery-' + galCounter + '"></div>';
-			mediaPreview.gallery( wpGallery, galCounter );
-			return myGallery;
+			return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_gallery-' + galCounter + '">'
+				+ mediaPreview.add2Queue( 'gallery', wpGallery, galCounter ) + '</div>';
 		});
 		text = text.replace( /\[playlist([^\]]*)\]/g, function( wpPlaylist ) {
 			galCounter++;
 			if ( /type\=\"video\"/.test( wpPlaylist ) ) {
-				var myPlaylist = '<div id="tmp_video_playlist-' + galCounter + '"></div>';
-				mediaPreview.videoPlaylist( wpPlaylist, galCounter );
-				return myPlaylist;
+				return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_video_playlist-' + galCounter + '">'
+					+ mediaPreview.add2Queue( 'videoPlaylist', wpPlaylist, galCounter ) + '</div>';
 			}
 			else {
-				var myPlaylist = '<div id="tmp_audio_playlist-' + galCounter + '"></div>';
-				mediaPreview.audioPlaylist( wpPlaylist, galCounter );
-				return myPlaylist;
+				return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_audio_playlist-' + galCounter + '">'
+					+ mediaPreview.add2Queue( 'audioPlaylist', wpPlaylist, galCounter ) + '</div>';
 			}
 		});
 		// Render the images
 		text = text.replace( /<a.*?><img.*?>\{\.align[a-z]+\}<\/a>/g, function( wpImage ) {
-			var fig = mediaPreview.convertImage( wpImage );
-			return fig;
+			return mediaPreview.processTask( 'convertImage', wpImage, false );
 		});
 		text = text.replace( /<img.*?>\{\.align[a-z]+\}/g, function( wpImage ) {
-			var fig = mediaPreview.convertImage( wpImage );
-			return fig;
+			return mediaPreview.processTask( 'convertImage', wpImage, false );
 		});
 		text = text.replace( /<p><figure/, '<figure' ).replace( /<\/figure><\/p>/, '</figure>' );
 		// Render the audio shortcodes
 		var audCounter = 0;
 		text = text.replace( /\[audio([^\]]*)\]\[\/audio\]/g, function( wpAudio ) {
-			return mediaPreview.convertAudio( wpAudio, audCounter++ );
+			return mediaPreview.processTask( 'convertAudio', wpAudio, audCounter++ );
 		});
 		// Render the video shortcodes
 		var vidCounter = 0;
 		text = text.replace( /\[video([^\]]*)\]\[\/video\]/g, function( wpVideo ) {
-			return mediaPreview.convertVideo( wpVideo, vidCounter++ );
+			return mediaPreview.processTask( 'convertVideo', wpVideo, vidCounter++ );
 		});
+		if ( ! _self.isRendering ) {
+			_self.isRendering = setTimeout(function() {
+				$( window ).trigger( 'resize.mmd_preview' );
+				_self.isRendering = 0;
+			}, 450);
+		}
 		return text;
 	};
 
@@ -273,10 +290,7 @@
 		}
 		else {
 			_self.toolbarButtons = [
-				"bold", "italic", "heading", "spell_checker", "pipe", "quote",
-				"unordered_list", "ordered_list", "pipe",
-				"link", "wpsimage", "table", "pipe",
-				"guide", "preview"
+				"bold", "italic", "heading", "spell-checker", "pipe", "quote", "unordered-list", "ordered-list", "pipe", "link", "wpsimage", "table", "pipe", "fullscreen", "side-by-side", "preview", "guide"
 			];
 		}
 		_self.core( textarea );
@@ -285,24 +299,42 @@
 
 	$( _doc ).ready(function() {
 		$( _doc.body ).addClass( 'easymde' );
+		var primaryAreaEnabled = 1;
+		if ( wp.pluginMarkupMarkdown && typeof wp.pluginMarkupMarkdown.primaryArea !== 'undefined' ) {
+			if ( ! wp.pluginMarkupMarkdown.primaryArea || isNaN( parseInt( wp.pluginMarkupMarkdown.primaryArea, 10 ) ) ) {
+				// EasyMDE has been disabled on the primary post editor area but might be enabled with custom fields
+				primaryAreaEnabled = 0;
+			}
+		}
+		var $editorContainer = $( '#wp-content-editor-container' );
 		_doc.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
-			$( '#wp-content-editor-container' ).addClass( 'ready' );
+			if ( ! $editorContainer.hasClass( 'ready' ) ) {
+				// Be careful as the event _CodeMirrorSpellCheckerReady_ can be triggered multiple times
+				$editorContainer.addClass( 'ready' );
+				// Initialize sticky (and other options if need be)
+				new MarkupMarkdownOptions();
+			}
+			// Trigger a refresh to get real boxe sizes just in case
+			$( _doc.body ).addClass( 'markupmarkdown-ready' )
+				.trigger( 'click.mmd_body_sticky_toolbar' );
 		});
-		$( '#wp-content-editor-container .wp-editor-area' ).each(function() {
-			new MarkupMarkdownWidget( this );
-		});
+		if ( primaryAreaEnabled > 0 ) {
+			// Initialize EasyMDE on the main content
+			$editorContainer.addClass( 'markupmarkdown' )
+				.find( '.wp-editor-area' ).each(function() {
+					new MarkupMarkdownWidget( this );
+				});
+		}
 	});
 
 
 	_win.MarkupMarkdown = MarkupMarkdownWidget;
 
 
-})( window.jQuery, window, document );
-
-
-(function( $, _win, _doc ) {
-
-
+	/**
+	 * From here an old school implementation to make the EasyMDE toolbars sticky with WayPoint
+	 * We _don't rely_ on CoreMirror events but with the user interactions from the surrounded containers 
+	 */
 	function MarkupMarkdownOptions() {
 		var _self = this,
 			userTimerId = 0,
@@ -325,8 +357,8 @@
 	/**
 	 * EasyMDE save user options edit preferences
 	 * @since 2.5
-	 * @param $userPanel object The jQuery Panel node
-	 * @returns object The user preferences
+	 * @param {Object} $userPanel The jQuery Panel node
+	 * @returns {Object} The user preferences
 	 */
 	MarkupMarkdownOptions.prototype.getUserOptions = function( $userPanel ) {
 		var userOptions = {};
@@ -340,8 +372,8 @@
 	/**
 	 * Send a an ajax request to save the user edit preferences
 	 * @since 2.5
-	 * @param $userPanel Object The jQuery Panel node
-	 * @returns void
+	 * @param {Object} $userPanel The jQuery Panel node
+	 * @returns {Void}
 	 */
 	MarkupMarkdownOptions.prototype.saveUserOptions = function( $userPanel ) {
 		var _self = this;
@@ -356,15 +388,19 @@
 
 	/**
 	 * Make EasyMDE toolbars sticky if the height of the panel is greater than the screen's height
+	 * 
 	 * @since 2.5
-	 * @returns Void
+	 * 
+	 * @returns {Void}
 	 */
 	MarkupMarkdownOptions.prototype.setStickyToolbar = function() {
 		var _self = this,
-			stickyToolbars = parseInt( _self.userOptions.mmd_sticky_toolbar || 0, 10 ),
+			isStickyEnabled = parseInt( _self.userOptions.mmd_sticky_toolbar || 0, 10 ),
+			isStickyActive = 0,
 			minHeight = $( _win ).height() - ( $( '#wpadminbar ' ).height() || 0 ),
 			initSticky = function( $el ) {
 				if ( $el.hasClass( 'sicky-toolbar' ) ) {
+					// Already active, exit
 					return false;
 				}
 				var $toolbar = $el.find( '.editor-toolbar:eq(0)' ),
@@ -373,6 +409,7 @@
 					// Don't set to sticky if the field is shorter than the screen 
 					return false;
 				}
+				isStickyActive = 1;
 				$el.addClass( 'sicky-toolbar' ); $toolbar.addClass( 'mmd-sticky' );
 				if ( ! $el.find( '.editor-endbar' ).length ) {
 					$el.append( $( '<div class="editor-endbar"></div>' ) );
@@ -393,29 +430,41 @@
 					offset: 'bottom-in-view'
 				}) );
 				return true;
-			}; 
-		if ( ! stickyToolbars ) {
-			// First unbind to avoid js errors
-			$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' );
-			$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' );
-			$( _win ).off( 'resize.mmd_win_sticky_toolbar' );
-			// Nest disable existing sticky toolbars if need be
-			_self.stickyInst = _self.stickyInst || [];
-			if ( _self.stickyInst.length ) {
-				_win.Waypoint.destroyAll(); // Destroy all of them
-				_self.stickyInst = [];
-			}
-			// Cleanup remaining attributes or nodes
-			$( '.EasyMDEContainer ').each(function() {
-				var $container = $( this ).removeClass( 'sicky-toolbar' ).removeClass( 'mmd-sticky-end' );
-				$container.find( '.editor-toolbar' ).removeClass( 'mmd-sticky' ).each(function() {
-					$( this ).removeAttr( 'style' );
-					if ( $( this ).parent().hasClass( 'sticky-wrapper' ) ) {
-						$container.prepend( this );
-					}
+			},
+			destroySticky = function() {
+				if ( ! _self.stickyInst || ! _self.stickyInst.length ) {
+					return false;
+				}
+				isStickyActive = 0;
+				// Nest disable existing sticky toolbars if need be
+				_self.stickyInst = _self.stickyInst || [];
+				if ( _self.stickyInst.length ) {
+					_win.Waypoint.destroyAll(); // Destroy all of them
+					_self.stickyInst = [];
+				}
+				// Cleanup remaining attributes or nodes
+				$( '.EasyMDEContainer ').each(function() {
+					var $container = $( this ).removeClass( 'sicky-toolbar' ).removeClass( 'mmd-sticky-end' );
+					$container.find( '.editor-toolbar' ).removeClass( 'mmd-sticky' ).each(function() {
+						$( this ).removeAttr( 'style' );
+						if ( $( this ).parent().hasClass( 'sticky-wrapper' ) ) {
+							$container.prepend( this );
+						}
+					});
+					$container.find( '.sticky-wrapper' ).remove();
 				});
-				$container.find( '.sticky-wrapper' ).remove();
-			});
+				return true;
+			},
+			disableSticky = function() {
+				// First unbind to avoid js errors
+				$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' );
+				$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' );
+				$( _win ).off( 'resize.mmd_win_sticky_toolbar' );
+				// Trash html modifications
+				destroySticky();
+			};
+		if ( ! isStickyEnabled ) {
+			disableSticky();
 		}
 		else {
 			// Initialize existing sticky toolbars if need be
@@ -433,26 +482,37 @@
 				}).trigger( 'resize.mmd_win_sticky_toolbar' );
 			// Quick fix to refresh trigger points with accordeaon like elements
 			var waypointTimerID = 0,
-				$clickedEditor;
-			$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' )
-				.on( 'click.mmd_body_sticky_toolbar', function( event ) {
+				$clickedEditor,
+				refreshTriggerPoints = function() {
 					if ( ! waypointTimerID ) {
 						waypointTimerID = setTimeout(function() {
-							_win.Waypoint.refreshAll();
+							if ( $( '.editor-toolbar.fullscreen' ).length ) {
+								destroySticky(); // Keep the our custom handlers
+							}
+							else if ( ! isStickyActive ) {
+								setTimeout(function() { // Restart
+									$( '.EasyMDEContainer' ).each(function() {
+										initSticky( $( this ) );
+									});
+									$( _win ).trigger( 'resize.mmd_win_sticky_toolbar' );
+								}, 50);
+							}
+							else {
+								_win.Waypoint.refreshAll(); // Restart
+							}
 							waypointTimerID = 0;
 						}, 450);
 					}
+				};
+			$( _doc.body ).off( 'click.mmd_body_sticky_toolbar' )
+				.on( 'click.mmd_body_sticky_toolbar', function( event ) {
+					refreshTriggerPoints();
 					$clickedEditor = $( event.target ).closest( '.EasyMDEContainer' );
 				});
 			// Quick fix to initialize sticky when the height is growing
 			$( _doc ).off( 'keyup.mmd_doc_sticky_toolbar' )
 				.on( 'keyup.mmd_doc_sticky_toolbar', function( event ) {
-					if ( ! waypointTimerID ) {
-						waypointTimerID = setTimeout(function() {
-							_win.Waypoint.refreshAll();
-							waypointTimerID = 0;
-						}, 450);
-					}
+					refreshTriggerPoints();
 					if ( event.keyCode && event.keyCode === 13 && $clickedEditor ) {
 						if ( $clickedEditor.length && ! $clickedEditor.hasClass( 'sicky-toolbar' ) ) {
 							setTimeout(function() {
@@ -465,11 +525,6 @@
 				});
 		}
 	};
-
-
-	$( _doc ).ready(function() {
-		new MarkupMarkdownOptions();
-	});
 
 
 })( window.jQuery, window, document );

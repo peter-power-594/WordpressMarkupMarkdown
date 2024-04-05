@@ -4,7 +4,7 @@
   display: none;
 }
 
-#wp-content-editor-container:after {
+#wp-content-editor-container.markupmarkdown:after {
 	content: ' ';
 	display: block;
 	position: absolute;
@@ -15,7 +15,8 @@
 	z-index: 10;
 	background: rgba(255,255,255,0.85) url(../../../../../../wp-includes/images/spinner-2x.gif) no-repeat 50% 50%;
 }
-#wp-content-editor-container.ready:after {
+#wp-content-editor-container.ready:after,
+.markupmarkdown-ready #wp-content-editor-container.markupmarkdown:after {
 	display: none;
 	background: transparent;
 }
@@ -27,6 +28,18 @@
   border: 0;
   padding: 16px 0 0 0;
 }
+
+.editor-toolbar .easymde-dropdown,
+.editor-toolbar button {
+	float: none;
+}
+
+.editor-toolbar button.preview:last-child,
+.editor-toolbar button.guide:last-child {
+	float: right;
+}
+
+
 .EasyMDEContainer .editor-toolbar {
   background: #f1f1f1;
 }
@@ -309,6 +322,21 @@
 	width: 100%;
 }
 
+.editor-preview .tmp_media .wp-audio-playlist,
+.editor-preview .tmp_media .wp-video-playlist {
+	cursor: default !important;
+	pointer-events: none !important;
+}
+.editor-preview .tmp_media .wp-audio-playlist *,
+.editor-preview .tmp_media .wp-video-playlist * {
+	color: #a7aaad !important;
+}
+.editor-preview .tmp_media .wp-audio-playlist .mejs-audio,
+.editor-preview .tmp_media .wp-video-playlist .mejs-video {
+	opacity: 0.85 !important;
+}
+
+
 /* Sticky Options */
 .sticky-wrapper .mmd-sticky.stuck {
 	position: fixed;
@@ -322,13 +350,16 @@
 		top: 46px;
 	}
 }
-.easymde-end {
+.editor-endbar {
 	width: 100%;
-	height: 0;
+	height: 1px;
 	margin: 0;
 	padding: 0;
+	position: absolute;
+	bottom: -33vh;
 	font-size: 0;
-	overflow: hidden;
+	line-height: 0;
+	border-top: 1px solid rgba(0,0,0,0);
 }
 .EasyMDEContainer.mmd-sticky-end {
 	position: relative;
@@ -346,6 +377,10 @@
 
 
 /* FullScreen */
+.EasyMDEContainer .CodeMirror-fullscreen,
+.EasyMDEContainer .editor-preview-side {
+	z-index: 2000;
+}
 .admin-bar .editor-toolbar.fullscreen {
 	top: 32px;
 }

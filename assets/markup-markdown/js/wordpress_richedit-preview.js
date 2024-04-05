@@ -1,12 +1,26 @@
+/* global wp */
+
+/**
+ * Everything needed to handle the preview
+ * @param $ The jQuery shortcut capsuled in anynymous function
+ */
+
 (function( $ ) {
 
+	var tmp_cache = {};
 
+	/**
+	 * MmdPreview is the public class available that will be used with the EasyMDE editor filters
+	 * 
+	 * @param {Obect} ops The constructor options
+	 * 
+	 * @returns {Object} 3 public methods
+	 */
 	function MmdPreview( ops ) {
 		if ( ! ops ) {
 			ops = {};
 		}
-		var _self = this,
-			callbacks = ops.callbacks || {},
+		var callbacks = ops.callbacks || {},
 			base_url = ops.base_url || '',
 			fallbacks = {
 				widget: function() {},
@@ -18,54 +32,130 @@
 		if ( ! callbacks.multisel || typeof callbacks.multisel !== 'function' ) {
 			callbacks.multisel = fallbacks.multisel;
 		}
-		var myEngine = new renderEngine({
+		return new renderEngine({
 			base_url: base_url,
 			callbacks: callbacks
 		});
+	}
+
+
+	/**
+	 * The preview render engine is a private class
+	 * 
+	 * @param {Object} ops The rendering engine options
+	 * 
+	 * @returns {Object} The following methods :
+	 * - {Function} flushQueue A method to clear the cache queue
+	 * - {Function} add2Queue A method to push a preview task to the queue
+	 * - {Function} runQueue A method to trigger the tasks in the queue
+	 */
+	function renderEngine( ops ) {
+		var _self = this;
+		_self.isReady = 0;
+		$( window ).on( 'resize.mmd_preview', function( event ) {
+			_self.clipbox( event );
+		});
+		if ( ! $( '#mmd_preview-css' ).length ) {
+			$( 'head' ).append( '<style type="text/css" id="mmd_preview-css"></style>' );
+		}
+		_self.previewSheet = document.getElementById( 'mmd_preview-css' ) || false;
+		if ( ops.base_url && ops.callbacks ) {
+			_self.base_url = ops.base_url;
+			_self.callbacks = ops.callbacks;
+			_self.isReady = 1;
+		}
+		var myQueue = [],
+			myToolBox = {
+				gallery: 'renderGallery',
+				videoPlaylist: 'renderVideoPlaylist',
+				audioPlaylist: 'renderAudioPlaylist',
+				convertImage: 'convertHTMLImage',
+				convertAudio: 'convertAudioShortcode',
+				convertVideo: 'convertVideoShortcode'
+			};
 		return {
-			gallery: function( wpGallery, galleryNumber ) {
-				return myEngine.renderGallery( wpGallery || '', galleryNumber || 0 );
+			flushQueue: function() {
+				myQueue = [];
 			},
-			videoPlaylist: function( wpVideoPlaylist, playlistNumber ) {
-				return myEngine.renderVideoPlaylist( wpVideoPlaylist || '', playlistNumber || 0 );
+			add2Queue: function( toolbox, arg1, arg2 ) {
+				var myHash = _self.hashString( arg1 || '' );
+				if ( tmp_cache && tmp_cache[ myHash ] ) {
+					return tmp_cache[ myHash ].join( '' );
+				}
+				else if ( toolbox && myToolBox[ toolbox ] ) {
+					myQueue.push([ myToolBox[ toolbox ], arg1 || '', arg2 || 0 ]);
+					return '';
+				}
 			},
-			audioPlaylist: function( wpAudioPlaylist, playlistNumber ) {
-				return myEngine.renderAudioPlaylist( wpAudioPlaylist || '', playlistNumber || 0 );
+			runQueue: function() {
+				for ( var q = 0, myAction; q < myQueue.length; q++ ) {
+					myAction = myQueue[ q ];
+					_self[ myAction[ 0 ] ]( myAction[ 1 ], myAction[ 2 ] );
+				}
 			},
-			convertImage: function( htmlImage ) {
-				return myEngine.convertHTMLImage( htmlImage );
-			},
-			convertAudio: function( audioShortcode, audioNumber ) {
-				return myEngine.convertAudioShortcode( audioShortcode, audioNumber );
-			},
-			convertVideo: function( videoShortcode, videoNumber ) {
-				return myEngine.convertVideoShortcode( videoShortcode, videoNumber );
+			processTask: function( toolbox, arg1, arg2 ) {
+				if ( toolbox && myToolBox[ toolbox ] ) {
+					return _self[ myToolBox[ toolbox ] ]( arg1 || '', arg2 || 0 );
+				}
+				else {
+					return '';
+				}
 			}
 		};
 	}
 
 
-	function renderEngine( ops ) {
-		this.isReady = 0;
-		if ( ops.base_url && ops.callbacks ) {
-			this.base_url = ops.base_url;
-			this.callbacks = ops.callbacks;
-			this.isReady = 1;
+	/**
+	 * An implementation of Jenkins's one-at-a-time hash
+	 * @source https://gist.github.com/atdt/2330641
+	 * @source http://en.wikipedia.org/wiki/Jenkins_hash_function
+	 *
+	 * @param {String} key The key to use the hash from
+	 * 
+	 * @returns {String} Hash of the string
+	 */
+	renderEngine.prototype.hashString = function ( key ) {
+		var hash = 0, i = key.length;
+		while ( i-- ) {
+			hash += key.charCodeAt(i);
+			hash += (hash << 10);
+			hash ^= (hash >> 6);
 		}
-	}
+		hash += (hash << 3);
+		hash ^= (hash >> 11);
+		hash += (hash << 15);
+		return "t" + hash;
+	};
+
+
+	/**
+	 * Handle media preview HTML display size while rendering
+	 *
+	 * @param {Object} event The _resize_ event handler
+	 * 
+	 */
+	renderEngine.prototype.clipbox = function( event ) {
+		var _self = this,
+			css = [];
+		$( '.tmp_media' ).each(function() {
+			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' ); 
+		});
+		_self.previewSheet.innerText = css.join( '' );
+	};
 
 
 	/**
 	 * Media Gallery Preview
 	 *
-	 * @param String wpGallery The WP gallery shortcode
-	 * @param Integer galleryNumber The gallery counter used for the ID
+	 * @param {String} wpGallery The WP gallery shortcode
+	 * @param {Integer} galleryNumber The gallery counter used for the ID
 	 * 
-	 * @returns Boolean TRUE in case of success or FALSE
+	 * @returns {Boolean} TRUE in case of success or FALSE
 	 */
 	renderEngine.prototype.renderGallery = function( wpGallery, galleryNumber ) {
 		var myRenderApp = this,
-			mediaIds = ( wpGallery || '' ).match( /ids\=\"(.*?)\"/ );
+			galleryHash = myRenderApp.hashString( wpGallery );
+		var mediaIds = ( wpGallery || '' ).match( /ids\=\"(.*?)\"/ );
 		if ( ! mediaIds || ! mediaIds[ 1 ] ) {
 			return '';
 		}
@@ -152,13 +242,16 @@
 			}
 		}
 		var renderGallery = function() {
-			var galleryNode = document.getElementById( 'tmp_gallery-' + galleryNumber ) || false;
+			var galleryNode = $( 'div[data-pointer="tmp_gallery-' + galleryNumber + '"]' )[ 0 ] || false;
 			if ( ! galleryNode ) {
 				return false;
 			}
 			var newHTMLGallery = htmlGallery( imageIds );
 			if ( ! newHTMLGallery || ! newHTMLGallery.length ) {
 				return false;
+			}
+			if ( ! tmp_cache[ galleryHash ] ) {
+				tmp_cache[ galleryHash ] = newHTMLGallery;
 			}
 			galleryNode.innerHTML = newHTMLGallery.join( '' );
 			if ( myRenderApp.callbacks && myRenderApp.callbacks.widget && typeof myRenderApp.callbacks.widget === 'function' ) {
@@ -168,25 +261,36 @@
 		if ( attachmentLoaded !== imageIds.length ) {
 			// All attachment info are not available yet
 			wp.media.query({ post__in: imageIds }).more().then(function() {
-				setTimeout( renderGallery, 250 );
+				setTimeout( function() {
+					renderGallery();
+					$( window ).trigger( 'resize.mmd_preview' );
+				}, 250 );
 			});
 		}
 		else {
-			setTimeout( renderGallery, 250 );
+			setTimeout(function() {
+				renderGallery();
+				$( window ).trigger( 'resize.mmd_preview' );
+			}, 250 );
 		}
-		return true;
+		return '';
 	};
 
 
 	/**
 	 * Convert HTML Image
 	 *
-	 * @param String wpImage An HTML image converted from markdown
+	 * @param {String} wpImage An HTML image converted from markdown
 	 * 
-	 * @returns String HTML Fixed HTML
+	 * @returns {String} HTML Fixed HTML content
 	 */
-	renderEngine.prototype.convertHTMLImage = function( wpImage ) {
-		var items = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/ );
+	renderEngine.prototype.convertHTMLImage = function( wpImage, dummy ) {
+		var items = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/ ),
+			myRenderApp = this,
+			pictureHash = myRenderApp.hashString( wpImage );
+		if ( tmp_cache && tmp_cache[ pictureHash ] ) {
+			return tmp_cache[ pictureHash ].join( '' );
+		}
 		if ( ! items || items.length < 2 ) {
 			return wpImage.replace( /\{\.(.*?)\}/, '' );
 		}
@@ -230,6 +334,7 @@
 				wpImage = wpImage.replace( matches[ m ], figure );
 			}
 		}
+		tmp_cache[ pictureHash ] = [ wpImage ];
 		return wpImage;
 	};
 
@@ -237,17 +342,24 @@
 	/**
 	 * Convert HTML Audio
 	 *
-	 * @param String wpAudio The WP Audio Shortcode to convert to html
-	 * @param Integer wpNumber The media number in the current HTML
+	 * @param {String} wpAudio The WP Audio Shortcode to convert to html
+	 * @param {Integer} wpNumber The media number in the current HTML
 	 * 
-	 * @returns String HTML Fixed HTML
+	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertAudioShortcode = function( wpAudio, wpNumber ) {
 		wpAudio = wpAudio || '';
+		var myRenderApp = this,
+			trackHash = myRenderApp.hashString( wpAudio );
+		if ( tmp_cache && tmp_cache[ trackHash ] ) {
+			return tmp_cache[ trackHash ].join( '' );
+		}
 		var att = wpAudio.match( /^\[audio.*?src\=\"(.*?)\".*?\]\[\/audio\]$/ ) || false;
 		if ( att && att.length && att.length > 0 ) {
-			return '<audio class="wp-audio-shortcode" id="audio-' + wpNumber + '" preload="none"'
-				+ ' style="width: 100%;" controls="controls" src="' + att[ 1 ] + '"></audio>';
+			var aud = '<audio class="wp-audio-shortcode" id="audio-' + wpNumber + '" preload="none" ';
+			aud += 'style="width: 100%;" controls="controls" src="' + att[ 1 ] + '"></audio>';
+			tmp_cache[ trackHash ] = [ aud ];
+			return aud;
 		}
 		else {
 			return '';
@@ -258,26 +370,41 @@
 	/**
 	 * Convert HTML Video
 	 *
-	 * @param String wpVideo The WP Video Shortcode to convert to html
-	 * @param Integer wpNumber The media number in the current HTML
+	 * @param {String} wpVideo The WP Video Shortcode to convert to html
+	 * @param {Integer} wpNumber The media number in the current HTML
 	 * 
-	 * @returns String HTML Fixed HTML
+	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertVideoShortcode = function( wpVideo, wpNumber ) {
 		wpVideo = wpVideo || '';
+		var myRenderApp = this,
+			movieHash = myRenderApp.hashString( wpVideo );
+		if ( tmp_cache && tmp_cache[ movieHash ] ) {
+			return tmp_cache[ movieHash ].join( '' );
+		}
 		var src = wpVideo.match( /src\=\"(.*?)\"/ ) || false,
 			wth = wpVideo.match( /width\=\"(.*?)\"/ ) || false,
-			hgt = wpVideo.match( /height\=\"(.*?)\"/ ) || false;
+			hgt = wpVideo.match( /height\=\"(.*?)\"/ ) || false,
+			svg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' ",
+			rct = "%3Crect ";
 		if ( src && src.length && src.length > 0 ) {
-			var vid = '<video class="wp-video-shortcode" id="video-' + wpNumber + '" preload="auto" ';
-			vid += ' style="width: 100%; height: auto;" controls="controls"';
+			var vid = '<video class="wp-video-shortcode" id="video-' + wpNumber + '" preload="none" ';
+			vid += 'style="width: 100%; height: auto;" controls="controls" ';
 			if ( wth && wth.length && wth.length > 0 ) {
 				vid += 'width="' + wth[ 1 ] + '" ';
+				svg += "width='" + wth[ 1 ] + "' ";
+				rct += "width='" + wth[ 1 ] + "' ";
 			}
 			if ( hgt && hgt.length && hgt.length > 0 ) {
 				vid += 'height="' + hgt[ 1 ] + '" ';
+				svg += "height='" + hgt[ 1 ] + "' ";
+				rct += "height='" + hgt[ 1 ] + "' ";
 			}
+			rct += " fill='%23EDEDED'%3E%3C/rect%3E";
+			svg += "%3E" + rct + "%3C/svg%3E";
+			vid += 'poster="' + svg + '" ';
 			vid += 'src="' + src[ 1 ] + '"></video>';
+			tmp_cache[ movieHash ] = [ vid ];
 			return vid;
 		}
 		else {
@@ -289,16 +416,20 @@
 	/**
 	 * Media Video Playlist Preview
 	 * 
-	 * @param String wpVideoPlaylist The WP playlist shortcode [playlist type="video" ids="xxx,xxx,xx"]
-	 * @param Integer playListNumber The number used for the media ID in the HTML document
+	 * @param {String} wpVideoPlaylist The WP playlist shortcode [playlist type="video" ids="xxx,xxx,xx"]
+	 * @param {Integer} playListNumber The number used for the media ID in the HTML document
 	 *
-	 * @returns Boolean TRUE in case of success or FALSE
+	 * @returns {Boolean} TRUE in case of success or FALSE
 	 */
 	renderEngine.prototype.renderVideoPlaylist = function( wpVideoPlaylist, playListNumber ) {
 		var myRenderApp = this,
 			mediaIds = ( wpVideoPlaylist || '' ).match( /ids\=\"(.*?)\"/ );
 		if ( ! mediaIds || ! mediaIds[ 1 ] ) {
 			return ''; // Something's wrong
+		}
+		var galleryHash = myRenderApp.hashString( wpVideoPlaylist );
+		if ( tmp_cache && tmp_cache[ galleryHash ] ) {
+			return tmp_cache[ galleryHash ].join( '' );
 		}
 		// HTML Vide Playlist 
 		var playlistHTML = function( videoIds ) {
@@ -307,7 +438,7 @@
 				vid = wp.media.attachment( +videoIds[ j ] ).attributes;
 				if ( ! vid.url ) continue; // Just in case the media was deleted
 				obj = {
-					src: vid.url.replace( myRenderApp.base_url, '' ),
+					src: vid.url,
 					type: vid.mime,
 					title: vid.title,
 					caption: vid.caption,
@@ -324,12 +455,12 @@
 						}
 					},
 					image: {
-						src: vid.image.src.replace( myRenderApp.base_url, '' ),
+						src: vid.image.src,
 						width: vid.image.width,
 						height: vid.image.height
 					},
 					thumb: {
-						src: vid.thumb.src.replace( myRenderApp.base_url, '' ),
+						src: vid.thumb.src,
 						width: vid.thumb.width,
 						height: vid.thumb.height
 					}
@@ -354,7 +485,7 @@
 		};
 		// Check all medias are ready before intializing the rendering
 		var renderPlaylist = function() {
-			var playlistNode = document.getElementById( 'tmp_video_playlist-' + playListNumber ) || false;
+			var playlistNode = $( 'div[data-pointer="tmp_video_playlist-' + playListNumber + '"]' )[ 0 ] || false;
 			if ( ! playlistNode ) {
 				return false;
 			}
@@ -366,6 +497,11 @@
 			if ( window.wp && window.wp.playlist && typeof window.wp.playlist.initialize === 'function' ) {
 				setTimeout(function() {
 					window.wp.playlist.initialize();
+					setTimeout(function() {
+						if ( ! tmp_cache[ galleryHash ] ) {
+							tmp_cache[ galleryHash ] = [ playlistNode.innerHTML ];
+						}
+					}, 250);
 				}, 250);
 			}
 			if ( myRenderApp.callbacks && myRenderApp.callbacks.widget && typeof myRenderApp.callbacks.widget === 'function' ) {
@@ -398,16 +534,20 @@
 	/**
 	 * Media Audio Playlist Preview
 	 * 
-	 * @param String wpAudioPlaylist The WP playlist shortcode [playlist ids="xxx,xxx,xx"]
-	 * @param Integer playListNumber The number used for the media ID in the HTML document
+	 * @param {String} wpAudioPlaylist The WP playlist shortcode [playlist ids="xxx,xxx,xx"]
+	 * @param {Integer} playListNumber The number used for the media ID in the HTML document
 	 *
-	 * @returns Boolean TRUE in case of success or FALSE
+	 * @returns {Boolean} TRUE in case of success or FALSE
 	 */
 	renderEngine.prototype.renderAudioPlaylist = function( wpAudioPlaylist, playListNumber ) {
 		var myRenderApp = this,
 			mediaIds = ( wpAudioPlaylist || '' ).match( /ids\=\"(.*?)\"/ );
 		if ( ! mediaIds || ! mediaIds[ 1 ] ) {
 			return ''; // Something's wrong
+		}
+		var galleryHash = myRenderApp.hashString( wpAudioPlaylist );
+		if ( tmp_cache && tmp_cache[ galleryHash ] ) {
+			return tmp_cache[ galleryHash ].join( '' );
 		}
 		// HTML Vide Playlist 
 		var playlistHTML = function( audioIds ) {
@@ -416,19 +556,19 @@
 				aud = wp.media.attachment( +audioIds[ j ] ).attributes;
 				if ( ! aud.url ) continue; // Just in case the media was deleted
 				obj = {
-					src: aud.url.replace( myRenderApp.base_url, '' ),
+					src: aud.url,
 					type: aud.mime,
 					title: aud.title,
 					caption: aud.caption,
 					description: aud.description,
 					meta: aud.meta,
 					image: {
-						src: aud.image.src.replace( myRenderApp.base_url, '' ),
+						src: aud.image.src,
 						width: aud.image.width,
 						height: aud.image.height
 					},
 					thumb: {
-						src: aud.thumb.src.replace( myRenderApp.base_url, '' ),
+						src: aud.thumb.src,
 						width: aud.thumb.width,
 						height: aud.thumb.height
 					}
@@ -438,7 +578,7 @@
 			if ( ! tracks.length ) {
 				return '';
 			}
-			var html = [ '<div id="playlist-' + playListNumber + '" class="wp-playlist wp-video-playlist wp-playlist-light" data-shortcode="' + encodeURIComponent( wpAudioPlaylist ) + '">' ];
+			var html = [ '<div id="playlist-' + playListNumber + '" class="wp-playlist wp-audio-playlist wp-playlist-light" data-shortcode="' + encodeURIComponent( wpAudioPlaylist ) + '">' ];
 			html.push( '<audio controls="controls" preload="none" width="582"></audio>' );
 			html.push( '<div class="wp-playlist-next"></div>' );
 			html.push( '<div class="wp-playlist-prev"></div>' );
@@ -453,7 +593,7 @@
 		};
 		// Check all medias are ready before intializing the rendering
 		var renderPlaylist = function() {
-			var playlistNode = document.getElementById( 'tmp_audio_playlist-' + playListNumber ) || false;
+			var playlistNode = $( 'div[data-pointer="tmp_audio_playlist-' + playListNumber + '"]' )[ 0 ] || false;
 			if ( ! playlistNode ) {
 				return false;
 			}
@@ -465,6 +605,11 @@
 			if ( window.wp && window.wp.playlist && typeof window.wp.playlist.initialize === 'function' ) {
 				setTimeout(function() {
 					window.wp.playlist.initialize();
+					setTimeout(function() {
+						if ( ! tmp_cache[ galleryHash ] ) {
+							tmp_cache[ galleryHash ] = [ playlistNode.innerHTML ];
+						}
+					}, 250);
 				}, 250);
 			}
 			if ( myRenderApp.callbacks && myRenderApp.callbacks.widget && typeof myRenderApp.callbacks.widget === 'function' ) {

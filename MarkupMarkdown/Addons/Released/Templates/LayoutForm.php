@@ -50,6 +50,11 @@
 					Custom toolbar
 				</th>
 				<td>
+					&nbsp;
+				</td>
+			</tr>
+			<tr class="site-default-toolbar">
+				<td colspan="2">
 <?php
 	include mmd()->plugin_dir . "/MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php";
 	$my_toolbar = new \MarkupMarkdown\Addons\Released\Media\ToolbarEasyMDE( $toolbar_conf );
@@ -59,7 +64,7 @@
 							<h4 class="ui-widget-header">Current Toolbar</h4>
 							<p>
 								Here is a preview of your toolbar, you can sort the buttons.<br />
-								Buttons related to languages displayed as a globe or a country code will only be displayed if the spell checker is enabled.
+								Buttons related to languages are represented as a single grey globe button, and will only be displayed if the related spell checkers are enabled.
 							</p>
 							<ul id="my_buttons" class="connected">
 <?php

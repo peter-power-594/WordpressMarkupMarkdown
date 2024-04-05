@@ -47,7 +47,6 @@ class Addons {
 		$this->load_media_vimeo();
 		$this->load_media_image();
 		$this->load_acf();
-		$this->load_builder_summernote();
 		$this->load_spellchecker();
 	}
 
@@ -108,15 +107,6 @@ class Addons {
 	private function load_acf() {
 		require_once $this->addon_dir  . 'Unsupported/AdvancedCustomField.php';
 		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\AdvancedCustomField();
-		$this->prop[ 'setup' ][] = $tmp_addon->slug;
-		$this->prop[ 'inst' ][ $tmp_addon->slug ] = $tmp_addon;
-		unset( $tmp_addon );
-	}
-
-
-	private function load_builder_summernote() {
-		require_once $this->addon_dir  . 'Unsupported/EngineSummernote.php';
-		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\EngineSummernote();
 		$this->prop[ 'setup' ][] = $tmp_addon->slug;
 		$this->prop[ 'inst' ][ $tmp_addon->slug ] = $tmp_addon;
 		unset( $tmp_addon );
