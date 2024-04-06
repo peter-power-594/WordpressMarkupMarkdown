@@ -69,8 +69,12 @@
 
 
 	MarkupMarkdownWidget.prototype.core = function( textarea ) {
-		if ( ! textarea || ! $( textarea ).length ) {
+		var $textarea = $( textarea || '#none' );
+		if ( ! $textarea.length ) {
 			return false;
+		}
+		if ( ! $textarea.attr( 'id' ) && $textarea.attr( 'name' ) ) {
+			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
 		var _self = this;
 		// Let the user upload contents
@@ -136,10 +140,19 @@
 		if ( n < 1 ) {
 			spell_check = 'none';
 		}
+		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
+			var minimalToolbar = [];
+			for ( var b = 0; b < toolbar.length; b++ ) {
+				if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
+					minimalToolbar.push( toolbar[ b ] );
+				}
+			}
+			toolbar = minimalToolbar;
+		}
 		// Editor config
 		var editorConfig = {
 			autoDownloadFontAwesome: false,
-			element: $( textarea )[ 0 ],
+			element: $textarea.get( 0 ),
 			toolbar: toolbar,
 			renderingConfig: {
 				codeSyntaxHighlighting: true
@@ -165,6 +178,9 @@
 			editorConfig.spellChecker = false;
 		}
 		_self.instance.editor = new EasyMDE( editorConfig );
+		_self.instance.editor.codemirror.on("change", function() {
+			$textarea.val( _self.instance.editor.value() );
+		});
 		if ( ! _win.wp.pluginMarkupMarkdown ) {
 			_win.wp.pluginMarkupMarkdown = {};
 		}

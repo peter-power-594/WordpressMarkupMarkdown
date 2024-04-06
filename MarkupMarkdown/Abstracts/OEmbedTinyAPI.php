@@ -95,7 +95,7 @@ abstract class OEmbedTinyAPI {
 					$my_content
 				);
 			elseif ( isset( $data->error ) ) :
-				error_log( "Markup Markdown: " . $data->error );
+				error_log( "\nWP Markup Markdown: " . $data->error );
 			endif;
 		endforeach;
 		return $my_content;

@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.2.0
-Version: 3.2.0
+Stable Tag: 3.2.2
+Version: 3.2.2
 Requires at least: 4.9
 Tested up to: 6.5.0
 Requires PHP: 5.6.0
@@ -61,12 +61,23 @@ Any block editor will be disabled for **all the users** of your Wordpress instan
 
 Sure, developers & designers can access the public properties & methods of the instance inside their templates through the global _mmd_ function. For example let's say you want to use it with a custom field called 'foo_bar'. You can use something
 like that:
-`<?php echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) ); ?>`
+
+```
+echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) );
+```
 
 With the plugin Advanced Custom Field (ACF), HTML content has been sanitized since v6.2.5. If you need to render iframes or others elements, instead of using:
-`<?php the_field( 'my_custom_field' ); ?>
- use  
-`<?php echo echo mmd()->markdown2html( get_field( 'my_custom_field' ) ); ?>`
+
+```
+the_field( 'my_custom_field' );
+```
+
+ use 
+
+```
+echo mmd()->markdown2html( get_field( 'my_custom_field' ) );
+```
+
 
 = What's the deal with the beta interface? =
 

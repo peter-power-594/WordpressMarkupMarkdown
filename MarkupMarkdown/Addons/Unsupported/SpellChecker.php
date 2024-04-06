@@ -231,17 +231,61 @@ class SpellChecker {
 			endif;
 			$lang_code = $this->dictionaries[ $dict ][ 'code' ];
 			$lang_label = $this->dictionaries[ $dict ][ 'label' ];
-			$lang_filename = urlencode( $this->dictionaries[ $dict ][ 'file_name' ] );
+			$lang_filename = $this->dictionaries[ $dict ][ 'file_name' ];
+			$this->check_for_older_names( $lang_filename );
 			$n++; if ( $n > 1 ) : $js .= ",\n"; endif;
 			$js .= "  " . $dict . ": {\n"
 				. "    code: \"" . $lang_code . "\",\n"
 				. "    label: \"" . $lang_label . "\",\n"
-				. "    aff: \"" . $dict_base_uri . urlencode( $lang_filename ) . ".aff\",\n"
-				. "    dic: \"" . $dict_base_uri . urlencode( $lang_filename ) . ".dic\"\n"
+				. "    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\",\n"
+				. "    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"\n"
 				. "  }";
 		endforeach;
 		$js .= "\n};";
 		return $js;
+	}
+
+	/**
+	 * Move spellchecker dictionnaries to new file names
+	 * Prior to version 3.2 urlencode was used. To use blueprint or other virtual machine, 
+	 * switched to md5 to remove any other character than 0-9 a-z
+	 *
+	 * @since 3.2.1
+	 * @access public 
+	 *
+	 * @return Boolean TRUE if the new dictionary were renamed or FALSE
+	 */
+	public function check_for_older_names( $dict_name = '' ) {
+		if ( empty( $dict_name ) ) :
+			return FALSE;
+		endif;
+		$dict_dir = $this->dict_dir;
+		$re = 0;
+		if ( file_exists( $dict_dir . '/' . urlencode( $dict_name ) . '.aff' ) ) :
+			$mv = rename( $dict_dir . '/' . urlencode( $dict_name ) . '.aff', $dict_dir . '/' . md5( $dict_name ) . '.aff' );
+			if ( ! $mv ) :
+				error_log( "\nWP Markup Markdown: Unable to rename the dictionary file called " . $dict_name . ".aff" );
+			else :
+				$re++;
+			endif;
+		endif;
+		if ( file_exists( $dict_dir . '/' . urlencode( $dict_name ) . '.dic' ) ) :
+			$mv = rename( $dict_dir . '/' . urlencode( $dict_name ) . '.dic', $dict_dir . '/' . md5( $dict_name ) . '.dic' );
+			if ( ! $mv ) :
+				error_log( "\nWP Markup Markdown: Unable to rename the dictionary file called " . $dict_name . ".dic" );
+			else :
+				$re++;
+			endif;
+		endif;
+		if ( file_exists( $dict_dir . '/' . urlencode( $dict_name ) . '.txt' ) ) :
+			$mv = rename( $dict_dir . '/' . urlencode( $dict_name ) . '.txt', $dict_dir . '/' . md5( $dict_name ) . '.txt' );
+			if ( ! $mv ) :
+				error_log( "\nWP Markup Markdown: Unable to rename the dictionary file called " . $dict_name . ".dic" );
+			else :
+				$re++;
+			endif;
+		endif;
+		return $re > 0 ? TRUE : FALSE;
 	}
 
 
@@ -276,7 +320,8 @@ class SpellChecker {
 		endif;
 		$dict_name = $this->dictionaries[ $dict_id ][ 'file_name' ];
 		$dict_dir = $this->dict_dir;
-		if ( file_exists( $dict_dir . '/' . urlencode( $dict_name ) . '.aff' ) && file_exists( $dict_dir . '/' . urlencode( $dict_name ) . '.dic' ) ) :
+		$this->check_for_older_names( $dict_name );
+		if ( file_exists( $dict_dir . '/' . md5( $dict_name ) . '.aff' ) && file_exists( $dict_dir . '/' . md5( $dict_name ) . '.dic' ) ) :
 			# Dictionary already installed, don't do anything
 			return FALSE;
 		endif;
@@ -294,10 +339,10 @@ class SpellChecker {
 		foreach ( $packages as $dict_ext => $dict_desc ) :
 			$response = wp_remote_get( $base . '/' . $dict_name . '.' . $dict_ext  );
 			if ( is_wp_error( $response ) || ! is_array( $response ) || ! isset( $response[ 'body' ] ) ) :
-				error_log( 'Markup Markdown : Error while trying to retrieve the ' . $dict_desc . ' about the dictionary ' . $dict_id );
+				error_log( 'WP Markup Markdown: Error while trying to retrieve the ' . $dict_desc . ' for the dictionary ' . $dict_id );
 				continue;
 			endif;
-			file_put_contents( $dict_dir . '/' . urlencode( $dict_name ) . '.' . $dict_ext, $response[ 'body' ] );
+			file_put_contents( $dict_dir . '/' . md5( $dict_name ) . '.' . $dict_ext, $response[ 'body' ] );
 			unset( $response ); # Be kind?
 			sleep( 1 ); # With rental server?
 		endforeach;
@@ -376,15 +421,16 @@ class SpellChecker {
 	$dict_dir = $this->dict_dir;
 	$dict_base_uri = str_replace( '/plugins/markup-markdown/', '/mmd-dict/', mmd()->plugin_uri );
 	foreach( $this->dictionaries as $dict_id => $dictionary ) :
-		$dictionary[ 'file_name' ] = urlencode( $dictionary[ 'file_name' ] );
+		$this->check_for_older_names( $dictionary[ 'file_name' ] );
+		$curr_base_filename = $dict_dir . '/' . md5( $dictionary[ 'file_name' ] );
 		echo "\n\t\t\t\t\t\t<tr>";
 		echo "\n\t\t\t\t\t\t\t<th scope=\"row\" class=\"lang-code\">" . $dictionary[ 'code' ] . "</th>";
 		echo "\n\t\t\t\t\t\t\t<th scope=\"row\">" . $dictionary[ 'label' ];
-		if ( file_exists( $dict_dir . '/' . $dictionary[ 'file_name' ] . '.txt' ) ) :
-			echo " (<a href=\"" . $dict_base_uri . urlencode( $dictionary[ 'file_name' ] ) . ".txt\" target=\"_blank\">Info</a>)";
+		if ( file_exists( $curr_base_filename . '.txt' ) ) :
+			echo " (<a href=\"" . $dict_base_uri . md5( $dictionary[ 'file_name' ] ) . ".txt\" target=\"_blank\">Info</a>)";
 		endif;
 		echo "</th>";
-		if ( file_exists( $dict_dir . '/' . $dictionary[ 'file_name' ] . '.dic' ) && file_exists( $dict_dir . '/' . $dictionary[ 'file_name' ] . '.aff' ) ) :
+		if ( file_exists( $curr_base_filename . '.dic' ) && file_exists( $curr_base_filename . '.aff' ) ) :
 			echo "\n\t\t\t\t\t\t\t<td>";
 			$isActive = isset( $my_cnf[ 'spellcheck' ] ) && is_array( $my_cnf[ 'spellcheck' ] ) && in_array( $dict_id, $my_cnf[ 'spellcheck' ] ) ? 1 : 0;
 			echo "\n\t\t\t\t\t\t\t\t<label for=\"mmd_spell_check_" . $dict_id . "\">"
