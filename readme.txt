@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.2.2
-Version: 3.2.2
+Stable Tag: 3.2.3
+Version: 3.2.3
 Requires at least: 4.9
-Tested up to: 6.5.0
+Tested up to: 6.5.2
 Requires PHP: 5.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -81,15 +81,20 @@ echo mmd()->markdown2html( get_field( 'my_custom_field' ) );
 
 = What's the deal with the beta interface? =
 
-The default editor is based on EasyMDE so you can write in markdown and use Wordpress feature at the same time.  
-The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. It's a custom version so you can get a live rendering when typing your content or adding medias. It's working quiet well actually but if something's wrong, you may have to edit directly the code from the builder or from the database so for the production environment I would advise to stick with the default options with EasyMDE. To find you more check my article here: https://red.phutu.red/blog/wordpress-plugins/dynamic-input-method-markdown/
+The default editor is based on EasyMDE so you can write in markdown and use Wordpress feature at the same time. The side panel preview mode has been fixed since 3.0. 
+The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta interface has been removed since 3.0 and will be available as a separate addon._ It's a custom version so you can get a live rendering when typing your content or adding medias. It's not perfect, it's still working well but for now you will have to modify the code on your own (builder or database) if something goes wrong. To find you more check my article here: https://www.markup-markdown.com/blog/wordpress-plugins/dynamic-input-method-markdown/
+
+= Accessibility =
+
+The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding. 
 
 == Changelog ==
 
-= 3.2.0 =
+= 3.2.X =
 
 Bug fix:
 - Bug introduced with version 3 for the custom post type support filter has been fixed
+- Patch for markdown contents not rendered on archive templates and REST calls
 
 Improvement:
 - "ACF Markup Markdown" custom field with custom post type !

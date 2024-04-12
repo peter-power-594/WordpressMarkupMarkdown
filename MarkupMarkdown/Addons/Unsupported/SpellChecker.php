@@ -171,7 +171,7 @@ class SpellChecker {
 	 * @access private
 	 * @since 1.9.3
 	 *
-	 * @param Array $dict the dictionaries locales list
+	 * @param Array $my_dict the dictionaries locales list
 	 * @returns Array $my_dict the list updated with different order if need be
 	 */
 	private function check_dict_preferences( $my_dict = [] ) {

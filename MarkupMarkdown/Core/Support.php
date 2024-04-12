@@ -200,9 +200,8 @@ class Support {
 	 * 
 	 * @return HTML $content The modified content
 	 */
-
 	public function post_markdown2html( $content ) {
-		if ( is_singular() && in_the_loop() && is_main_query() ) :
+		if ( wp_is_rest_endpoint() || ( ( is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
 			if ( post_type_supports( get_post_type(), 'markup_markdown' ) ) :
 				return apply_filters( 'post_markdown2html', $content );
 			else :
