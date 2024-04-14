@@ -1,19 +1,23 @@
 
 .acf-field-markupmarkdown .acf-input {
-  position: relative;
+  position: relative !important;
 }
 .acf-field-markupmarkdown .acf-input:after {
-	content: ' ';
-	display: block;
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 10;
-	background: rgba(255,255,255,0.85) url(../../../../../../../../../wp-includes/images/spinner-2x.gif) no-repeat 50% 50%;
+	content: ' ' !important;
+	display: block !important;
+	position: absolute !important;
+	top: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	z-index: 10 !important;
+	background: rgba(255,255,255,0.85) url(../../../../../../../../../wp-includes/images/spinner-2x.gif) no-repeat 50% 50% !important;
 }
 
 .acf-field-markupmarkdown .acf-input.ready:after {
-  display: none;
+  width: 1px !important;
+  height: 1px !important;
+  right: auto !important;
+  bottom: auto !important;
+  background: transparent !important;
 }

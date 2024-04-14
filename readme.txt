@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.2.3
-Version: 3.2.3
+Stable Tag: 3.2.4
+Version: 3.2.4
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -18,7 +18,7 @@ The content is saved with the markdown syntax in the database and is rendered on
 
 This extension rocks:
 - v3.2: Support to enable markdown only for custom fields
-- v3.1: Preview panel
+- v3.1: Side preview panel fixed
 - v3.0: Choose and sort the default toolbar buttons
 - v2.6: Sticky toolbar with the editor
 - v2.6: Possible to disable OP Cache
@@ -90,11 +90,20 @@ The current version is based on components that are not compatible with assistiv
 
 == Changelog ==
 
-= 3.2.X =
+= 3.2.4 =
+
+Bug fix:
+- Patch to refresh the view with frozen loader icons
+
+= 3.2.3 =
+
+Bug fix:
+- Patch for markdown contents not rendered on archive templates and REST calls
+
+= 3.2 =
 
 Bug fix:
 - Bug introduced with version 3 for the custom post type support filter has been fixed
-- Patch for markdown contents not rendered on archive templates and REST calls
 
 Improvement:
 - "ACF Markup Markdown" custom field with custom post type !

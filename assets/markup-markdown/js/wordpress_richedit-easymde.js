@@ -204,6 +204,11 @@
 			// Event need to be triggered manually
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
 		}
+		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
+			setTimeout(function() {
+				_self.instance.editor.codemirror.refresh();
+			}, 250 );
+		}
 	};
 
 
