@@ -67,7 +67,7 @@ class mmd_acf_field_markdown extends \acf_field {
 
 		$this->env = array(
 			'url'     => site_url( str_replace( ABSPATH, '', __DIR__ ) ), // URL to the acf-FIELD-NAME directory.
-			'version' => '1.0.7', // Replace this with your theme or plugin version constant.
+			'version' => '1.0.9', // Replace this with your theme or plugin version constant.
 		);
 
 		parent::__construct();
@@ -117,7 +117,7 @@ class mmd_acf_field_markdown extends \acf_field {
 			Debug output to show what field data is available.
 			echo '<pre>';
 			print_r( $field );
-			echo '</pre>';	
+			echo '</pre>';
 		*/
 		if ( ! defined( 'MMD_CUSTOM_FIELD' ) ) :
 			define( 'MMD_CUSTOM_FIELD', 1 );

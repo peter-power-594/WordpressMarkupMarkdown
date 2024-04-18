@@ -76,14 +76,18 @@
 		if ( ! $textarea.attr( 'id' ) && $textarea.attr( 'name' ) ) {
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
-		var _self = this;
+		var _self = this,
+			isACF = $textarea.closest( '.acf-input' ).length ? 1 : 0;
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
-		var spell_check = '',
+		var spell_check = { disabled: 1 },
 			toolbar = [];
 		if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.spellChecker ) {
 			spell_check = _win.wp.pluginMarkupMarkdown.spellChecker;
+			if ( typeof spell_check !== 'object' ) {
+				spell_check = { disabled: 1 };
+			}
 		}
 		var n = 0;
 		for ( var b = 0, slug = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
@@ -91,7 +95,7 @@
 			if ( slug === "pipe" ) {
 				toolbar.push( "|" );
 			}
-			else if ( /spell[-_]*check/.test( slug ) ) {
+			else if ( /spell[-_]*check/.test( slug ) && ! spell_check.disabled ) {
 				$.each(spell_check, function(myLang, targetLang) {
 					n++;
 					if ( n <= 1 ) {
@@ -138,9 +142,10 @@
 			}
 		}
 		if ( n < 1 ) {
-			spell_check = 'none';
+			spell_check = { disabled: 1 };
 		}
-		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
+		if ( isACF > 0 ) {
+			// Disable preview mode by default with Advanced Custom Fields
 			var minimalToolbar = [];
 			for ( var b = 0; b < toolbar.length; b++ ) {
 				if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
@@ -167,7 +172,7 @@
 				return text;
 			}
 		};
-		if ( spell_check && spell_check !== 'none' ) {
+		if ( spell_check && spell_check !== 'none' && ! spell_check.disabled ) {
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files
 			editorConfig.spellChecker = function( spellCheckConfig ) {
 				spellCheckConfig.language = spell_check;
@@ -187,7 +192,7 @@
 		if ( ! _win.wp.pluginMarkupMarkdown.instances ) {
 			_win.wp.pluginMarkupMarkdown.instances = [];
 		}
-		_self.fieldNumber = fieldNumber++; 
+		_self.fieldNumber = fieldNumber++;
 		var mediaCounters = $( textarea ).val().match( /\"myset.*?\s/g );
 		if ( mediaCounters && mediaCounters.length ) {
 			var startCounter = 0;
@@ -200,11 +205,19 @@
 			_self.widgetCounter = startCounter + 1;
 		}
 		_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
-		if ( ! spell_check || spell_check === 'none' ) {
+		if ( ! spell_check || ( spell_check.disabled && spell_check.disabled === 1 ) || spell_check === 'none' ) {
 			// Event need to be triggered manually
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
+			if ( isACF > 0 ) {
+				$textarea.closest( '.acf-input' ).addClass( 'ready' );
+			}
+			else {
+				$( '#wp-content-editor-container' ).addClass( 'ready' );
+				new MarkupMarkdownOptions();
+				$( _doc.body ).addClass( 'markupmarkdown-ready' );
+			}
 		}
-		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
+		if ( isACF > 0 ) {
 			setTimeout(function() {
 				_self.instance.editor.codemirror.refresh();
 			}, 250 );
@@ -354,11 +367,15 @@
 
 	/**
 	 * From here an old school implementation to make the EasyMDE toolbars sticky with WayPoint
-	 * We _don't rely_ on CoreMirror events but with the user interactions from the surrounded containers 
+	 * We _don't rely_ on CoreMirror events but with the user interactions from the surrounded containers
 	 */
 	function MarkupMarkdownOptions() {
-		var _self = this,
-			userTimerId = 0,
+		var _self = this;
+		if ( $( _doc.body ).hasClass( 'mmd-options-ready' ) ) {
+			return false;
+		}
+		$( _doc.body ).addClass( 'mmd-options-ready' );
+		var userTimerId = 0,
 			$userPanel = $( '.mmd-easymde-prefs' );
 		_self.userOptions = _self.getUserOptions( $userPanel );
 		_self.stickyInst = [];
@@ -409,9 +426,9 @@
 
 	/**
 	 * Make EasyMDE toolbars sticky if the height of the panel is greater than the screen's height
-	 * 
+	 *
 	 * @since 2.5
-	 * 
+	 *
 	 * @returns {Void}
 	 */
 	MarkupMarkdownOptions.prototype.setStickyToolbar = function() {
@@ -427,7 +444,7 @@
 				var $toolbar = $el.find( '.editor-toolbar:eq(0)' ),
 					currHeight = $el.height() - $toolbar.height();
 				if ( currHeight < minHeight ) {
-					// Don't set to sticky if the field is shorter than the screen 
+					// Don't set to sticky if the field is shorter than the screen
 					return false;
 				}
 				isStickyActive = 1;

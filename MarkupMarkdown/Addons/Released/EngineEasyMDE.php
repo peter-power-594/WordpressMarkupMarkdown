@@ -101,7 +101,7 @@ class EngineEasyMDE {
 	 * @since 3.0
 	 *
 	 * @param String $hook the current hook in use
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function check_current_hook( $hook ) {
@@ -128,7 +128,7 @@ class EngineEasyMDE {
 	 * on the edit screen of a post / page using the markdown version of wysiwyg
 	 *
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function load_engine_assets() {
@@ -150,7 +150,7 @@ class EngineEasyMDE {
 		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__sticky' ], '1.1.3', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.15', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.17', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.7', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.11', true );
 		wp_add_inline_script( 'markup_markdown__wordpress_media', $this->add_inline_editor_conf() );
 		return TRUE;
 	}
@@ -176,7 +176,7 @@ class EngineEasyMDE {
 			endif;
 		endif;
 		$toolbarButtons = json_decode( preg_replace( "#[^a-z0-9-_\,\:\"\{\}\[\]]#", "", file_get_contents( $json ) ) );
-		$js .= "wp.pluginMarkupMarkdown.primaryArea = " . ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ? '1' : '0' ) . ";\n"; 
+		$js .= "wp.pluginMarkupMarkdown.primaryArea = " . ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ? '1' : '0' ) . ";\n";
 		$js .= "wp.pluginMarkupMarkdown.toolbarButtons = [ \"" . implode( "\",\"", str_replace( '_', '-', $toolbarButtons->my_buttons ) ) . "\" ];\n";
 		return $js;
 	}
