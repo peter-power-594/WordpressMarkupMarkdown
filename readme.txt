@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.2.4
-Version: 3.2.4
+Stable Tag: 3.3.0
+Version: 3.3.0
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -49,12 +49,12 @@ All done! That's all you should do.
 
 = Is it still compatible with Gutenberg or any other builder?
 
-**Yes but you can't use both at the same time ;-)**  
+**Yes but you can't use both at the same time ;-)**
 Data are saved as pure markdown code in the database, for the other editors on the market data are saved as HTML or custom markups like shortcodes. Currently data are still saved but won't be converted or rendered correctly if you revert back or switch between editors.
 
 = Can I switch between editors or allow the markdown editor for specific users ? =
 
-**Yes, please keep in mind it's a global switch for every user. You need to stick to one editor with one post type.**  
+**Yes, please keep in mind it's a global switch for every user. You need to stick to one editor with one post type.**
 Any block editor will be disabled for **all the users** of your Wordpress instance. _filters_ are available to disable the markdown editor for specific custom post types at a global level. For example you can do a setup to use _Divi_ or _Elementor_ to edit your pages and _Markdown_ to edit your blog'posts. Please refer to the forum to know how to do it.
 
 = Can I use it with custom fields? (Or within my theme) =
@@ -72,21 +72,20 @@ With the plugin Advanced Custom Field (ACF), HTML content has been sanitized sin
 the_field( 'my_custom_field' );
 ```
 
- use 
+ use
 
 ```
 echo mmd()->markdown2html( get_field( 'my_custom_field' ) );
 ```
 
-
 = What's the deal with the beta interface? =
 
-The default editor is based on EasyMDE so you can write in markdown and use Wordpress feature at the same time. The side panel preview mode has been fixed since 3.0. 
+The default editor is based on EasyMDE so you can write in markdown and use Wordpress feature at the same time. The side panel preview mode has been fixed since 3.0.
 The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta interface has been removed since 3.0 and will be available as a separate addon._ It's a custom version so you can get a live rendering when typing your content or adding medias. It's not perfect, it's still working well but for now you will have to modify the code on your own (builder or database) if something goes wrong. To find you more check my article here: https://www.markup-markdown.com/blog/wordpress-plugins/dynamic-input-method-markdown/
 
 = Accessibility =
 
-The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding. 
+The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
 == Changelog ==
 

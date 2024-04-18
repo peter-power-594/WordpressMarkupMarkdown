@@ -128,7 +128,7 @@ class Settings {
 		do_action( 'mmd_before_options' );
 ?>
 		<div id="wrap">
-			<h1>Markup Markdown : <?php echo __( 'Settings' ); ?></h1>
+			<h1>Markup Markdown <sup><?php echo mmd()->version; ?></sup> : <?php echo __( 'Settings' ); ?></h1>
 			<p>Most of the following settings are related to addons. You can globally enable or disable addons from the <a href="#show-settings-link" class="toggler">screen options</a> panel.
 			<form method="post">
 				<div id="tabs">

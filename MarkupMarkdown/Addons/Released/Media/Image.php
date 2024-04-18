@@ -22,6 +22,8 @@ class Image {
 	public $def_sizes = [];
 
 
+	public $gutenberg = 0;
+
 	public function __construct( ) {
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
@@ -38,6 +40,16 @@ class Image {
 			return $this->prop[ $name ];
 		}
 		return 'mmd_undefined';
+	}
+
+
+	public function load_image_block_assets() {
+		if ( $this->gutenberg > 0 ) : # Already loaded
+			return FALSE;
+		endif;
+		$this->gutenberg = 1;
+		wp_enqueue_style( 'wp-block-image', '/wp-includes/blocks/images/style.min.css' );
+		return TRUE;
 	}
 
 
@@ -61,9 +73,9 @@ class Image {
 		endif;
 		$html = '<figure id="attachment_mmd_' . $ops[ 'idx' ] . '"';
 		if ( ! empty( $caption ) ) :
-			$html .= ' aria-describedby="caption-attachment-mmd' . $ops[ 'idx' ] . '" class="wp-caption ';
+			$html .= ' aria-describedby="caption-attachment-mmd' . $ops[ 'idx' ] . '" class="wp-block-image wp-caption ';
 		else :
-			$html .= ' class="';
+			$html .= ' class="wp-block-image ';
 		endif;
 		$html .= 'align' . $align . '">';
 		if ( isset( $ops[ 'url' ] ) && ! empty( $ops[ 'url' ] ) ) :
@@ -144,7 +156,7 @@ class Image {
 		endif;
 		if ( ! empty( $caption ) ) :
 			$html .= '<figcaption id="caption-attachment-mmd' . $ops[ 'idx' ]
-				. '" class="wp-caption-text">' . trim( $caption ) . '</figcaption>';
+				. '" class="wp-caption-text wp-element-caption">' . trim( $caption ) . '</figcaption>';
 		endif;
 		$html .= '</figure>';
 		return $html;
@@ -160,6 +172,9 @@ class Image {
 	 * @return string $content The modified html code
 	 */
 	public function render_responsive_image( $content = '' ) {
+		if ( defined( 'MMD_USE_BLOCKSTYLES' ) && MMD_USE_BLOCKSTYLES ) :
+			$this->load_image_block_assets();
+		endif;
 		$wp_imgs = array();
 		if ( ! $this->home_url ) :
 			$this->home_url = preg_replace( '#(\.[a-z]+)\/.*?$#', '$1/', get_home_url() );
@@ -171,7 +186,7 @@ class Image {
 				[ 'large' => [ (int)get_option( 'large_size_w' ), (int)get_option( 'large_size_h' ) ] ]
 			];
 		endif;
-		# Replace linked images
+		# Replace WP-like linked images <a href=""...><img src=".../foo-640x480.jpg"...></a>
 		preg_match_all( '#<a href="(.*?)"([^>]*)><img src="/(.*?)-(\d+)x(\d+)\.([a-zA-Z]+)"(.*?)></a>#', $content, $wp_imgs );
 		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
 			preg_match( '#alt="(.*?)"#', $wp_imgs[ 7 ][ $idx ], $img_label );
@@ -192,7 +207,7 @@ class Image {
 				$content = str_replace( $img_tag, $new_img_tag, $content );
 			endif;
 		endforeach;
-		# Replace images
+		# Replace WP-like images <img src=".../bar-1024x768.jpg"...>
 		preg_match_all( '#<img src="/(.*?)-(\d+)x(\d+)\.([a-zA-Z]+)"(.*?)>#', $content, $wp_imgs );
 		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
 			preg_match( '#alt="(.*?)"#', $wp_imgs[ 5 ][ $idx ], $img_label );
@@ -206,6 +221,23 @@ class Image {
 						. '.' . $wp_imgs[ 4 ][ $idx ],
 				'width' => $wp_imgs[ 2 ][ $idx ],
 				'height' => $wp_imgs[ 3 ][ $idx ],
+			));
+			if ( ! empty( $new_img_tag ) ) :
+				$content = str_replace( $img_tag, $new_img_tag, $content );
+			endif;
+		endforeach;
+		# Replace other linked images <a href=""...><img src="....jpg"...></a>
+		preg_match_all( '#<a href="(.*?)"([^>]*)><img src="(.*?\.[a-zA-Z]+)"(.*?)></a>#', $content, $wp_imgs );
+		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
+			preg_match( '#alt="(.*?)"#', $wp_imgs[ 4 ][ $idx ], $img_label );
+			preg_match( '#align([a-z]+)#', $wp_imgs[ 4 ][ $idx ], $img_align );
+			$new_img_tag = $this->wp_image(array(
+				'idx'	=> $idx,
+				'url'	=> $wp_imgs[ 1 ][ $idx ],
+				'title' => $wp_imgs[ 2 ][ $idx ],
+				'label' => $img_label,
+				'align' => $img_align,
+				'src'	=> $wp_imgs[ 3 ][ $idx ]
 			));
 			if ( ! empty( $new_img_tag ) ) :
 				$content = str_replace( $img_tag, $new_img_tag, $content );

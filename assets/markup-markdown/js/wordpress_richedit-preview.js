@@ -71,7 +71,8 @@
 				audioPlaylist: 'renderAudioPlaylist',
 				convertImage: 'convertHTMLImage',
 				convertAudio: 'convertAudioShortcode',
-				convertVideo: 'convertVideoShortcode'
+				convertVideo: 'convertVideoShortcode',
+				convertHeading: 'convertHeadingTags'
 			};
 		return {
 			flushQueue: function() {
@@ -141,6 +142,68 @@
 			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' ); 
 		});
 		_self.previewSheet.innerText = css.join( '' );
+	};
+
+
+	/**
+	 * Extract and generates html attributes from markdown extra syntax
+	 *
+	 * @param {String} extractExtra Markdown extra markup
+	 * 
+	 * @returns {String} The list of the related html attributes or FALSE in case of errors
+	 */
+	renderEngine.prototype.extractExtra = function( extraMarkup ) {
+		if ( ! extraMarkup || ! extraMarkup.length ) {
+			return false;
+		}
+		var extras = extraMarkup.match( /([^\s][\#\.]*[a-zA-Z0-9-_=]+[^\W]*)/g );
+		if ( ! extras || ! extras.length ) {
+			return false;
+		}
+		var attrs = {};
+		for ( var e = 0, extra, tmp; e < extras.length; e++ ) {
+			extra = extras[ e ];
+			if ( /^#/.test( extra ) ) {
+				attrs[ 'id' ] = attrs[ 'id' ] || '';
+				attrs[ 'id' ] += extra.replace( '#', '' );
+			}
+			else if ( /^\./.test( extra ) ) {
+				attrs[ 'class' ] = attrs[ 'class' ] || '';
+				attrs[ 'class' ] += ' ' + extra.replace( '.', '' );
+			}
+			else if ( /\=/.test( extra ) ) {
+				tmp = extra.split( '=' );
+				attrs[ tmp[ 0 ] ] = tmp [ 1 ];
+			}
+		}
+		var html = [];
+		for ( var key in attrs ) {
+			html.push( key + '="' + attrs[ key ].replace( /^\s*|\s*$/, '' ) + '"' );
+		}
+		return ' ' + html.join( ' ' );
+	}
+
+
+	renderEngine.prototype.convertHeadingTags = function( wpHeading ) {
+		var myRenderApp = this,
+			headingHash = myRenderApp.hashString( wpHeading );
+		if ( tmp_cache && tmp_cache[ headingHash ] ) {
+			return tmp_cache[ headingHash ].join( '' );
+		}
+		var matches = wpHeading.match( /<h(\d)[^\>]*>(.*?)\{([^\}]+)\}<\/h\d>/ );
+		if ( ! matches || ! matches.length || matches.length !== 4 ) {
+			tmp_cache[ headingHash ] = [ wpHeading ];
+			return wpHeading;
+		}
+		var headline = [
+			'<h' + matches[ 1 ],
+			( myRenderApp.extractExtra( matches[ 3 ] ) || '' ),
+			'>',
+			matches[ 2 ],
+			'</h' + matches[ 1 ] + '>',
+		];
+		tmp_cache[ headingHash ] = headline;
+		return headline.join( '' );
 	};
 
 
@@ -285,24 +348,24 @@
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertHTMLImage = function( wpImage, dummy ) {
-		var items = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/ ),
+		var items = wpImage.match( /<img(.*?)>\{([^\}]+)\}/ ),
 			myRenderApp = this,
 			pictureHash = myRenderApp.hashString( wpImage );
 		if ( tmp_cache && tmp_cache[ pictureHash ] ) {
 			return tmp_cache[ pictureHash ].join( '' );
 		}
 		if ( ! items || items.length < 2 ) {
-			return wpImage.replace( /\{\.(.*?)\}/, '' );
+			return wpImage.replace( /\{[^\}]+\}/, '' );
 		}
-		var matches = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/g );
+		var matches = wpImage.match( /<img(.*?)>\{([^\}]+)\}/g ); // Watch out for the "/g" (global) here !
 		if ( ! matches || ! matches.length ) {
 			return wpImage;
 		}
-		for ( var m = 0, links = [], link = '', item = [], figure = '', alt = [], sizes = [], caption = ''; m < matches.length; m++ ) {
-			links = wpImage.match( '<a href="(.*?)"[^>]*>' + matches[ m ] ),
+		for ( var m = 0, links = [], link = '', item = [], figure = '', extras = [], alt = [], sizes = [], caption = ''; m < matches.length; m++ ) {
+			links = wpImage.match( '<a href="(.*?)"[^>]*>' + items[ m ] ),
 			link = links && links.length > 0 ? links[ 1 ] : '',
-			item = matches[ m ].match( /<img(.*?)>\{\.(align[a-z]+)\}/ ),
-			figure = '<figure class="' + item[ 2 ] + '">';
+			item = matches[ m ].match( /<img(.*?)>\{(.*?)\}/ ),
+			figure = '<figure' + ( myRenderApp.extractExtra( matches[ 2 ] ) || '' ) + '>';
 			if ( link && link.length ) {
 				figure += '<a href="' + link + '" target="_blank">'; // New tab for the preview
 			}
@@ -319,9 +382,9 @@
 				figure += '</a>';
 			}
 			if ( caption && caption.length ) {
-				figure = figure.replace( /class="(.*?)"/, 'class="wp-caption $1"' );
+				figure = figure.replace( /class="(.*?)"/, 'class="wp-block-image wp-caption $1"' );
 				figure = figure.replace( /alt=".*?"/, 'alt="' + alt + '"' );
-				figure += '<figcaption>' + caption + '</figcaption>';
+				figure += '<figcaption class="wp-caption-text wp-element-caption">' + caption + '</figcaption>';
 			}
 			if ( sizes && sizes[ 2 ] && ! isNaN( +sizes[ 2 ] ) ) {
 				figure = figure.replace( /<figure/, '<figure style="width:' + sizes[ 2 ] + 'px"' );

@@ -457,9 +457,14 @@ class Extra extends \MarkupMarkdown\Parsedown\Parsedown
             {
                 $Data['id'] = substr($attribute, 1);
             }
-            else # "."
+            elseif ( $attribute[0] === '.' )
             {
                 $classes []= substr($attribute, 1);
+            }
+            elseif ( strpos($attribute, '=') )
+            {
+              preg_match('#([\w-]+)="?([\D\w-]+)"?#', $attribute, $match);
+              if( !empty($match) ) $Data[$match[1]] = $match[2];
             }
         }
 
@@ -545,5 +550,5 @@ class Extra extends \MarkupMarkdown\Parsedown\Parsedown
     # Fields
     #
 
-    protected $regexAttribute = '(?:[#.][-\w]+[ ]*)';
+    protected $regexAttribute = '((?:[.#:;=\-"\'\s\w]+))[^}]?';
 }

@@ -187,7 +187,7 @@
 		if ( ! _win.wp.pluginMarkupMarkdown.instances ) {
 			_win.wp.pluginMarkupMarkdown.instances = [];
 		}
-		_self.fieldNumber = fieldNumber++; 
+		_self.fieldNumber = fieldNumber++;
 		var mediaCounters = $( textarea ).val().match( /\"myset.*?\s/g );
 		if ( mediaCounters && mediaCounters.length ) {
 			var startCounter = 0;
@@ -255,6 +255,10 @@
 	MarkupMarkdownWidget.prototype.previewRender = function( text, preview ) {
 		var _self = this;
 		text = _self.instance.editor.markdown( text );
+		// Render the headings
+		text = text.replace( /<h\d[^\>]*>.*?\{[^\}]+\}<\/h\d>/g, function( wpHeadline ) {
+			return mediaPreview.processTask( 'convertHeading', wpHeadline );
+		});
 		// Render the gallery shortcode. Ref /wp-includes/js/tinymce/plugins/wpgallery/plugin.js
 		var galCounter = 0,
 			getRandomNodeID = function( min, max ) {
@@ -277,10 +281,10 @@
 			}
 		});
 		// Render the images
-		text = text.replace( /<a.*?><img.*?>\{\.align[a-z]+\}<\/a>/g, function( wpImage ) {
+		text = text.replace( /<a.*?><img.*?>\{[^\}]+\}<\/a>/g, function( wpImage ) {
 			return mediaPreview.processTask( 'convertImage', wpImage, false );
 		});
-		text = text.replace( /<img.*?>\{\.align[a-z]+\}/g, function( wpImage ) {
+		text = text.replace( /<img.*?>\{[^\}]+\}/g, function( wpImage ) {
 			return mediaPreview.processTask( 'convertImage', wpImage, false );
 		});
 		text = text.replace( /<p><figure/, '<figure' ).replace( /<\/figure><\/p>/, '</figure>' );
@@ -354,7 +358,7 @@
 
 	/**
 	 * From here an old school implementation to make the EasyMDE toolbars sticky with WayPoint
-	 * We _don't rely_ on CoreMirror events but with the user interactions from the surrounded containers 
+	 * We _don't rely_ on CoreMirror events but with the user interactions from the surrounded containers
 	 */
 	function MarkupMarkdownOptions() {
 		var _self = this,
@@ -409,9 +413,9 @@
 
 	/**
 	 * Make EasyMDE toolbars sticky if the height of the panel is greater than the screen's height
-	 * 
+	 *
 	 * @since 2.5
-	 * 
+	 *
 	 * @returns {Void}
 	 */
 	MarkupMarkdownOptions.prototype.setStickyToolbar = function() {
@@ -427,7 +431,7 @@
 				var $toolbar = $el.find( '.editor-toolbar:eq(0)' ),
 					currHeight = $el.height() - $toolbar.height();
 				if ( currHeight < minHeight ) {
-					// Don't set to sticky if the field is shorter than the screen 
+					// Don't set to sticky if the field is shorter than the screen
 					return false;
 				}
 				isStickyActive = 1;
