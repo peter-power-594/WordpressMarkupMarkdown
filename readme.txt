@@ -12,7 +12,7 @@ Disable Wordpress's native Gutenberg or TinyMCE editor in favor of a Markdown ed
 
 == Description ==
 
-This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the edit screen with [EasyMDE](https://easy-markdown-editor.tk), a markdown editor based on CodeMirror.
+This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the edit screen with [EasyMDE](https://github.com/Ionaru/easy-markdown-editor), a markdown editor based on CodeMirror.
 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
