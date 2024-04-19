@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.2.5
-Version: 3.2.5
+Stable Tag: 3.2.6
+Version: 3.2.6
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -12,7 +12,7 @@ Disable Wordpress's native Gutenberg or TinyMCE editor in favor of a Markdown ed
 
 == Description ==
 
-This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the edit screen with [EasyMDE](https://easy-markdown-editor.tk), a markdown editor based on CodeMirror.
+This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the edit screen with [EasyMDE](https://github.com/Ionaru/easy-markdown-editor), a markdown editor based on CodeMirror.
 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
@@ -62,22 +62,16 @@ Any block editor will be disabled for **all the users** of your Wordpress instan
 Sure, developers & designers can access the public properties & methods of the instance inside their templates through the global _mmd_ function. For example let's say you want to use it with a custom field called 'foo_bar'. You can use something
 like that:
 
-```php
-<?php echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) ); ?>
-```
+`<?php echo mmd()->markdown2html( get_post_meta( get_the_ID(), 'foo_bar' , true ) ); ?>`
 
 Disclaimer: with the plugin Advanced Custom Field (ACF), HTML content has been sanitized since v6.2.5.
 If you need to render iframes or others elements, instead of using:
 
-```php
-<?php the_field( 'my_custom_field' ); ?>
-```
+`<?php the_field( 'my_custom_field' ); ?>`
 
  use
 
-```php
-<?php echo mmd()->markdown2html( get_field( 'my_custom_field' ) ); ?>
-```
+`<?php echo mmd()->markdown2html( get_field( 'my_custom_field' ) ); ?>`
 
 
 = What's the deal with the beta interface? =
@@ -90,6 +84,10 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta in
 The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
 == Changelog ==
+
+= 3.2.6 =
+
+Readme.txt Updated
 
 = 3.2.5 =
 
