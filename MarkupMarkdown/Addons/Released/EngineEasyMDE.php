@@ -17,19 +17,30 @@ class EngineEasyMDE {
 	);
 
 
+	public $is_admin = FALSE;
+
+	public $frontend_enabled = FALSE;
+
 	public function __construct() {
 		if ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) !== FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated (SummerNote activated)
 		endif;
-		if ( is_admin() ) :
-			add_action( 'admin_enqueue_scripts', array( $this, 'check_current_hook' ) );
+		$this->is_admin = is_admin() ? TRUE : FALSE;
+		if ( $this->is_admin ) :
+			# Hooks that run only in the backend
 			add_action( 'wp_ajax_mmduser-editoptions', array( $this, 'save_mmd_edit_options' ) );
 			$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 			if ( 'edit' === $action ) :
 				add_filter( 'screen_settings', array( $this, 'mmd_post_screen_options_settings' ), 9 , 2 );
 			endif;
+			add_action( 'init', array( $this, 'prepare_editor_assets' ), 10000 );
+		else :
+			# Hooks that might be used on the frontend as well. Use same priority
+			# Use the same or higher priority than defined in Core/Support.php
+			add_action( 'wp_head', array( $this, 'prepare_editor_assets' ), 12 );
 		endif;
+		return TRUE;
 	}
 
 
@@ -95,65 +106,118 @@ class EngineEasyMDE {
 
 
 	/**
-	 * Check if the user is currently on an edit screen
+	 * Check and trigger the assets load if need be
 	 *
 	 * @access public
-	 * @since 3.0
+	 * @since 3.3.0
+	 *
+	 * @return Boolean TRUE if we need to load the assets or FALSE
+	 */
+	public function prepare_editor_assets() {
+		if ( $this->is_admin ) :
+			add_action( 'admin_enqueue_scripts', array( $this, 'load_assets' ) );
+		else :
+			$this->frontend_enabled = apply_filters( 'mmd_frontend_enabled', false );
+			if ( ! $this->frontend_enabled ) :
+				return false;
+			endif;
+			$this->load_assets();
+		endif;
+		return true;
+	}
+
+
+	/**
+	 * Load step by setp the required assets
+	 *
+	 * @access public
+	 * @since 3.0.0
 	 *
 	 * @param String $hook the current hook in use
 	 *
 	 * @return Void
 	 */
-	public function check_current_hook( $hook ) {
-		if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
-			return FALSE;
+	public function load_assets( $hook = 'unknown.php' ) {
+		if ( $this->is_admin ) : # Backend
+			if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
+				# Not editing a post, do not load asset & exit
+				return false;
+			endif;
+		else : # Frontend
+			if ( ! is_singular() || ! $this->frontend_enabled ) :
+				// Frontend and user is no logged or not possible to edit content
+				return false;
+			endif;
 		endif;
-		wp_enqueue_media();
+		# (1) Load the media related manager assets
+		$this->load_engine_media();
+		# (2) Load the markdown editor related stylesheets
+		$this->load_engine_stylesheets();
+		# (3) Conditional markdown editor scripts loading inside the footer after all plugins are loaded
+		add_action( $this->is_admin ? 'admin_footer' : 'wp_footer', array( $this, 'load_engine_scripts' ) );
+	}
+
+
+	/**
+	 * Queue the media manager related assets
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @return Void
+	 */
+	public function load_engine_media() {
+		$args = array();
+		$post_id = function_exists( 'get_the_ID' ) ? get_the_ID() : 0;
+		if ( (int)$post_id > 0 ) :
+			$args[ 'post' ] = $post_id;
+		endif;
+		wp_enqueue_media( $args );
 		wp_playlist_scripts( 'audio' );
 		wp_playlist_scripts( 'video' );
+	}
+
+
+	/**
+	 * Trigger the loading of the editor scripts if and only if we are
+	 * on the edit screen of a post / page using the markdown version of wysiwyg
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @return Void
+	 */
+	public function load_engine_stylesheets() {
 		$plugin_uri = mmd()->plugin_uri;
-		# 1. Load editor related stylesheets
 		wp_enqueue_style( 'markup_markdown__cssengine_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.101' );
 		wp_enqueue_style( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/github.css', [ 'markup_markdown__cssengine_editor' ], '8.9.1' );
 		wp_enqueue_style( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/css/wordpress_richedit-easymde.css', [ 'markup_markdown__highlightjs_snippets' ], '1.1.28' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown__wordpress_richedit' ], '5.15.14' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown__font_awesome_regular' ], '5.15.14' );
-		# Conditinal script loading with footer hook after all plugins are loaded
-		add_action( 'admin_footer', array( $this, 'load_engine_assets' ) );
 	}
 
 
 	/**
-	 * Trigger the loading of stylesheets and scripts if and only if we are
-	 * on the edit screen of a post / page using the markdown version of wysiwyg
+	 * Trigger the loading of the editor scripts
 	 *
 	 * @access public
+	 * @since 3.3.0
 	 *
 	 * @return Void
 	 */
-	public function load_engine_assets() {
-		$required = 0;
-		if ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED > 0 ) :
-			$required = 1;
-		elseif ( defined( 'MMD_CUSTOM_FIELD' ) && MMD_CUSTOM_FIELD > 0 ) :
-			$required = 1;
-		endif;
-		if ( ! $required ) :
-			return FALSE;
-		endif;
-		# 2. Load markdown related scripts
+	public function load_engine_scripts() {
 		$plugin_uri = mmd()->plugin_uri;
 		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.0', true );
 		wp_enqueue_script( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/highlightjs.min.js', [ 'markup_markdown__jsengine_editor' ], '8.9.1', true );
 		wp_enqueue_script( 'markup_markdown__waypoints', 'https://unpkg.com/waypoints@4.0.1/lib/jquery.waypoints.min.js', [ 'markup_markdown__jsengine_editor' ], '4.0.1', true );
 		wp_enqueue_script( 'markup_markdown__sticky', 'https://unpkg.com/waypoints@4.0.1/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
 		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__sticky' ], '1.1.3', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.15', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.17', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.20', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.20', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.11', true );
 		wp_add_inline_script( 'markup_markdown__wordpress_media', $this->add_inline_editor_conf() );
-		return TRUE;
 	}
+
 
 	/**
 	 * Method to add inline JavaScript setup variable to the admin edit screen
@@ -165,7 +229,8 @@ class EngineEasyMDE {
 	 */
 	public function add_inline_editor_conf() {
 		$home_url = get_home_url() . '/';
-		$js = "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
+		$js = "window.wp = window.wp || {};\n"; # Just in case
+		$js .= "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
 		$js .= "wp.pluginMarkupMarkdown.homeURL = \"" . $home_url . "\";\n";
 		$json = mmd()->cache_dir . '/conf_easymde_toolbar.json';
 		if ( ! file_exists( $json ) ) :

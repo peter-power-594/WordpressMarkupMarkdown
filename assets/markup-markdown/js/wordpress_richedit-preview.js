@@ -11,9 +11,9 @@
 
 	/**
 	 * MmdPreview is the public class available that will be used with the EasyMDE editor filters
-	 * 
+	 *
 	 * @param {Obect} ops The constructor options
-	 * 
+	 *
 	 * @returns {Object} 3 public methods
 	 */
 	function MmdPreview( ops ) {
@@ -41,9 +41,9 @@
 
 	/**
 	 * The preview render engine is a private class
-	 * 
+	 *
 	 * @param {Object} ops The rendering engine options
-	 * 
+	 *
 	 * @returns {Object} The following methods :
 	 * - {Function} flushQueue A method to clear the cache queue
 	 * - {Function} add2Queue A method to push a preview task to the queue
@@ -71,7 +71,8 @@
 				audioPlaylist: 'renderAudioPlaylist',
 				convertImage: 'convertHTMLImage',
 				convertAudio: 'convertAudioShortcode',
-				convertVideo: 'convertVideoShortcode'
+				convertVideo: 'convertVideoShortcode',
+				convertHeading: 'convertHeadingTags'
 			};
 		return {
 			flushQueue: function() {
@@ -111,7 +112,7 @@
 	 * @source http://en.wikipedia.org/wiki/Jenkins_hash_function
 	 *
 	 * @param {String} key The key to use the hash from
-	 * 
+	 *
 	 * @returns {String} Hash of the string
 	 */
 	renderEngine.prototype.hashString = function ( key ) {
@@ -132,15 +133,77 @@
 	 * Handle media preview HTML display size while rendering
 	 *
 	 * @param {Object} event The _resize_ event handler
-	 * 
+	 *
 	 */
 	renderEngine.prototype.clipbox = function( event ) {
 		var _self = this,
 			css = [];
 		$( '.tmp_media' ).each(function() {
-			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' ); 
+			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' );
 		});
 		_self.previewSheet.innerText = css.join( '' );
+	};
+
+
+	/**
+	 * Extract and generates html attributes from markdown extra syntax
+	 *
+	 * @param {String} extractExtra Markdown extra markup
+	 *
+	 * @returns {String} The list of the related html attributes or FALSE in case of errors
+	 */
+	renderEngine.prototype.extractExtra = function( extraMarkup ) {
+		if ( ! extraMarkup || ! extraMarkup.length ) {
+			return false;
+		}
+		var extras = extraMarkup.match( /([^\s][\#\.]*[a-zA-Z0-9-_=]+[^\W]*)/g );
+		if ( ! extras || ! extras.length ) {
+			return false;
+		}
+		var attrs = {};
+		for ( var e = 0, extra, tmp; e < extras.length; e++ ) {
+			extra = extras[ e ];
+			if ( /^#/.test( extra ) ) {
+				attrs[ 'id' ] = attrs[ 'id' ] || '';
+				attrs[ 'id' ] += extra.replace( '#', '' );
+			}
+			else if ( /^\./.test( extra ) ) {
+				attrs[ 'class' ] = attrs[ 'class' ] || '';
+				attrs[ 'class' ] += ' ' + extra.replace( '.', '' );
+			}
+			else if ( /\=/.test( extra ) ) {
+				tmp = extra.split( '=' );
+				attrs[ tmp[ 0 ] ] = tmp [ 1 ];
+			}
+		}
+		var html = [];
+		for ( var key in attrs ) {
+			html.push( key + '="' + attrs[ key ].replace( /^\s*|\s*$/, '' ) + '"' );
+		}
+		return ' ' + html.join( ' ' );
+	}
+
+
+	renderEngine.prototype.convertHeadingTags = function( wpHeading ) {
+		var myRenderApp = this,
+			headingHash = myRenderApp.hashString( wpHeading );
+		if ( tmp_cache && tmp_cache[ headingHash ] ) {
+			return tmp_cache[ headingHash ].join( '' );
+		}
+		var matches = wpHeading.match( /<h(\d)[^\>]*>(.*?)\{([^\}]+)\}<\/h\d>/ );
+		if ( ! matches || ! matches.length || matches.length !== 4 ) {
+			tmp_cache[ headingHash ] = [ wpHeading ];
+			return wpHeading;
+		}
+		var headline = [
+			'<h' + matches[ 1 ],
+			( myRenderApp.extractExtra( matches[ 3 ] ) || '' ),
+			'>',
+			matches[ 2 ],
+			'</h' + matches[ 1 ] + '>',
+		];
+		tmp_cache[ headingHash ] = headline;
+		return headline.join( '' );
 	};
 
 
@@ -149,7 +212,7 @@
 	 *
 	 * @param {String} wpGallery The WP gallery shortcode
 	 * @param {Integer} galleryNumber The gallery counter used for the ID
-	 * 
+	 *
 	 * @returns {Boolean} TRUE in case of success or FALSE
 	 */
 	renderEngine.prototype.renderGallery = function( wpGallery, galleryNumber ) {
@@ -281,28 +344,28 @@
 	 * Convert HTML Image
 	 *
 	 * @param {String} wpImage An HTML image converted from markdown
-	 * 
+	 *
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertHTMLImage = function( wpImage, dummy ) {
-		var items = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/ ),
+		var items = wpImage.match( /<img(.*?)>\{([^\}]+)\}/ ),
 			myRenderApp = this,
 			pictureHash = myRenderApp.hashString( wpImage );
 		if ( tmp_cache && tmp_cache[ pictureHash ] ) {
 			return tmp_cache[ pictureHash ].join( '' );
 		}
 		if ( ! items || items.length < 2 ) {
-			return wpImage.replace( /\{\.(.*?)\}/, '' );
+			return wpImage.replace( /\{[^\}]+\}/, '' );
 		}
-		var matches = wpImage.match( /<img(.*?)>\{\.(align[a-z]+)\}/g );
+		var matches = wpImage.match( /<img(.*?)>\{([^\}]+)\}/g ); // Watch out for the "/g" (global) here !
 		if ( ! matches || ! matches.length ) {
 			return wpImage;
 		}
-		for ( var m = 0, links = [], link = '', item = [], figure = '', alt = [], sizes = [], caption = ''; m < matches.length; m++ ) {
-			links = wpImage.match( '<a href="(.*?)"[^>]*>' + matches[ m ] ),
+		for ( var m = 0, links = [], link = '', item = [], figure = '', extras = [], alt = [], sizes = [], caption = ''; m < matches.length; m++ ) {
+			links = wpImage.match( '<a href="(.*?)"[^>]*>' + items[ m ] ),
 			link = links && links.length > 0 ? links[ 1 ] : '',
-			item = matches[ m ].match( /<img(.*?)>\{\.(align[a-z]+)\}/ ),
-			figure = '<figure class="' + item[ 2 ] + '">';
+			item = matches[ m ].match( /<img(.*?)>\{(.*?)\}/ ),
+			figure = '<figure' + ( myRenderApp.extractExtra( matches[ 2 ] ) || '' ) + '>';
 			if ( link && link.length ) {
 				figure += '<a href="' + link + '" target="_blank">'; // New tab for the preview
 			}
@@ -319,9 +382,9 @@
 				figure += '</a>';
 			}
 			if ( caption && caption.length ) {
-				figure = figure.replace( /class="(.*?)"/, 'class="wp-caption $1"' );
+				figure = figure.replace( /class="(.*?)"/, 'class="wp-block-image wp-caption $1"' );
 				figure = figure.replace( /alt=".*?"/, 'alt="' + alt + '"' );
-				figure += '<figcaption>' + caption + '</figcaption>';
+				figure += '<figcaption class="wp-caption-text wp-element-caption">' + caption + '</figcaption>';
 			}
 			if ( sizes && sizes[ 2 ] && ! isNaN( +sizes[ 2 ] ) ) {
 				figure = figure.replace( /<figure/, '<figure style="width:' + sizes[ 2 ] + 'px"' );
@@ -344,7 +407,7 @@
 	 *
 	 * @param {String} wpAudio The WP Audio Shortcode to convert to html
 	 * @param {Integer} wpNumber The media number in the current HTML
-	 * 
+	 *
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertAudioShortcode = function( wpAudio, wpNumber ) {
@@ -372,7 +435,7 @@
 	 *
 	 * @param {String} wpVideo The WP Video Shortcode to convert to html
 	 * @param {Integer} wpNumber The media number in the current HTML
-	 * 
+	 *
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertVideoShortcode = function( wpVideo, wpNumber ) {
@@ -415,7 +478,7 @@
 
 	/**
 	 * Media Video Playlist Preview
-	 * 
+	 *
 	 * @param {String} wpVideoPlaylist The WP playlist shortcode [playlist type="video" ids="xxx,xxx,xx"]
 	 * @param {Integer} playListNumber The number used for the media ID in the HTML document
 	 *
@@ -431,7 +494,7 @@
 		if ( tmp_cache && tmp_cache[ galleryHash ] ) {
 			return tmp_cache[ galleryHash ].join( '' );
 		}
-		// HTML Vide Playlist 
+		// HTML Vide Playlist
 		var playlistHTML = function( videoIds ) {
 			var tracks = [];
 			for ( var j = 0, vid, obj; j < videoIds.length; j++ ) {
@@ -533,7 +596,7 @@
 
 	/**
 	 * Media Audio Playlist Preview
-	 * 
+	 *
 	 * @param {String} wpAudioPlaylist The WP playlist shortcode [playlist ids="xxx,xxx,xx"]
 	 * @param {Integer} playListNumber The number used for the media ID in the HTML document
 	 *
@@ -549,7 +612,7 @@
 		if ( tmp_cache && tmp_cache[ galleryHash ] ) {
 			return tmp_cache[ galleryHash ].join( '' );
 		}
-		// HTML Vide Playlist 
+		// HTML Vide Playlist
 		var playlistHTML = function( audioIds ) {
 			var tracks = [];
 			for ( var j = 0, aud, obj; j < audioIds.length; j++ ) {

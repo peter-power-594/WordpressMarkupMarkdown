@@ -39,6 +39,9 @@ class Layout {
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_layout_assets' ) );
 		else :
 			add_filter( 'addon_markdown2html', array( $this, 'render_lightbox_masonry' ) );
+			if ( defined( 'MMD_USE_BLOCKSTYLES' ) && MMD_USE_BLOCKSTYLES ) :
+				add_filter( 'addon_markdown2html', array( $this, 'render_gutenberg_basics' ), 12, 1 );
+			endif;
 			add_action( 'wp_enqueue_scripts', array( $this, 'my_plugin_assets' ), 11 );
 		endif;
 	}
@@ -65,6 +68,7 @@ class Layout {
 		$my_cnf[ 'imagesloaded' ] = filter_input( INPUT_POST, 'mmd_imagesloaded', FILTER_VALIDATE_INT );
 		$my_cnf[ 'masonry' ] = filter_input( INPUT_POST, 'mmd_masonry', FILTER_VALIDATE_INT );
 		$my_cnf[ 'toolbar' ] = preg_replace( "#[^a-z0-9_,]#", "", filter_input( INPUT_POST, 'mmd_toolbar', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
+		$my_cnf[ 'goodvibes' ] = filter_input( INPUT_POST, 'mmd_goodvibes', FILTER_VALIDATE_INT );
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
@@ -74,6 +78,8 @@ class Layout {
 		unset( $my_cnf[ 'imagesloaded' ] );
 		$my_cnf[ 'MMD_USE_MASONRY' ] = isset( $my_cnf[ 'masonry' ] ) ? $my_cnf[ 'masonry' ] : 0;
 		unset( $my_cnf[ 'masonry' ] );
+		$my_cnf[ 'MMD_USE_BLOCKSTYLES' ] = isset( $my_cnf[ 'goodvibes' ] ) ? $my_cnf[ 'goodvibes' ] : 0;
+		unset( $my_cnf[ 'goodvibes' ] );
 		if ( isset( $my_cnf[ 'toolbar' ] ) > 0 ) :
 			file_put_contents( $this->toolbar_conf, '{"my_buttons":' . json_encode( explode( ",", $my_cnf[ 'toolbar' ] ) ) . '}' );
 			unset( $my_cnf[ 'toolbar' ] );
@@ -130,7 +136,7 @@ class Layout {
 	 *
 	 * @since 2.2.2
 	 * @access public
-	 * 
+	 *
 	 * @param \HTML_node $gallery_style The html opening tag and styles of current gallery
 	 *
 	 * @return \HTML_node The updated html code
@@ -146,7 +152,7 @@ class Layout {
 	 *
 	 * @since 2.2.2
 	 * @access public
-	 * 
+	 *
 	 * @param Array $attributes The current link
 	 * @param Integer $post_ID The post ID
 	 *
@@ -189,7 +195,7 @@ class Layout {
 	 *
 	 * @since 3.0.0
 	 * @access private
-	 * 
+	 *
 	 * @param Integer $lightbox_used 1 if the Lightbox framework is used - just for the dependency
 	 *
 	 * @return Integer 1 if the framework is used or 0 if unused
@@ -212,7 +218,7 @@ class Layout {
 	 *
 	 * @since 3.0.0
 	 * @access private
-	 * 
+	 *
 	 * @param Integer $lightbox_used 1 if the Lightbox framework is used - just for the dependency
 	 * @param Integer $imagesloaded_used 1 if the ImagesLoaded framework is used - just for the dependency
 	 *
@@ -290,6 +296,23 @@ class Layout {
 		foreach( $replacers as $regexp ) :
 			$content = preg_replace( $regexp[ 0 ], $regexp[ 1 ], $content );
 		endforeach;
+		return $content;
+	}
+
+	/**
+	 * Format the html so gutenberg block styles can be applied
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function render_gutenberg_basics( $content ) {
+		# <h2 class="has-text-align-center"> => <h2 class="wp-block-heading has-text-align-center">
+		# <h2 id="peter" class="has-text-align-center"> => <h2 d="peter" class="wp-block-heading has-text-align-center">
+		$content = preg_replace( "#<h(\d)(.*?)class=\"#u", "<h$1$2class=\"wp-block-heading ", $content );
+		# <h2> => <h2 class="wp-block-heading">
+		$content = preg_replace( "#<h(\d)>#u", "<h$1 class=\"wp-block-heading\">", $content );
 		return $content;
 	}
 

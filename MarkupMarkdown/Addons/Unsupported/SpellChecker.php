@@ -99,6 +99,8 @@ class SpellChecker {
 			add_filter( 'mmd_verified_config', array( $this, 'update_config' ) );
 			add_filter( 'mmd_var2const', array( $this, 'create_const' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_spellchecker_assets' ), 11 , 1 );
+		else :
+			add_action( 'wp_footer', array( $this, 'load_engine_assets' ), 12 );
 		endif;
 	}
 
@@ -153,10 +155,10 @@ class SpellChecker {
 	/**
 	 * Method to add the javascript inline settings for the spell checkers
 	 * Hooked to the head previously, now hooked to the footer
-	 * 
+	 *
 	 * @access public
 	 * @since 3.0
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function load_engine_assets() {
@@ -247,11 +249,11 @@ class SpellChecker {
 
 	/**
 	 * Move spellchecker dictionnaries to new file names
-	 * Prior to version 3.2 urlencode was used. To use blueprint or other virtual machine, 
+	 * Prior to version 3.2 urlencode was used. To use blueprint or other virtual machine,
 	 * switched to md5 to remove any other character than 0-9 a-z
 	 *
 	 * @since 3.2.1
-	 * @access public 
+	 * @access public
 	 *
 	 * @return Boolean TRUE if the new dictionary were renamed or FALSE
 	 */

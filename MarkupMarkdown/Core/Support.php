@@ -19,14 +19,35 @@ class Support {
 
 
 	public function __construct() {
-		# Add Support
-		add_action( 'init', array( $this, 'add_markdown_support' ), 10 );
-		# Check then enable or disable the markdown editor on the backend
+		# Add Support. When possible we let developers take benefit of the default 10 priority
+		add_action( 'init', array( $this, 'add_markdown_support' ) );
 		if ( is_admin() ) :
+			# Check then enable or disable the markdown editor on the backend
 			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 );
+			# Enable or disable the post filters
+			add_action( 'wp_loaded', array( $this, 'set_content_filters' ) );
+		else :
+			# Check then enable or disable the markdown editor on the frontend
+			add_filter( 'mmd_frontend_enabled', array( $this, 'current_template_allowed' ) );
+			add_action( 'wp_head', array( $this, 'prepare_markdown_editor' ), 11 );
+			# Enable or disable the post filters
+			add_action( 'wp_head', array( $this, 'set_content_filters' ), 12 );
 		endif;
-		# Enable or disable the post filters
-		add_action( 'wp_loaded', array( $this, 'set_content_filters' ), 10 );
+	}
+
+
+	/**
+	 * Tiny filter to switch on / off the loading of the markdown editor on the frontend
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @param Boolean TRUE if the editor can be loaded on the frontend. Default to false
+	 *
+	 * @return Boolean TRUE if enabled or FALSE if disabed
+	 */
+	public function current_template_allowed( $bool = false ) {
+		return $bool;
 	}
 
 
@@ -90,16 +111,23 @@ class Support {
 		if ( ! $this->mmd_syntax ) :
 			$this->mmd_syntax = 0;
 			return FALSE;
-		else :
+		else:
 			$my_post_type = $this->get_current_post_type();
 			if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
 				$this->mmd_syntax = 0;
+			endif;
+			if ( ! is_admin() ) :
+				$mmd_tmpl_enabled = apply_filters( 'mmd_frontend_enabled', false );
+				if ( ! (int)$mmd_tmpl_enabled ) :
+					return FALSE;
+				endif;
+			elseif ( ! $this->mmd_syntax ) :
 				return FALSE;
 			endif;
 		endif;
 		# Markdown can be used with custom fields, so only disable TinyMCE / Guternberg hooks when support is enabled
 		# Clear static cache when post is saved
-		if ( ! defined( 'WP_MMD_OPCACHE' ) || WP_MMD_OPCACHE ) :
+		if ( defined( 'WP_MMD_OPCACHE' ) && WP_MMD_OPCACHE ) :
 			add_action( 'save_post', array( $this, 'clear_post_cache' ), 10, 3 );
 		endif;
 		# https://stackoverflow.com/questions/12648402/how-can-i-completely-remove-tinymce-in-wordpress/12648896
@@ -194,22 +222,55 @@ class Support {
 	 * Tiny switch to apply or not the markdown filters
 	 * Since 3.0: Checking the post type inside the loop
 	 * https://developer.wordpress.org/reference/hooks/the_content/
-	 * 
+	 *
 	 * @access public
 	 * @since 2.0
-	 * 
-	 * @return HTML $content The modified content
+	 *
+	 * @param String $field_content the HTML content
+	 * @param Integer $cache_allowed 1 if cache is allowed with the field
+	 *
+	 * @return String $content The modified HTML content
 	 */
-	public function post_markdown2html( $content ) {
+	private function content_data( $field_content, $cache_allowed ) {
 		if ( wp_is_rest_endpoint() || ( ( is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
 			if ( post_type_supports( get_post_type(), 'markup_markdown' ) ) :
-				return apply_filters( 'post_markdown2html', $content );
+				return apply_filters( 'post_markdown2html', $field_content, $cache_allowed );
 			else :
-				return $content;
+				return $field_content;
 			endif;
 		else :
-			return $content;
+			return $field_content;
 		endif;
+	}
+
+
+	/**
+	 * Quick bridge to allow static cache content with the post content data
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @param String $post_content The HTML post content field
+	 *
+	 * @return String the filtered content
+	 */
+	public function post_content_mmd2html( $post_content ) {
+		return $this->content_data( $post_content, 1 );
+	}
+
+
+	/**
+	 * Quick bridge to force disable static cache content with the post excerpt data
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @param String $post_excerpt The HTML excerpt field
+	 *
+	 * @return String the filtered content
+	 */
+	public function post_excerpt_mmd2html( $post_excerpt ) {
+		return $this->content_data( $post_excerpt, 0 );
 	}
 
 
@@ -228,11 +289,11 @@ class Support {
 			remove_all_filters( 'the_content' );
 			remove_all_filters( 'the_excerpt' );
 		else :
-			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 );
+			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 ? TRUE : FALSE );
 			require_once mmd()->plugin_dir . 'MarkupMarkdown/Core/Parser.php';
 			new \MarkupMarkdown\Core\Parser();
-			add_filter( 'the_content', array( $this, 'post_markdown2html' ), 1 , 9 );
-			add_filter( 'the_excerpt', array( $this, 'post_markdown2html' ), 1 , 9 );
+			add_filter( 'the_content', array( $this, 'post_content_mmd2html' ), 9 , 1 );
+			add_filter( 'the_excerpt', array( $this, 'post_excerpt_mmd2html' ), 9 , 1 );
 		endif;
 	}
 

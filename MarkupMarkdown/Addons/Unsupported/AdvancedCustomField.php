@@ -25,6 +25,9 @@ class AdvancedCustomField {
 			return FALSE; # Addon has been desactivated
 		endif;
 		add_action( 'init', array( $this, 'mmd_include_acf_field_markdown' ) );
+		if ( ! is_admin() ) :
+			add_action( 'wp', array( $this, 'mmd_frontend_filters' ) );
+		endif;
 	}
 
 
@@ -42,6 +45,38 @@ class AdvancedCustomField {
 		endif;
 		require_once mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomField/mmd_acf_field_markdown.php';
 		acf_register_field_type( 'mmd_acf_field_markdown' );
+	}
+
+
+	/**
+	 * Allow markdown use on the frontend :
+	 * + Filter to grant the markdown editor to be loaded on the frontend
+	 * + Filter top disable TinyMCE on the frontend if need be, we switch the field type from "wysiwyg" to "textarea"
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @return Boolean TRUE if backend related or FALSE if frontend related
+	 */
+	public function mmd_frontend_filters() {
+		# Action triggered by acf_form_head()
+		add_action( 'acf/input/admin_head', function() {
+			add_filter( 'mmd_frontend_enabled', '__return_true' );
+		});
+		# Action triggered by acf_form()
+		add_filter( 'acf/get_valid_field', function( $field ) {
+			if ( strpos( $field[ 'name' ], 'post_content' ) !== FALSE && $field[ 'type' ] == 'wysiwyg' ) :
+				if ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ) :
+					$field[ 'type' ] = 'textarea';
+					$field[ 'toolbar' ] = 0;
+					$field[ 'media_upload' ] = 0;
+					$field[ 'rows' ] = 15;
+					$field[ 'maxlength' ] = 524524;
+				endif;
+			endif;
+			return $field;
+		});
+		return true;
 	}
 
 

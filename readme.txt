@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.2.6
-Version: 3.2.6
+Stable Tag: 3.3.0
+Version: 3.3.0
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -17,6 +17,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- v3.3: Bug fixes, basic compatibiliy with block styles, the editor can now be loaded on the frontend with acf_form
 - v3.2: Support to enable markdown only for custom fields
 - v3.1: Side preview panel fixed
 - v3.0: Choose and sort the default toolbar buttons
@@ -72,7 +73,6 @@ If you need to render iframes or others elements, instead of using:
  use
 
 `<?php echo mmd()->markdown2html( get_field( 'my_custom_field' ) ); ?>`
-
 
 = What's the deal with the beta interface? =
 

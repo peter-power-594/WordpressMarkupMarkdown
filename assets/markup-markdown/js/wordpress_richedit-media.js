@@ -18,26 +18,48 @@
 			callbacks.multisel = fallbacks.multisel;
 		}
 		_self.base_url = ops.base_url || '';
+		_self.callbacks = callbacks;
 		// Pictures : https://codex.wordpress.org/Javascript_Reference/wp.media
-		var mediaFrame = wp.media({
-			frame: 'post',
+		return {
+			initialize: function() {
+				_self.initialize();
+			},
+			open: function() {
+				if ( _self.instance ) {
+					_self.instance.open();
+				}
+			}
+		};
+	}
+
+
+	MmdMedia.prototype.initialize = function() {
+		var _self = this,
+			isAdmin = /wp-admin/.test( document.body.className || '' ) ? true : false;
+		_self.instance = wp.media({
+			frame:  'post',
 			type: 'image',
 			multiple: true,
 			title: 'Media'
 			// button: { text: 'OK' },
 		});
-		mediaFrame.on( 'update', function() {
+		if ( ! _self.instance ) {
+			if ( window.console && window.console.log ) {
+				window.console.log( 'Markup Markdown: The WP Media Library is not properly loaded' );
+			}
+			return false;
+		}
+		_self.instance.on( 'update', function() {
 			// **Update** event is triggered when the user presses the "Create the {widget}"
 			// from the media modal (example: generating a gallery)
-			_self.addMediaFromWidget( mediaFrame.state(), callbacks.widget );
+			_self.addMediaFromWidget( _self.instance.state(), _self.callbacks.widget );
 		});
-		mediaFrame.on( 'insert', function() {
+		_self.instance.on( 'insert', function() {
 			// **Insert** event is trigerred when the user presses the "Insert into post"
 			// inside the media modal (one or multiples images are propably selected)
-			_self.addMediaFromSel( mediaFrame.state(), callbacks.multisel );
+			_self.addMediaFromSel( _self.instance.state(), _self.callbacks.multisel );
 		});
-		return mediaFrame;
-	}
+	};
 
 
 	MmdMedia.prototype.addMediaFromWidget = function( frameState, callback ) {
@@ -95,10 +117,10 @@
 
 	/**
 	 * Image
-	 * 
+	 *
 	 * @param Object att The media attributes from the uploader frame
 	 * @param Object dpy The display options from the sidebar frame
-	 * 
+	 *
 	 * @return String The markdown related code
 	 */
 	MmdMedia.prototype.addMediaImage = function( att, dpy ) {
@@ -154,10 +176,10 @@
 	/**
 	 * Audio [audio src="xxxx"][/audio]
 	 * @ref https://wordpress.org/documentation/article/audio-shortcode/
-	 * 
+	 *
 	 * @param Object att The media attributes from the uploader frame
 	 * @param Object dpy The display options from the sidebar frame
-	 * 
+	 *
 	 * @return String The WP shortcode
 	 */
 	MmdMedia.prototype.addMediaAudio = function( att, dpy ) {
@@ -194,10 +216,10 @@
 	/**
 	 * Video [video src="xxxx"][/video]
 	 * @ref https://wordpress.org/documentation/article/video-shortcode/
-	 * 
+	 *
 	 * @param Object att The media attributes from the uploader frame
 	 * @param Object dpy The display options from the sidebar frame
-	 * 
+	 *
 	 * @return String The WP shortcode
 	 */
 	MmdMedia.prototype.addMediaVideo = function( att, dpy ) {

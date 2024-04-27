@@ -77,7 +77,7 @@
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
 		var _self = this,
-			isACF = $textarea.closest( '.acf-input' ).length ? 1 : 0;
+			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0;
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
@@ -124,18 +124,23 @@
 				});
 			}
 			else if ( /wps[-_]*image/.test( slug ) ) {
-				toolbar.push({
-					name: "wpsimage",
-					action: function( editor ) {
-						activeWidget = _self;
-						if ( ! activeWidget.widgetCounter ) {
-							activeWidget.widgetCounter = 1;
-						}
-						mediaFrame.open();
-					},
-					className: "fa fa-images",
-					title: "Image"
-				});
+				//if ( isAdmin > 0 ) {
+					toolbar.push({
+						name: "wpsimage",
+						action: function( editor ) {
+							activeWidget = _self;
+							if ( ! activeWidget.widgetCounter ) {
+								activeWidget.widgetCounter = 1;
+							}
+							if( ! mediaFrame || ! mediaFrame.title ) {
+								mediaFrame.initialize();
+							}
+							mediaFrame.open();
+						},
+						className: "fa fa-images",
+						title: "Image"
+					});
+				//}
 			}
 			else {
 				toolbar.push( slug.replace( '_', '-' ) );
@@ -144,8 +149,7 @@
 		if ( n < 1 ) {
 			spell_check = { disabled: 1 };
 		}
-		if ( isACF > 0 ) {
-			// Disable preview mode by default with Advanced Custom Fields
+		if ( $textarea.parent().hasClass( 'acf-input' ) || ! isAdmin ) {
 			var minimalToolbar = [];
 			for ( var b = 0; b < toolbar.length; b++ ) {
 				if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
@@ -268,6 +272,10 @@
 	MarkupMarkdownWidget.prototype.previewRender = function( text, preview ) {
 		var _self = this;
 		text = _self.instance.editor.markdown( text );
+		// Render the headings
+		text = text.replace( /<h\d[^\>]*>.*?\{[^\}]+\}<\/h\d>/g, function( wpHeadline ) {
+			return mediaPreview.processTask( 'convertHeading', wpHeadline );
+		});
 		// Render the gallery shortcode. Ref /wp-includes/js/tinymce/plugins/wpgallery/plugin.js
 		var galCounter = 0,
 			getRandomNodeID = function( min, max ) {
@@ -290,10 +298,10 @@
 			}
 		});
 		// Render the images
-		text = text.replace( /<a.*?><img.*?>\{\.align[a-z]+\}<\/a>/g, function( wpImage ) {
+		text = text.replace( /<a.*?><img.*?>\{[^\}]+\}<\/a>/g, function( wpImage ) {
 			return mediaPreview.processTask( 'convertImage', wpImage, false );
 		});
-		text = text.replace( /<img.*?>\{\.align[a-z]+\}/g, function( wpImage ) {
+		text = text.replace( /<img.*?>\{[^\}]+\}/g, function( wpImage ) {
 			return mediaPreview.processTask( 'convertImage', wpImage, false );
 		});
 		text = text.replace( /<p><figure/, '<figure' ).replace( /<\/figure><\/p>/, '</figure>' );
@@ -340,9 +348,21 @@
 				primaryAreaEnabled = 0;
 			}
 		}
-		var $editorContainer = $( '#wp-content-editor-container' );
+		if ( ! primaryAreaEnabled ) {
+			// Only custom fields or other fields managed by addons are used with Markdown
+			// We just need to setup a few UI options like sticky and exit
+			_doc.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
+				// Stuff inside the custom event CodeMirrorSpellCheckerReady are callbacks
+				new MarkupMarkdownOptions();
+				// Trigger a refresh to get real boxe sizes just in case
+				$( _doc.body ).addClass( 'markupmarkdown-ready' )
+					.trigger( 'click.mmd_body_sticky_toolbar' );
+			});
+			return true;
+		}
+		// Primary content used with markdown. Need to separate backend and frontend
 		_doc.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
-			if ( ! $editorContainer.hasClass( 'ready' ) ) {
+			if ( $editorContainer && ! $editorContainer.hasClass( 'ready' ) ) {
 				// Be careful as the event _CodeMirrorSpellCheckerReady_ can be triggered multiple times
 				$editorContainer.addClass( 'ready' );
 				// Initialize sticky (and other options if need be)
@@ -352,12 +372,24 @@
 			$( _doc.body ).addClass( 'markupmarkdown-ready' )
 				.trigger( 'click.mmd_body_sticky_toolbar' );
 		});
-		if ( primaryAreaEnabled > 0 ) {
+		// Default is backend
+		var $editorContainer = $( '#wp-content-editor-container' );
+		if ( $editorContainer.length ) {
 			// Initialize EasyMDE on the main content
 			$editorContainer.addClass( 'markupmarkdown' )
 				.find( '.wp-editor-area' ).each(function() {
 					new MarkupMarkdownWidget( this );
 				});
+			return true;
+		}
+		// Fallback with the frontend for layer case with the ACF plugin
+		// Custom fields will be trigger from the addon, only need to check for the main content
+		$editorContainer = $( '.acf-input #acf-_post_content' ).parent();
+		if ( $editorContainer.length ) {
+			// Initialize EasyMDE on the main content
+			$editorContainer.addClass( 'markupmarkdown' );
+			new MarkupMarkdownWidget( $( '#acf-_post_content' ) );
+			return true;
 		}
 	});
 

@@ -4,7 +4,7 @@
  *
  * Plugin Name: Markup Markdown
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
- * Version:     3.2.6
+ * Version:     3.3.0
  * Author:      Pierre-Henri Lavigne
  * Author URI:  https://www.markup-markdown.com
  * License:     GPLv2 or later
@@ -32,7 +32,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		protected $parser;
 
 		protected $settings = array(
-			'version' => '3.2.6',
+			'version' => '3.3.0',
 			'plugin_uri' => '',
 			'plugin_dir' => '',
 			'plugin_slug' => '',
@@ -91,7 +91,8 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		 *  @access public
 		 *
 		 *  @param String $content The markdown code
-		 *  @returns String The HTML content
+		 *
+		 *  @return String The HTML content
 		 */
 		public function markdown2html( $content ) {
 			$filtered = apply_filters( 'field_markdown2html', $content );
@@ -105,7 +106,8 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		 *  @access public
 		 *
 		 *  @param $file String Target file
-		 *  @returns Void
+		 *
+		 *  @return Void
 		 */
 		public function clear_cache( $file = '' ) {
 			if ( function_exists( 'wp_opcache_invalidate' ) ) :
@@ -115,6 +117,32 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			endif;
 		}
 
+
+		/**
+		 * Tiny function to filter user permissions
+		 *
+		 * @since 3.3.0
+		 * @access public
+		 *
+		 * @param Boolean TRUE to grant access user with enough premission
+		 *
+		 * @return Boolean TRUE if granted or FALSE
+		 */
+		public function user_allowed( $user_id = 0 ) {
+			if ( ! $user_id ) :
+				$user_id = get_current_user_id();
+			endif;
+			if ( ! $user_id ) :
+				# Disable *Guest* users
+				return false;
+			endif;
+			$user = new \WP_User( $user_id );
+			if ( $user && ! $user->has_cap( 'edit_posts' ) ) :
+				# Disable *Subscribers* or users without edit permissions
+				return false;
+			endif;
+			return true;
+		}
 
 	}
 

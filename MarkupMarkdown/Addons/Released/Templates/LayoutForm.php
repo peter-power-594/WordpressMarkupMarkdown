@@ -9,16 +9,28 @@
 	$my_cnf = array(
 		'lightbox' => defined( 'MMD_USE_LIGHTBOX' ) ? MMD_USE_LIGHTBOX : 1,
 		'masonry' => defined( 'MMD_USE_MASONRY' ) ? MMD_USE_MASONRY : 1,
-		'imagesloaded' => defined( 'MMD_USE_IMAGESLOADED' ) ? MMD_USE_IMAGESLOADED : 1
+		'imagesloaded' => defined( 'MMD_USE_IMAGESLOADED' ) ? MMD_USE_IMAGESLOADED : 1,
+		'goodvibes' => defined( 'MMD_USE_BLOCKSTYLES' ) ? MMD_USE_BLOCKSTYLES : 0
 	);
 ?>
+			<tr class="site-use-lightbox">
+				<th scope="row">
+					Use Gutenberg blocks styles
+				</th>
+				<td>
+					<label for="mmd_goodvibes">
+						<input type="checkbox" name="mmd_goodvibes" id="mmd_goodvibes" value="1" <?php echo (int)$my_cnf[ 'goodvibes' ] > 0 ? 'checked="checked"' : ''; ?> />
+						Keep a minimum of assets active if your theme was designed to be used with Gutenberg. Can avoid broken layout in case styles are missing.
+					</label>
+				</td>
+			</tr>
 			<tr class="site-use-lightbox">
 				<th scope="row">
 					Use Lightbox
 				</th>
 				<td>
 					<label for="mmd_lightbox">
-						<input type="checkbox" name="mmd_lightbox" id="mmd_lightbox" value="1" <?php echo $my_cnf[ 'lightbox' ] > 0 ? 'checked="checked"' : ''; ?> />
+						<input type="checkbox" name="mmd_lightbox" id="mmd_lightbox" value="1" <?php echo (int)$my_cnf[ 'lightbox' ] > 0 ? 'checked="checked"' : ''; ?> />
 						An image inside a <em>post</em> or <em>page</em> that was linked to its original size will open in a modal (overlay on the same page) instead of a new window / tab.
 					</label>
 				</td>
@@ -29,7 +41,7 @@
 				</th>
 				<td>
 					<label for="mmd_masonry">
-						<input type="checkbox" name="mmd_masonry" id="mmd_masonry" value="1" <?php echo $my_cnf[ 'masonry' ] > 0 ? 'checked="checked"' : '';; ?>>
+						<input type="checkbox" name="mmd_masonry" id="mmd_masonry" value="1" <?php echo (int)$my_cnf[ 'masonry' ] > 0 ? 'checked="checked"' : '';; ?>>
 						Transform a bullet list of images as a 2 waterfall column layout when the <em>photo gallery</em> post format is selected.
 					</label>
 				</td>
@@ -39,7 +51,7 @@
 					</th>
 					<td>
 						<label for="mmd_imagesloaded">
-							<input type="checkbox" name="mmd_imagesloaded" id="mmd_imagesloaded" value="1" <?php echo $my_cnf[ 'imagesloaded' ] > 0 ? 'checked="checked"' : '';; ?> />
+							<input type="checkbox" name="mmd_imagesloaded" id="mmd_imagesloaded" value="1" <?php echo (int)$my_cnf[ 'imagesloaded' ] > 0 ? 'checked="checked"' : '';; ?> />
 							Trigger the update of the layout after all images are loaded. Can solve specific issues in case the layout is broken with the gallery.
 						</label>
 					</td>

@@ -19,11 +19,13 @@ class Addons {
 
 
 	public function __construct() {
+		add_filter( 'mmd_autoplugs_enabled', array( $this, 'should_load_plugs' ), 10, 1 );
 		$addon_conf = mmd()->cache_dir . '/conf_screen.php';
 		if ( file_exists( $addon_conf ) ) :
 			require_once $addon_conf;
 		endif;
 		$this->load_addons();
+		$this->load_autoplugs( apply_filters( 'mmd_autoplugs_enabled', true ) );
 	}
 
 
@@ -35,7 +37,24 @@ class Addons {
 	}
 
 
-	
+	/**
+	 * Default filter to allow or deny the plugs
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @param Boolean $bool TRUE in case the plugs are allowed or FALSE
+	 *
+	 * @return Boolean TRUE if required or FALSE
+	 */
+	public function should_load_plugs( $bool ) {
+		if ( ! defined( 'WP_MMD_PLUGS' ) ) :
+			return $bool;
+		endif;
+		return WP_MMD_PLUGS ? true : false;
+	}
+
+
 	private function load_addons() {
 		# Load addons modules
 		$this->addon_dir = mmd()->plugin_dir . '/MarkupMarkdown/Addons/';
@@ -121,5 +140,23 @@ class Addons {
 		unset( $tmp_addon );
 	}
 
+
+	/**
+	 * Add a few plugs with existing WP Plugins to make a smooth connection
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @param Boolean $auto TRUE to load automatically the plugs or FALSE
+	 *
+	 * @return Voids
+	 */
+	public function load_autoplugs( $auto = TRUE ) {
+		if ( ! $auto ) :
+			return;
+		else :
+			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
+		endif;
+	 }
 
 }

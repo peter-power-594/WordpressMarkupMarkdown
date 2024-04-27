@@ -67,7 +67,7 @@ class mmd_acf_field_markdown extends \acf_field {
 
 		$this->env = array(
 			'url'     => site_url( str_replace( ABSPATH, '', __DIR__ ) ), // URL to the acf-FIELD-NAME directory.
-			'version' => '1.0.9', // Replace this with your theme or plugin version constant.
+			'version' => '1.0.10', // Replace this with your theme or plugin version constant.
 		);
 
 		parent::__construct();
