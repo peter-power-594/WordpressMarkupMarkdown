@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.3.1
-Version: 3.3.1
+Stable Tag: 3.3.2
+Version: 3.3.2
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -84,6 +84,11 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta in
 The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
 == Changelog ==
+
+= 3.3.2 =
+
+Bug fix:
+- Patch a javascript error with an undefined variable
 
 = 3.3.1 =
 

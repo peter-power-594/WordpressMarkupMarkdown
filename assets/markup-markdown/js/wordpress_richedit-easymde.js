@@ -77,7 +77,8 @@
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
 		var _self = this,
-			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0;
+			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0,
+			isACF = $textarea.parent().hasClass( 'acf-input' ) ? 1 : 0;
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
@@ -124,23 +125,21 @@
 				});
 			}
 			else if ( /wps[-_]*image/.test( slug ) ) {
-				//if ( isAdmin > 0 ) {
-					toolbar.push({
-						name: "wpsimage",
-						action: function( editor ) {
-							activeWidget = _self;
-							if ( ! activeWidget.widgetCounter ) {
-								activeWidget.widgetCounter = 1;
-							}
-							if( ! mediaFrame || ! mediaFrame.title ) {
-								mediaFrame.initialize();
-							}
-							mediaFrame.open();
-						},
-						className: "fa fa-images",
-						title: "Image"
-					});
-				//}
+				toolbar.push({
+					name: "wpsimage",
+					action: function( editor ) {
+						activeWidget = _self;
+						if ( ! activeWidget.widgetCounter ) {
+							activeWidget.widgetCounter = 1;
+						}
+						if( ! mediaFrame || ! mediaFrame.title ) {
+							mediaFrame.initialize();
+						}
+						mediaFrame.open();
+					},
+					className: "fa fa-images",
+					title: "Image"
+				});
 			}
 			else {
 				toolbar.push( slug.replace( '_', '-' ) );
@@ -149,7 +148,7 @@
 		if ( n < 1 ) {
 			spell_check = { disabled: 1 };
 		}
-		if ( $textarea.parent().hasClass( 'acf-input' ) || ! isAdmin ) {
+		if ( isACF || ! isAdmin ) {
 			var minimalToolbar = [];
 			for ( var b = 0; b < toolbar.length; b++ ) {
 				if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
