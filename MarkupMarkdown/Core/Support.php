@@ -19,19 +19,19 @@ class Support {
 
 
 	public function __construct() {
-		# Add Support
-		add_action( 'init', array( $this, 'add_markdown_support' ), 10, 0 );
+		# Add Support. When possible we let developers take benefit of the default 10 priority
+		add_action( 'init', array( $this, 'add_markdown_support' ) );
 		if ( is_admin() ) :
 			# Check then enable or disable the markdown editor on the backend
-			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999, 0 );
+			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 );
 			# Enable or disable the post filters
-			add_action( 'wp_loaded', array( $this, 'set_content_filters' ), 10, 0 );
+			add_action( 'wp_loaded', array( $this, 'set_content_filters' ) );
 		else :
 			# Check then enable or disable the markdown editor on the frontend
-			add_filter( 'mmd_front_enabled', array( $this, 'current_template_allowed' ), 9, 1 );
-			add_action( 'get_header', array( $this, 'prepare_markdown_editor' ), 9, 0 );
+			add_filter( 'mmd_frontend_enabled', array( $this, 'current_template_allowed' ) );
+			add_action( 'wp_head', array( $this, 'prepare_markdown_editor' ), 11 );
 			# Enable or disable the post filters
-			add_action( 'get_header', array( $this, 'set_content_filters' ), 10, 0 );
+			add_action( 'wp_head', array( $this, 'set_content_filters' ), 12 );
 		endif;
 	}
 
@@ -42,20 +42,11 @@ class Support {
 	 * @since 3.3.0
 	 * @access public
 	 *
-	 * @param Boolean TRUE if the editor can be loaded on the frontend.
+	 * @param Boolean TRUE if the editor can be loaded on the frontend. Default to false
 	 *
 	 * @return Boolean TRUE if enabled or FALSE if disabed
 	 */
-	public function current_template_allowed( $bool = true ) {
-		if ( ! get_current_user_id() ) :
-			# Disable *Guest* users
-			return false;
-		endif;
-		$user = wp_get_current_user();
-		if ( $user && ! $user->has_cap( 'edit_posts' ) ) :
-			# Disable *Subscribers* or users without edit permissions
-			return false;
-		endif;
+	public function current_template_allowed( $bool = false ) {
 		return $bool;
 	}
 
@@ -126,7 +117,7 @@ class Support {
 				$this->mmd_syntax = 0;
 			endif;
 			if ( ! is_admin() ) :
-				$mmd_tmpl_enabled = apply_filters( 'mmd_front_enabled', false );
+				$mmd_tmpl_enabled = apply_filters( 'mmd_frontend_enabled', false );
 				if ( ! (int)$mmd_tmpl_enabled ) :
 					return FALSE;
 				endif;
