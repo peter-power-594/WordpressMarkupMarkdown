@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.3.0
-Version: 3.3.0
+Stable Tag: 3.3.1
+Version: 3.3.1
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -17,7 +17,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
-- v3.3: Bug fixes, basic compatibiliy with block styles, the editor can now be loaded on the frontend with acf_form
+- v3.3: Bug fixes, markdown extra with multiple html attributes support, basic compatibility with block styles, compatibility with acf_form added for the frontend
 - v3.2: Support to enable markdown only for custom fields
 - v3.1: Side preview panel fixed
 - v3.0: Choose and sort the default toolbar buttons
@@ -84,6 +84,23 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta in
 The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
 == Changelog ==
+
+= 3.3.1 =
+
+Improvements:
+- Markdown extra patches added to support HTML multi-attributes
+`## Headline {#h2 .short .great lang=en}` => `<h2 id="h2" lang="en" class="short great">Headline</h2>`
+- Basic block classnames added to headlines and images to avoid broken layout with themes built for Gutenberg
+`### H3 Tag` => `<h3 class="wp-block-heading">H3 Tag</h3>`
+- ACF Markup Markdown custom fields can now be used in the frontend with acf_form_head & acf_form
+
+Bug fix:
+- Static Cache is disabled by default to avoid side effects with a few cache engine
+- Filters fixed: when cache was turned on, excerpt was returning the content value
+
+New feature: AUTO PLUGS
+Unlike *Addons* designed to add extra features to the editing experience, the *Plugs* will be designed to smooth the behavior of the rendering with existing WP plugins.
+The first plug with WP Geshi Highlight has been added to allow the rendering of snippets on the frontend
 
 = 3.2.6 =
 
