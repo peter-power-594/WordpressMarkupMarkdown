@@ -25,7 +25,7 @@ class AdvancedCustomField {
 			return FALSE; # Addon has been desactivated
 		endif;
 		add_action( 'init', array( $this, 'mmd_include_acf_field_markdown' ) );
-		add_action( 'wp', array( $this, 'mmd_filter_front_settings' ) );
+		add_action( 'wp', array( $this, 'mmd_frontend_filters' ) );
 	}
 
 
@@ -47,15 +47,22 @@ class AdvancedCustomField {
 
 
 	/**
-	 * Disable TinyMCE on the frontend if need be for the main content if acf_form() is used.
-	 * We switch the field type from "wysiwyg" to "textarea"
+	 * Allow markdown use on the frontend so it can be triggered by acf_form_head / acf_form :
+	 * + Filter to grant the markdown editor to be loaded on the frontend
+	 * + Filter top disable TinyMCE on the frontend if need be, we switch the field type from "wysiwyg" to "textarea"
 	 *
 	 * @access public
 	 * @since 3.3.0
 	 *
-	 * @return Void
+	 * @return Boolean TRUE if backend related or FALSE if frontend related
 	 */
-	public function mmd_filter_front_settings() {
+	public function mmd_frontend_filters() {
+		if ( ! is_admin() ) :
+			return false;
+		endif;
+		add_action( 'acf/input/admin_enqueue_scripts', function() {
+			add_filter( 'mmd_front_enabled', '__return_true' );
+		});
 		add_filter( 'acf/get_valid_field', function( $field ) {
 			if ( strpos( $field[ 'name' ], 'post_content' ) !== FALSE && $field[ 'type' ] == 'wysiwyg' ) :
 				if ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ) :
@@ -68,6 +75,7 @@ class AdvancedCustomField {
 			endif;
 			return $field;
 		});
+		return true;
 	}
 
 

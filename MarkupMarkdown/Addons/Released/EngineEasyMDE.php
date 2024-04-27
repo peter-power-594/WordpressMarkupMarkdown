@@ -34,9 +34,11 @@ class EngineEasyMDE {
 			if ( 'edit' === $action ) :
 				add_filter( 'screen_settings', array( $this, 'mmd_post_screen_options_settings' ), 9 , 2 );
 			endif;
+			add_action( 'init', array( $this, 'prepare_editor_assets' ), 10000, 0 );
+		else :
+			# Hooks that might be used on the frontend as well
+			add_action( 'get_header', array( $this, 'prepare_editor_assets' ), 10, 0 );
 		endif;
-		# Hooks that might be used on the frontend as well
-		add_action( 'wp_loaded', array( $this, 'prepare_editor_assets' ) );
 		return TRUE;
 	}
 
@@ -103,6 +105,28 @@ class EngineEasyMDE {
 
 
 	/**
+	 * Check and trigger the assets load if need be
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @return Boolean TRUE if we need to load the assets or FALSE
+	 */
+	public function prepare_editor_assets() {
+		if ( $this->is_admin ) :
+			add_action( 'admin_enqueue_scripts', array( $this, 'check_current_hook' ) );
+		else :
+			$this->frontend_enabled = apply_filters( 'mmd_front_enabled', false );
+			if ( ! $this->frontend_enabled ) :
+				return false;
+			endif;
+			add_action( 'wp_head', array( $this, 'check_current_hook' ) );
+		endif;
+		return true;
+	}
+
+
+	/**
 	 * Check if the user is currently on an edit screen
 	 *
 	 * @access public
@@ -149,32 +173,6 @@ class EngineEasyMDE {
 
 
 	/**
-	 * Check and trigger the assets load if need be
-	 *
-	 * @access public
-	 * @since 3.3.0
-	 *
-	 * @return Boolean TRUE if we need to load the assets or FALSE
-	 */
-	public function prepare_editor_assets() {
-		$editor_required = apply_filters( 'mmd_editor_required', $this->is_admin );
-		if ( ! $editor_required ) :
-			return FALSE;
-		endif;
-		if ( $this->is_admin ) :
-			add_action( 'admin_enqueue_scripts', array( $this, 'check_current_hook' ) );
-		else :
-			add_filter( 'mmd_frontend', array( $this, 'disable_subs_guests' ), 9, 1 );
-			$this->frontend_enabled = apply_filters( 'mmd_front_enabled', false );
-			if ( ! $this->frontend_enabled ) :
-				return false;
-			endif;
-			add_action( 'wp_head', array( $this, 'check_current_hook' ) );
-		endif;
-		return true;
-	}
-
-	/**
 	 * Trigger the loading of stylesheets and scripts if and only if we are
 	 * on the edit screen of a post / page using the markdown version of wysiwyg
 	 *
@@ -183,17 +181,6 @@ class EngineEasyMDE {
 	 * @return Void
 	 */
 	public function load_engine_assets() {
-		$required = 0;
-		if ( ! $this->is_admin ) :
-			$required = 1;
-		elseif ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED > 0 ) :
-			$required = 1;
-		elseif ( defined( 'MMD_CUSTOM_FIELD' ) && MMD_CUSTOM_FIELD > 0 ) :
-			$required = 1;
-		endif;
-		if ( ! $required ) :
-			return FALSE;
-		endif;
 		# 2. Load markdown related scripts
 		$plugin_uri = mmd()->plugin_uri;
 		wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.0', true );

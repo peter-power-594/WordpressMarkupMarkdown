@@ -20,18 +20,18 @@ class Support {
 
 	public function __construct() {
 		# Add Support
-		add_action( 'init', array( $this, 'add_markdown_support' ), 10 );
+		add_action( 'init', array( $this, 'add_markdown_support' ), 10, 0 );
 		if ( is_admin() ) :
 			# Check then enable or disable the markdown editor on the backend
-			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 );
+			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999, 0 );
 			# Enable or disable the post filters
-			add_action( 'wp_loaded', array( $this, 'set_content_filters' ), 10 );
+			add_action( 'wp_loaded', array( $this, 'set_content_filters' ), 10, 0 );
 		else :
 			# Check then enable or disable the markdown editor on the frontend
-			add_filter( 'mmd_front_enabled', array( $this, 'current_template_allowed' ), 10, 1 );
-			add_action( 'wp', array( $this, 'prepare_markdown_editor' ), 9 );
+			add_filter( 'mmd_front_enabled', array( $this, 'current_template_allowed' ), 9, 1 );
+			add_action( 'get_header', array( $this, 'prepare_markdown_editor' ), 9, 0 );
 			# Enable or disable the post filters
-			add_action( 'wp', array( $this, 'set_content_filters' ), 10 );
+			add_action( 'get_header', array( $this, 'set_content_filters' ), 10, 0 );
 		endif;
 	}
 
@@ -42,11 +42,11 @@ class Support {
 	 * @since 3.3.0
 	 * @access public
 	 *
-	 * @param Boolean TRUE if the editor can be loaded on the frontend. Default is FALSE
+	 * @param Boolean TRUE if the editor can be loaded on the frontend.
 	 *
 	 * @return Boolean TRUE if enabled or FALSE if disabed
 	 */
-	public function current_template_allowed( $bool = false ) {
+	public function current_template_allowed( $bool = true ) {
 		if ( ! get_current_user_id() ) :
 			# Disable *Guest* users
 			return false;
