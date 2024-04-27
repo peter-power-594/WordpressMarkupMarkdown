@@ -13,55 +13,63 @@ class Parser {
 
 	private $preview = 'false';
 
+	private $mmd_allowed = 1;
+
+	private $cache_enabled = 0;
+
 	public function __construct() {
 		if ( MMD_SUPPORT_ENABLED > 0 ) :
 			# Add the filter so the markdown can be parsed and the html generated properly on the frontend
 			$this->preview = filter_input( INPUT_GET, 'preview', FILTER_SANITIZE_SPECIAL_CHARS );
-			$cached_filter = defined( 'WP_MMD_OPCACHE' ) && WP_MMD_OPCACHE ? 'cached_' : '';
-			add_filter( 'post_markdown2html', array( $this, $cached_filter . 'post_markdown2html' ) );
+			$this->cache_enabled = defined( 'WP_MMD_OPCACHE' ) && WP_MMD_OPCACHE ? 1 : 0;
+			$this->mmd_allowed = 1;
 		else :
-			add_filter( 'post_markdown2html', array( $this, 'dummy_markdown' ) );
+			$this->mmd_allowed = 0;
 		endif;
-		add_filter( 'field_markdown2html', array( $this, 'post_markdown2html' ) );
-	}
-
-
-	/**
-	 * Dummy method to return original post content in case markdown is disabled
-	 *
-	 * @access public
-	 * @since 2.0.0
-	 *
-	 * @param   string $content The HTML to be parsed.
-	 * @returns string The HTML rendered.
-	 */
-	public function dummy_markdown( $content ) {
-		return $content;
+		add_filter( 'post_markdown2html', array( $this, 'format_mmd2html' ), 10, 2 );
+		add_filter( 'field_markdown2html', array( $this, 'final_html' ), 10, 1 );
 	}
 
 
 	/**
 	 * Method to check for existing cached content before rendering the markdown
 	 *
-	 * @access public
+	 * @access private
 	 * @since 2.0.0
 	 *
-	 * @param string $content the HTML to be parsed
-	 * @returns string HTML rendered from the markdown
+	 * @param String $content the HTML to be parsed
+	 *
+	 * @return String HTML rendered from the markdown
 	 */
-	public function cached_post_markdown2html( $content ) {
+	private function static_html( $content ) {
 		$cache_content = mmd()->cache_dir . "/." . get_main_site_id() . '_' . get_the_id() . ".html";
-		# Cache available
 		if ( $this->preview !== 'true' && file_exists( $cache_content ) ) :
+			# Cache file already exists
 			$my_content = file_get_contents( $cache_content );
 			return $my_content;
+		else :
+			# New cache file
+			$my_content = $this->live_html( $content );
+			file_put_contents( $cache_content, $my_content );
+			return $my_content;
 		endif;
-		# Cache not available
-		$html = $this->post_markdown2html( $content );
+	}
+
+
+	/**
+	 * Method to render raw markdown content
+	 *
+	 * @access private
+	 * @since 3.0.0
+	 *
+	 * @param String $content the HTML to be parsed
+	 *
+	 * @return String HTML rendered from the markdown
+	 */
+	private function live_html( $content ) {
+		$html = $this->final_html( $content );
 		# Decode the double quotes to avoid breaking native WP shortcodes
-		$html_with_shortcodes = htmlspecialchars_decode( $html, ENT_COMPAT );
-		file_put_contents( $cache_content, $html_with_shortcodes );
-		return $html_with_shortcodes;
+		return htmlspecialchars_decode( $html, ENT_COMPAT );
 	}
 
 
@@ -74,8 +82,31 @@ class Parser {
 	 * @param string $content the HTML to be parsed
 	 * @returns string HTML rendered from the markdown
 	 */
-	public function post_markdown2html( $content ) {
+	public function final_html( $content ) {
 		return apply_filters( 'addon_markdown2html', $this->markdown2html( $content ) );
+	}
+
+
+	/**
+	 * Quick bridge to filter cache allowed in settings and cache allowed with the field
+	 *
+	 * @access public
+	 * @since 1.5.4
+	 *
+	 * @param String $field_content the HTML content
+	 * @param Boolean $cache_allowed TRUE if cache is allowed with the field
+	 *
+	 * @return String $content The modified HTML content
+	 */
+	public function format_mmd2html( $field_content, $cache_allowed ) {
+		if ( ! $this->mmd_allowed ) :
+			# Markdown has been disabled on the main content
+			return $field_content;
+		elseif ( $this->cache_enabled && $cache_allowed ) :
+			return $this->static_html( $field_content );
+		else :
+			return $this->live_html( $field_content );
+		endif;
 	}
 
 

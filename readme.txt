@@ -17,6 +17,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- v3.3: Bug fixes, basic compatibiliy with block styles, the editor can now be loaded on the frontend with acf_form
 - v3.2: Support to enable markdown only for custom fields
 - v3.1: Side preview panel fixed
 - v3.0: Choose and sort the default toolbar buttons

@@ -213,15 +213,20 @@ class Settings {
 			touch( $my_cnf_screen );
 		endif;
 		$php_code = [ "<?php" ];
-		$php_code[] = "\n\tdefined( 'ABSPATH' ) || exit;";
-		$php_code[] = "\n\tdefine( 'MMD_ADDONS', [";
+		$php_code[] = "\n\t" . 'defined( \'ABSPATH\' ) || exit;';
+		$php_code[] = "\n\t" . 'define( \'MMD_ADDONS\', [';
 		if ( isset( $my_addons ) && is_array( $my_addons ) ) :
 			foreach( $my_addons as $addon ) :
-				$php_code[] = "\n\t\t\"" . htmlspecialchars( $addon ) . "\",";
+				$php_code[] = "\n\t\t\"" . htmlspecialchars( $addon ) . '",';
 			endforeach;
-			$php_code[] = "\n\t\t\"eof\"";
+			$php_code[] = "\n\t\t" . '"eof"';
 		endif;
-		$php_code[] = "\n\t]);";
+		$php_code[] = "\n\t" . ']);';
+		$php_code[] = "\n\t" . 'if ( ! defined( \'WP_MMD_OPCACHE\' ) ) :'
+			. "\n\t\t" . 'define( \'WP_MMD_OPCACHE\', '
+				.  ( in_array( 'nopcache', $my_addons ) ? 'false' : 'true' )
+			. ' );'
+			. "\n\t" . 'endif;';
 		if ( file_put_contents( $my_cnf_screen, implode( '', $php_code ) ) ) :
 			if ( function_exists( 'opcache_invalidate' ) ) :
 				opcache_invalidate( $my_cnf_screen );

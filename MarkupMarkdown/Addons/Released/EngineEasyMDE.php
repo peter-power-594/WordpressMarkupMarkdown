@@ -17,19 +17,27 @@ class EngineEasyMDE {
 	);
 
 
+	public $is_admin = FALSE;
+
+	public $frontend_enabled = FALSE;
+
 	public function __construct() {
 		if ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) !== FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated (SummerNote activated)
 		endif;
-		if ( is_admin() ) :
-			add_action( 'admin_enqueue_scripts', array( $this, 'check_current_hook' ) );
+		$this->is_admin = is_admin() ? TRUE : FALSE;
+		if ( $this->is_admin ) :
+			# Hooks that run only in the backend
 			add_action( 'wp_ajax_mmduser-editoptions', array( $this, 'save_mmd_edit_options' ) );
 			$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
 			if ( 'edit' === $action ) :
 				add_filter( 'screen_settings', array( $this, 'mmd_post_screen_options_settings' ), 9 , 2 );
 			endif;
 		endif;
+		# Hooks that might be used on the frontend as well
+		add_action( 'wp_loaded', array( $this, 'prepare_editor_assets' ) );
+		return TRUE;
 	}
 
 
@@ -98,17 +106,30 @@ class EngineEasyMDE {
 	 * Check if the user is currently on an edit screen
 	 *
 	 * @access public
-	 * @since 3.0
+	 * @since 3.0.0
 	 *
 	 * @param String $hook the current hook in use
-	 * 
+	 *
 	 * @return Void
 	 */
-	public function check_current_hook( $hook ) {
-		if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
-			return FALSE;
+	public function check_current_hook( $hook = 'unknown.php' ) {
+		if ( $this->is_admin ) :
+			// Backend
+			if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
+				return FALSE;
+			endif;
+		else :
+			if ( ! is_singular() || ! $this->frontend_enabled ) :
+				// Frontend and user is no logged or not possible to edit content
+				return FALSE;
+			endif;
 		endif;
-		wp_enqueue_media();
+		$args = array();
+		$post_id = function_exists( 'get_the_ID' ) ? get_the_ID() : 0;
+		if ( (int)$post_id > 0 ) :
+			$args[ 'post' ] = $post_id;
+		endif;
+		wp_enqueue_media( $args );
 		wp_playlist_scripts( 'audio' );
 		wp_playlist_scripts( 'video' );
 		$plugin_uri = mmd()->plugin_uri;
@@ -119,21 +140,53 @@ class EngineEasyMDE {
 		wp_enqueue_style( 'markup_markdown__font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown__wordpress_richedit' ], '5.15.14' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown__font_awesome_regular' ], '5.15.14' );
 		# Conditinal script loading with footer hook after all plugins are loaded
-		add_action( 'admin_footer', array( $this, 'load_engine_assets' ) );
+		if ( $this->is_admin ) :
+			add_action( 'admin_footer', array( $this, 'load_engine_assets' ) );
+		else :
+			add_action( 'wp_footer', array( $this, 'load_engine_assets' ) );
+		endif;
 	}
 
+
+	/**
+	 * Check and trigger the assets load if need be
+	 *
+	 * @access public
+	 * @since 3.3.0
+	 *
+	 * @return Boolean TRUE if we need to load the assets or FALSE
+	 */
+	public function prepare_editor_assets() {
+		$editor_required = apply_filters( 'mmd_editor_required', $this->is_admin );
+		if ( ! $editor_required ) :
+			return FALSE;
+		endif;
+		if ( $this->is_admin ) :
+			add_action( 'admin_enqueue_scripts', array( $this, 'check_current_hook' ) );
+		else :
+			add_filter( 'mmd_frontend', array( $this, 'disable_subs_guests' ), 9, 1 );
+			$this->frontend_enabled = apply_filters( 'mmd_front_enabled', false );
+			if ( ! $this->frontend_enabled ) :
+				return false;
+			endif;
+			add_action( 'wp_head', array( $this, 'check_current_hook' ) );
+		endif;
+		return true;
+	}
 
 	/**
 	 * Trigger the loading of stylesheets and scripts if and only if we are
 	 * on the edit screen of a post / page using the markdown version of wysiwyg
 	 *
 	 * @access public
-	 * 
+	 *
 	 * @return Void
 	 */
 	public function load_engine_assets() {
 		$required = 0;
-		if ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED > 0 ) :
+		if ( ! $this->is_admin ) :
+			$required = 1;
+		elseif ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED > 0 ) :
 			$required = 1;
 		elseif ( defined( 'MMD_CUSTOM_FIELD' ) && MMD_CUSTOM_FIELD > 0 ) :
 			$required = 1;
@@ -165,7 +218,8 @@ class EngineEasyMDE {
 	 */
 	public function add_inline_editor_conf() {
 		$home_url = get_home_url() . '/';
-		$js = "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
+		$js = "window.wp = window.wp || {};";
+		$js .= "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
 		$js .= "wp.pluginMarkupMarkdown.homeURL = \"" . $home_url . "\";\n";
 		$json = mmd()->cache_dir . '/conf_easymde_toolbar.json';
 		if ( ! file_exists( $json ) ) :
@@ -176,7 +230,7 @@ class EngineEasyMDE {
 			endif;
 		endif;
 		$toolbarButtons = json_decode( preg_replace( "#[^a-z0-9-_\,\:\"\{\}\[\]]#", "", file_get_contents( $json ) ) );
-		$js .= "wp.pluginMarkupMarkdown.primaryArea = " . ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ? '1' : '0' ) . ";\n"; 
+		$js .= "wp.pluginMarkupMarkdown.primaryArea = " . ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ? '1' : '0' ) . ";\n";
 		$js .= "wp.pluginMarkupMarkdown.toolbarButtons = [ \"" . implode( "\",\"", str_replace( '_', '-', $toolbarButtons->my_buttons ) ) . "\" ];\n";
 		return $js;
 	}

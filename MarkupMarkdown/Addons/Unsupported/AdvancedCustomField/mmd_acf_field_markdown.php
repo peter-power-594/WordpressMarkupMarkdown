@@ -117,7 +117,7 @@ class mmd_acf_field_markdown extends \acf_field {
 			Debug output to show what field data is available.
 			echo '<pre>';
 			print_r( $field );
-			echo '</pre>';	
+			echo '</pre>';
 		*/
 		if ( ! defined( 'MMD_CUSTOM_FIELD' ) ) :
 			define( 'MMD_CUSTOM_FIELD', 1 );

@@ -11,9 +11,9 @@
 
 	/**
 	 * MmdPreview is the public class available that will be used with the EasyMDE editor filters
-	 * 
+	 *
 	 * @param {Obect} ops The constructor options
-	 * 
+	 *
 	 * @returns {Object} 3 public methods
 	 */
 	function MmdPreview( ops ) {
@@ -41,9 +41,9 @@
 
 	/**
 	 * The preview render engine is a private class
-	 * 
+	 *
 	 * @param {Object} ops The rendering engine options
-	 * 
+	 *
 	 * @returns {Object} The following methods :
 	 * - {Function} flushQueue A method to clear the cache queue
 	 * - {Function} add2Queue A method to push a preview task to the queue
@@ -112,7 +112,7 @@
 	 * @source http://en.wikipedia.org/wiki/Jenkins_hash_function
 	 *
 	 * @param {String} key The key to use the hash from
-	 * 
+	 *
 	 * @returns {String} Hash of the string
 	 */
 	renderEngine.prototype.hashString = function ( key ) {
@@ -133,13 +133,13 @@
 	 * Handle media preview HTML display size while rendering
 	 *
 	 * @param {Object} event The _resize_ event handler
-	 * 
+	 *
 	 */
 	renderEngine.prototype.clipbox = function( event ) {
 		var _self = this,
 			css = [];
 		$( '.tmp_media' ).each(function() {
-			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' ); 
+			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' );
 		});
 		_self.previewSheet.innerText = css.join( '' );
 	};
@@ -149,7 +149,7 @@
 	 * Extract and generates html attributes from markdown extra syntax
 	 *
 	 * @param {String} extractExtra Markdown extra markup
-	 * 
+	 *
 	 * @returns {String} The list of the related html attributes or FALSE in case of errors
 	 */
 	renderEngine.prototype.extractExtra = function( extraMarkup ) {
@@ -212,7 +212,7 @@
 	 *
 	 * @param {String} wpGallery The WP gallery shortcode
 	 * @param {Integer} galleryNumber The gallery counter used for the ID
-	 * 
+	 *
 	 * @returns {Boolean} TRUE in case of success or FALSE
 	 */
 	renderEngine.prototype.renderGallery = function( wpGallery, galleryNumber ) {
@@ -344,7 +344,7 @@
 	 * Convert HTML Image
 	 *
 	 * @param {String} wpImage An HTML image converted from markdown
-	 * 
+	 *
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertHTMLImage = function( wpImage, dummy ) {
@@ -407,7 +407,7 @@
 	 *
 	 * @param {String} wpAudio The WP Audio Shortcode to convert to html
 	 * @param {Integer} wpNumber The media number in the current HTML
-	 * 
+	 *
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertAudioShortcode = function( wpAudio, wpNumber ) {
@@ -435,7 +435,7 @@
 	 *
 	 * @param {String} wpVideo The WP Video Shortcode to convert to html
 	 * @param {Integer} wpNumber The media number in the current HTML
-	 * 
+	 *
 	 * @returns {String} HTML Fixed HTML content
 	 */
 	renderEngine.prototype.convertVideoShortcode = function( wpVideo, wpNumber ) {
@@ -478,7 +478,7 @@
 
 	/**
 	 * Media Video Playlist Preview
-	 * 
+	 *
 	 * @param {String} wpVideoPlaylist The WP playlist shortcode [playlist type="video" ids="xxx,xxx,xx"]
 	 * @param {Integer} playListNumber The number used for the media ID in the HTML document
 	 *
@@ -494,7 +494,7 @@
 		if ( tmp_cache && tmp_cache[ galleryHash ] ) {
 			return tmp_cache[ galleryHash ].join( '' );
 		}
-		// HTML Vide Playlist 
+		// HTML Vide Playlist
 		var playlistHTML = function( videoIds ) {
 			var tracks = [];
 			for ( var j = 0, vid, obj; j < videoIds.length; j++ ) {
@@ -596,7 +596,7 @@
 
 	/**
 	 * Media Audio Playlist Preview
-	 * 
+	 *
 	 * @param {String} wpAudioPlaylist The WP playlist shortcode [playlist ids="xxx,xxx,xx"]
 	 * @param {Integer} playListNumber The number used for the media ID in the HTML document
 	 *
@@ -612,7 +612,7 @@
 		if ( tmp_cache && tmp_cache[ galleryHash ] ) {
 			return tmp_cache[ galleryHash ].join( '' );
 		}
-		// HTML Vide Playlist 
+		// HTML Vide Playlist
 		var playlistHTML = function( audioIds ) {
 			var tracks = [];
 			for ( var j = 0, aud, obj; j < audioIds.length; j++ ) {
