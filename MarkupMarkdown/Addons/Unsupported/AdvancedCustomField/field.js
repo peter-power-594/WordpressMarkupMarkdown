@@ -8,8 +8,9 @@
 			$textarea = $field.find( 'textarea:eq(0)' );
 		// Warning: set the binder BEFORE calling the MarkupMarkdown class
 		document.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
-			if ( ! $textarea.parent().hasClass( 'ready' ) ) {
-				$textarea.parent().addClass( 'ready' );
+			var $acfInputField = $textarea.closest( '.acf-input' );
+			if ( $acfInputField.length && ! $acfInputField.hasClass( 'ready' ) ) {
+				$acfInputField.addClass( 'ready' );
 			}
 		});
 		new MarkupMarkdown( $textarea );

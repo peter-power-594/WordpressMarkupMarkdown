@@ -128,7 +128,7 @@ class EngineEasyMDE {
 
 
 	/**
-	 * Check if the user is currently on an edit screen
+	 * Load step by setp the required assets
 	 *
 	 * @access public
 	 * @since 3.0.0
@@ -141,12 +141,12 @@ class EngineEasyMDE {
 		if ( $this->is_admin ) : # Backend
 			if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
 				# Not editing a post, do not load asset & exit
-				return FALSE;
+				return false;
 			endif;
 		else : # Frontend
 			if ( ! is_singular() || ! $this->frontend_enabled ) :
 				// Frontend and user is no logged or not possible to edit content
-				return FALSE;
+				return false;
 			endif;
 		endif;
 		# (1) Load the media related manager assets
@@ -159,8 +159,7 @@ class EngineEasyMDE {
 
 
 	/**
-	 * Trigger the loading of the editor scripts if and only if we are
-	 * on the edit screen of a post / page using the markdown version of wysiwyg
+	 * Queue the media manager related assets
 	 *
 	 * @access public
 	 * @since 3.3.0
@@ -213,8 +212,8 @@ class EngineEasyMDE {
 		wp_enqueue_script( 'markup_markdown__waypoints', 'https://unpkg.com/waypoints@4.0.1/lib/jquery.waypoints.min.js', [ 'markup_markdown__jsengine_editor' ], '4.0.1', true );
 		wp_enqueue_script( 'markup_markdown__sticky', 'https://unpkg.com/waypoints@4.0.1/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
 		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__sticky' ], '1.1.3', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.17', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.18', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.20', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.20', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.11', true );
 		wp_add_inline_script( 'markup_markdown__wordpress_media', $this->add_inline_editor_conf() );
 	}

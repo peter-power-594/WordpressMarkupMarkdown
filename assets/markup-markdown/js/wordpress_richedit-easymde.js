@@ -81,10 +81,13 @@
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
-		var spell_check = '',
+		var spell_check = { disabled: 1 },
 			toolbar = [];
 		if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.spellChecker ) {
 			spell_check = _win.wp.pluginMarkupMarkdown.spellChecker;
+			if ( typeof spell_check !== 'object' ) {
+				spell_check = { disabled: 1 };
+			}
 		}
 		var n = 0;
 		for ( var b = 0, slug = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
@@ -92,7 +95,7 @@
 			if ( slug === "pipe" ) {
 				toolbar.push( "|" );
 			}
-			else if ( /spell[-_]*check/.test( slug ) ) {
+			else if ( /spell[-_]*check/.test( slug ) && ! spell_check.disabled ) {
 				$.each(spell_check, function(myLang, targetLang) {
 					n++;
 					if ( n <= 1 ) {
@@ -144,7 +147,7 @@
 			}
 		}
 		if ( n < 1 ) {
-			spell_check = 'none';
+			spell_check = { disabled: 1 };
 		}
 		if ( $textarea.parent().hasClass( 'acf-input' ) || ! isAdmin ) {
 			var minimalToolbar = [];
@@ -173,7 +176,7 @@
 				return text;
 			}
 		};
-		if ( spell_check && spell_check !== 'none' ) {
+		if ( spell_check && spell_check !== 'none' && ! spell_check.disabled ) {
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files
 			editorConfig.spellChecker = function( spellCheckConfig ) {
 				spellCheckConfig.language = spell_check;
@@ -206,11 +209,19 @@
 			_self.widgetCounter = startCounter + 1;
 		}
 		_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
-		if ( ! spell_check || spell_check === 'none' ) {
+		if ( ! spell_check || ( spell_check.disabled && spell_check.disabled === 1 ) || spell_check === 'none' ) {
 			// Event need to be triggered manually
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
+			if ( isACF > 0 ) {
+				$textarea.closest( '.acf-input' ).addClass( 'ready' );
+			}
+			else {
+				$( '#wp-content-editor-container' ).addClass( 'ready' );
+				new MarkupMarkdownOptions();
+				$( _doc.body ).addClass( 'markupmarkdown-ready' );
+			}
 		}
-		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
+		if ( isACF > 0 ) {
 			setTimeout(function() {
 				_self.instance.editor.codemirror.refresh();
 			}, 250 );
@@ -391,8 +402,12 @@
 	 * We _don't rely_ on CoreMirror events but with the user interactions from the surrounded containers
 	 */
 	function MarkupMarkdownOptions() {
-		var _self = this,
-			userTimerId = 0,
+		var _self = this;
+		if ( $( _doc.body ).hasClass( 'mmd-options-ready' ) ) {
+			return false;
+		}
+		$( _doc.body ).addClass( 'mmd-options-ready' );
+		var userTimerId = 0,
 			$userPanel = $( '.mmd-easymde-prefs' );
 		_self.userOptions = _self.getUserOptions( $userPanel );
 		_self.stickyInst = [];
