@@ -58,16 +58,17 @@ class WPGeshi {
 
 
 	public function load_wp_geshi_stylesheets() {
-		if ( ! is_singular() ) :
+		if ( ! is_singular() || empty( $this->mmd_geshi_css_code ) ) :
 			return false;
 		endif;
 		# Override the global inline style variable. Solved the undefined error
 		global $wp_geshi_css_code;
-		$wp_geshi_css_code = $this->mmd_geshi_css_code;
+		$wp_geshi_css_code = "";
 		if ( ! defined( 'WP_MMD_OPCACHE' ) || ! WP_MMD_OPCACHE || ! function_exists( 'ob_start' ) ) :
 			# OP Cache is disabled or output buffering not available, just trigger the styles generator
 			wp_geshi_add_css_to_head();
-		elseif ( strlen( $wp_geshi_css_code ) ) :
+			wp_add_inline_style( 'wpgeshi-wp-geshi-highlight', $this->mmd_geshi_css_code );
+		else :
 			# OP Cache is enabled and required PHP module exists. We compile the css inside and push it to the static cache file
 			$geshi_stylesheet = '';
 			ob_start();
@@ -83,13 +84,14 @@ class WPGeshi {
 					endif;
 				endforeach;
 			endif;
+			echo '<style id="wpgeshi-wp-geshi-highlight-inline-css" type="text/css">' . $this->mmd_geshi_css_code . '</style>';
 			$post_geshi_css = ob_get_clean();
 			$post_content = mmd()->cache_dir . "/." . get_main_site_id() . '_' . get_the_id() . ".html";
 			if ( file_exists( $post_content ) ) :
 				file_put_contents( $post_content, $post_geshi_css, FILE_APPEND );
 			endif;
 			# For the first run we still need to ouput the content !
-			echo $geshi_stylesheet . '<style type="text/css">' . $wp_geshi_css_code . '</style>';
+			echo $post_geshi_css;
 		endif;
 		return TRUE;
 	}
@@ -97,4 +99,4 @@ class WPGeshi {
 
 }
 
-new WPGeshi();
+new \MarkupMarkdown\Addons\AutoPlugs\WPGeshi();
