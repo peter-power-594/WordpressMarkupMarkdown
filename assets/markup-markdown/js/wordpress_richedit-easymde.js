@@ -96,33 +96,35 @@
 			if ( slug === "pipe" ) {
 				toolbar.push( "|" );
 			}
-			else if ( /spell[-_]*check/.test( slug ) && ! spell_check.disabled ) {
-				$.each(spell_check, function(myLang, targetLang) {
-					n++;
-					if ( n <= 1 ) {
-						return true; // Skip first default language
-					}
-					if ( n === 2 ) {
-						toolbar.push( "|" );
-					}
-					toolbar.push({
-						name: "wpsi18n_" + targetLang.code,
-						action: function( editor ) {
-							var cm = _self.instance.editor.codemirror,
-							doc = cm.getDoc(),
-							sel = doc.getSelection() || false;
-							if ( sel && sel.length ) {
-								_self.instance.i18nAdded = 1;
-								return doc.replaceSelection(
-									'<span lang="' + targetLang.code + '">' + sel + '</span>'
-								);
-							}
-						},
-						className: "i18n " + targetLang.code,
-						text: targetLang.code.toUpperCase(),
-						title: targetLang.label
-					});
-				});
+			else if ( /spell[-_]*check/.test( slug ) ) {
+				if ( ! spell_check.disabled ) {
+					$.each(spell_check, function(myLang, targetLang) {
+						n++;
+						if ( n <= 1 ) {
+							return true; // Skip first default language
+						}
+						if ( n === 2 ) {
+							toolbar.push( "|" );
+						}
+						toolbar.push({
+							name: "wpsi18n_" + targetLang.code,
+							action: function( editor ) {
+								var cm = _self.instance.editor.codemirror,
+								doc = cm.getDoc(),
+								sel = doc.getSelection() || false;
+								if ( sel && sel.length ) {
+									_self.instance.i18nAdded = 1;
+									return doc.replaceSelection(
+										'<span lang="' + targetLang.code + '">' + sel + '</span>'
+									);
+								}
+							},
+							className: "i18n " + targetLang.code,
+							text: targetLang.code.toUpperCase(),
+							title: targetLang.label
+						});
+					});					
+				}
 			}
 			else if ( /wps[-_]*image/.test( slug ) ) {
 				toolbar.push({

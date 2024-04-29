@@ -57,7 +57,7 @@ class Image {
 		if ( ! isset( $ops ) || ! is_array( $ops ) ) :
 			return '';
 		endif;
-		// Check for caption inside alternative text
+		# Check for caption inside alternative text
 		$alt = ''; $caption = '';
 		if ( isset( $ops[ 'label' ] ) && is_array( $ops[ 'label' ] ) ) :
 			$alt = isset( $ops[ 'label' ][ 1 ] ) ? $ops[ 'label' ][ 1 ] : '';
@@ -66,10 +66,25 @@ class Image {
 				$alt = $text[ 0 ]; $caption = $text[ 1 ];
 			endif;
 		endif;
+		# Check for custom align
 		$align = 'none';
 		if ( isset( $ops[ 'align' ] ) && is_array( $ops[ 'align' ] )
 			&& in_array( $ops[ 'align' ][ 1 ], array( 'none', 'left', 'right', 'center' ) ) ) :
 			$align = $ops[ 'align' ][ 1 ];
+		endif;
+		# Check for custom sizes set in html attributes
+		$req_width = 0; $req_height = 0;
+		if ( isset( $ops[ 'size' ] ) && is_array( $ops[ 'size' ] ) ) :
+			if ( isset( $ops[ 'size' ][ 0 ] ) && isset( $ops[ 'size' ][ 0 ][ 1 ] ) ) :
+				if ( (int)$ops[ 'size' ][ 0 ][ 1 ] > 0 ) :
+					$req_width = (int)$ops[ 'size' ][ 0 ][ 1 ];
+				endif;
+			endif;
+			if ( isset( $ops[ 'size' ][ 1 ] ) && isset( $ops[ 'size' ][ 1 ][ 1 ] ) ) :
+				if ( (int)$ops[ 'size' ][ 1 ][ 1 ] > 0 ) :
+					$req_height = (int)$ops[ 'size' ][ 1 ][ 1 ];
+				endif;
+			endif;
 		endif;
 		$html = '<figure id="attachment_mmd_' . $ops[ 'idx' ] . '"';
 		if ( ! empty( $caption ) ) :
@@ -101,26 +116,43 @@ class Image {
 			$src = $ops[ 'src' ];
 			$html .= ' src="' . $src . '"';
 		endif;
-		# Image size
+		# Image final size
 		$width = 0; $height = 0;
-		if ( isset( $ops[ 'width' ] ) && is_numeric( $ops[ 'width' ] ) ) :
-			$width = (int)$ops[ 'width' ];
+		if ( $req_width > 0 ) :
+			$width = $req_width;
+		endif;
+		if ( $req_height > 0 ) :
+			$height = $req_height;
+		endif;
+		$wp_width = 0; $wp_height = 0;
+		if ( isset( $ops[ 'width' ] ) && is_numeric( $ops[ 'width' ] ) && (int)$ops[ 'width' ] > 0 ) :
+			$wp_width = (int)$ops[ 'width' ];
+			if ( ! $req_width && ! $req_height ) :
+				$width = (int)$ops[ 'width' ];
+			endif;
+		endif;
+		if ( isset( $ops[ 'height' ] ) && is_numeric( $ops[ 'height' ] ) && (int)$ops[ 'height' ] > 0 ) :
+			$wp_height = (int)$ops[ 'height' ];
+			if ( ! $req_width && ! $req_height ) :
+				$height = (int)$ops[ 'height' ];
+			endif;
+		endif;
+		if ( $width > 0 ) :
 			$html .= ' width="' . $width . '"';
 		endif;
-		if ( isset( $ops[ 'height' ] ) && is_numeric( $ops[ 'height' ] ) ) :
-			$height = (int)$ops[ 'height' ];
+		if ( $height > 0 ) :
 			$html .= ' height="' . $height . '"';
 		endif;
 		# If width or height is set to 'auto', we might miss a param
-		if ( ! empty( $src ) && $width > 0 && $height > 0 ) :
-			$html .= ' srcset="' . $src . ' ' . $width . 'w';
-			// Check wich size is used
+		if ( ! empty( $src ) && $wp_width > 0 && $wp_height > 0 ) :
+			$html .= ' srcset="' . $src . ' ' . $wp_width . 'w';
+			// Check which size is used
 			foreach ( $this->def_sizes as $def_size ) :
 				foreach( $def_size as $size_name => $size_value ) :
-					if ( $width === $size_value[ 0 ] ) :
+					if ( $wp_width === $size_value[ 0 ] ) :
 						continue;
 					endif;
-					$new_height = floor( $size_value[ 0 ] * $height / $width );
+					$new_height = floor( $size_value[ 0 ] * $wp_height / $wp_width );
 					$new_src = preg_replace( '#\d+x\d+\.([a-zA-Z]+)$#', $size_value[ 0 ] . 'x' . $new_height . '.$1', $src );
 					$base_src = preg_replace( '#.*?wp-content#', '/wp-content', $new_src );
 					if ( ! file_exists( ABSPATH . $base_src ) ) :
@@ -192,12 +224,15 @@ class Image {
 		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
 			preg_match( '#alt="(.*?)"#', $wp_imgs[ 7 ][ $idx ], $img_label );
 			preg_match( '#align([a-z]+)#', $wp_imgs[ 7 ][ $idx ], $img_align );
+			preg_match( '#width="(.*?)"#', $wp_imgs[ 7 ][ $idx ], $img_width );
+			preg_match( '#height="(.*?)"#', $wp_imgs[ 7 ][ $idx ], $img_height );
 			$new_img_tag = $this->wp_image(array(
 				'idx'	=> $media_idx,
 				'url'	=> $wp_imgs[ 1 ][ $idx ],
 				'title' => $wp_imgs[ 2 ][ $idx ],
 				'label' => $img_label,
 				'align' => $img_align,
+				'size'  => array( $img_width, $img_height ),
 				'src'	=> '/' . $wp_imgs[ 3 ][ $idx ] . '-'
 						. $wp_imgs[ 4 ][ $idx ] . 'x' . $wp_imgs[ 5 ][ $idx ]
 						. '.' . $wp_imgs[ 6 ][ $idx ],
@@ -214,10 +249,13 @@ class Image {
 		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
 			preg_match( '#alt="(.*?)"#', $wp_imgs[ 5 ][ $idx ], $img_label );
 			preg_match( '#align([a-z]+)#', $wp_imgs[ 5 ][ $idx ], $img_align );
+			preg_match( '#width="(.*?)"#', $wp_imgs[ 5 ][ $idx ], $img_width );
+			preg_match( '#height="(.*?)"#', $wp_imgs[ 5 ][ $idx ], $img_height );
 			$new_img_tag = $this->wp_image(array(
 				'idx'	=> $media_idx,
 				'label' => $img_label,
 				'align' => $img_align,
+				'size'  => array( $img_width, $img_height ),
 				'src'	=> '/' . $wp_imgs[ 1 ][ $idx ] . '-'
 						. $wp_imgs[ 2 ][ $idx ] . 'x' . $wp_imgs[ 3 ][ $idx ]
 						. '.' . $wp_imgs[ 4 ][ $idx ],
@@ -234,12 +272,34 @@ class Image {
 		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
 			preg_match( '#alt="(.*?)"#', $wp_imgs[ 4 ][ $idx ], $img_label );
 			preg_match( '#align([a-z]+)#', $wp_imgs[ 4 ][ $idx ], $img_align );
+			preg_match( '#width="(.*?)"#', $wp_imgs[ 4 ][ $idx ], $img_width );
+			preg_match( '#height="(.*?)"#', $wp_imgs[ 4 ][ $idx ], $img_height );
 			$new_img_tag = $this->wp_image(array(
 				'idx'	=> $media_idx,
 				'url'	=> $wp_imgs[ 1 ][ $idx ],
 				'title' => $wp_imgs[ 2 ][ $idx ],
 				'label' => $img_label,
 				'align' => $img_align,
+				'size'  => array( $img_width, $img_height ),
+				'src'	=> $wp_imgs[ 3 ][ $idx ]
+			));
+			if ( ! empty( $new_img_tag ) ) :
+				$content = str_replace( $img_tag, $new_img_tag, $content );
+				$media_idx++;
+			endif;
+		endforeach;
+		# Replace other standard images <img src="....jpg"...>
+		preg_match_all( '#<img src="(.*?\.[a-zA-Z]+)"(.*?)>#', $content, $wp_imgs );
+		foreach( $wp_imgs[ 0 ] as $idx => $img_tag ) :
+			preg_match( '#alt="(.*?)"#', $wp_imgs[ 2 ][ $idx ], $img_label );
+			preg_match( '#align([a-z]+)#', $wp_imgs[ 2 ][ $idx ], $img_align );
+			preg_match( '#width="(.*?)"#', $wp_imgs[ 2 ][ $idx ], $img_width );
+			preg_match( '#height="(.*?)"#', $wp_imgs[ 2 ][ $idx ], $img_height );
+			$new_img_tag = $this->wp_image(array(
+				'idx'	=> $media_idx,
+				'label' => $img_label,
+				'align' => $img_align,
+				'size'  => array( $img_width, $img_height ),
 				'src'	=> $wp_imgs[ 3 ][ $idx ]
 			));
 			if ( ! empty( $new_img_tag ) ) :
