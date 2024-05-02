@@ -300,7 +300,7 @@ class Image {
 				'label' => $img_label,
 				'align' => $img_align,
 				'size'  => array( $img_width, $img_height ),
-				'src'	=> $wp_imgs[ 3 ][ $idx ]
+				'src'	=> $wp_imgs[ 1 ][ $idx ]
 			));
 			if ( ! empty( $new_img_tag ) ) :
 				$content = str_replace( $img_tag, $new_img_tag, $content );

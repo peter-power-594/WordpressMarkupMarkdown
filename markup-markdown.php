@@ -4,7 +4,7 @@
  *
  * Plugin Name: Markup Markdown
  * Description: Replaces the Gutenberg Block Editor in favor of pure markdown based markups
- * Version:     3.3.4
+ * Version:     3.3.6
  * Author:      Pierre-Henri Lavigne
  * Author URI:  https://www.markup-markdown.com
  * License:     GPLv2 or later
@@ -32,7 +32,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		protected $parser;
 
 		protected $settings = array(
-			'version' => '3.3.4',
+			'version' => '3.3.6',
 			'plugin_uri' => '',
 			'plugin_dir' => '',
 			'plugin_slug' => '',

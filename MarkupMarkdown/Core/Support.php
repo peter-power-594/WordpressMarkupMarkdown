@@ -29,6 +29,7 @@ class Support {
 		else :
 			# Check then enable or disable the markdown editor on the frontend
 			add_filter( 'mmd_frontend_enabled', array( $this, 'current_template_allowed' ) );
+			add_action( 'rest_api_init', array( $this, 'whitelist_wp_api' ), 10 );
 			add_action( 'wp_head', array( $this, 'prepare_markdown_editor' ), 11 );
 			# Enable or disable the post filters
 			add_action( 'wp_head', array( $this, 'set_content_filters' ), 12 );
@@ -95,6 +96,22 @@ class Support {
 			return get_post_type( (int)$_REQUEST[ 'post' ] );
 		else :
 			return FALSE;
+		endif;
+	}
+
+
+	/**
+	 * Output the rendering of markdown
+	 *
+	 * @since 3.3.4
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function whitelist_wp_api() {
+		if ( wp_is_rest_endpoint() ) :
+			$this->prepare_markdown_editor();
+			$this->set_content_filters();
 		endif;
 	}
 

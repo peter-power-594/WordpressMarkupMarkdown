@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.3.4
-Version: 3.3.4
+Stable Tag: 3.3.6
+Version: 3.3.6
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -85,10 +85,20 @@ The current version is based on components that are not compatible with assistiv
 
 == Changelog ==
 
+= 3.3.6 =
+
+Bug fix:
+- Fixing PHP error with undefined array key
+
+= 3.3.5 =
+
+Bug fix:
+- Adding a whitelist on the REST hook to allow the rendering of markdown with REST content
+
 = 3.3.4 =
 
 Bug fixes:
-- Removing blank icon in the toolbar when the spell checker addon was disable
+- Removing blank icon in the toolbar when the spell checker addon was disabled
 - Fixing the case when a custom image size was overriden by wordress predefined size
 
 = 3.3.3 =

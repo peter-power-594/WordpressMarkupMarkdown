@@ -98,6 +98,16 @@
   margin: 0 0 1.5rem 0;
   padding: 0;
 }
+.editor-preview figure {
+	display: block;
+	margin: 0 0 1.5rem 0;
+	padding: 0;
+}
+.editor-preview figure img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
 .editor-preview ul {
   list-style: disc;
   margin: 0 0 1.5rem 1rem;
