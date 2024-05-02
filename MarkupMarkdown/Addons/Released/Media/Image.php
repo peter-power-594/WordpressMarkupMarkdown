@@ -68,8 +68,7 @@ class Image {
 		endif;
 		# Check for custom align
 		$align = 'none';
-		if ( isset( $ops[ 'align' ] ) && is_array( $ops[ 'align' ] )
-			&& in_array( $ops[ 'align' ][ 1 ], array( 'none', 'left', 'right', 'center' ) ) ) :
+		if ( isset( $ops[ 'align' ] ) && is_array( $ops[ 'align' ] ) && isset( $ops[ 'align' ][ 1 ] ) && in_array( $ops[ 'align' ][ 1 ], array( 'none', 'left', 'right', 'center' ) ) ) :
 			$align = $ops[ 'align' ][ 1 ];
 		endif;
 		# Check for custom sizes set in html attributes
