@@ -20,6 +20,8 @@ class WPGeshi {
 	public function mmd_wp_geshi_plug() {
 		# Just in case make sure one of the wp geshi core function is available
 		if ( function_exists( 'wp_geshi_filter_replace_code' ) ) :
+			global $wp_geshi_used_languages;
+			$wp_geshi_used_languages = array();
 			add_filter( 'addon_markdown2html', array( $this, 'trigger_wp_geshi' ), 11, 1 );
 		endif;
 		if ( function_exists( 'wp_geshi_add_css_to_head' ) ) :

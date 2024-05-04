@@ -18,22 +18,62 @@ class Support {
 	private $mmd_syntax = 1;
 
 
+	/**
+	 * @property Array $allowed_hooks
+	 * The list of default hooks where the markdown editor will be used in the backend
+	 * Can be overriden by developers with the *mmd_backend_enabled* filter
+	 *
+	 * @since 2.0.0
+	 * @access private
+	 */
+	private $allowed_hooks = array(
+		'post.php', 'post-new.php',
+		'edit-tags.php', 'term.php',
+	);
+
+
 	public function __construct() {
 		# Add Support. When possible we let developers take benefit of the default 10 priority
-		add_action( 'init', array( $this, 'add_markdown_support' ) );
+		add_action( 'init', array( $this, 'add_markdown_support' ) ); # Priority 10
 		if ( is_admin() ) :
 			# Check then enable or disable the markdown editor on the backend
-			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 );
-			# Enable or disable the post filters
+			add_filter( 'mmd_backend_enabled', array( $this, 'current_hook_allowed' ) );
+			# Check if we are at the right location
+			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 ); # Priority 9999
+			# Toggle on / off the markdown related filters. Different hook so ok with priority 10
 			add_action( 'wp_loaded', array( $this, 'set_content_filters' ) );
 		else :
 			# Check then enable or disable the markdown editor on the frontend
 			add_filter( 'mmd_frontend_enabled', array( $this, 'current_template_allowed' ) );
-			add_action( 'rest_api_init', array( $this, 'whitelist_wp_api' ), 10 );
+			# Check first if the request is related to the REST api
+			add_action( 'rest_api_init', array( $this, 'whitelist_wp_api' ) );
+			# Then check if the request is related to a front page / post.
+			# We need the latest hook wp_head to keep compatibility with plugin like ACF
+			# Priority should be greater than 10 so we go with 11
 			add_action( 'wp_head', array( $this, 'prepare_markdown_editor' ), 11 );
-			# Enable or disable the post filters
+			# Toggle on / off the markdown related filters.
+			# Again to keep compatibility with existing plugins we keep the wp_head hook
+			# Priority should be greater than the previous prepare_markdown_editor. Go for 12
 			add_action( 'wp_head', array( $this, 'set_content_filters' ), 12 );
 		endif;
+	}
+
+
+	/**
+	 * Tiny filter to switch on / off the loading of the markdown editor on the backend
+	 *
+	 * @since 3.4.0
+	 * @access public
+	 *
+	 * @param String $hook The target $hook. Default to a dummy value unknown.php
+	 *
+	 * @return Boolean TRUE if enabled or FALSE if disabed
+	 */
+	public function current_hook_allowed( $hook = 'unknown.php' ) {
+		if ( in_array( $hook, $this->allowed_hooks ) !== false ) :
+			return true;
+		endif;
+		return false;
 	}
 
 
@@ -95,7 +135,7 @@ class Support {
 		elseif ( isset( $_REQUEST[ 'post' ] ) && function_exists( 'get_post_type' ) ) :
 			return get_post_type( (int)$_REQUEST[ 'post' ] );
 		else :
-			return FALSE;
+			return false;
 		endif;
 	}
 
@@ -109,10 +149,20 @@ class Support {
 	 * @return Void
 	 */
 	public function whitelist_wp_api() {
-		if ( wp_is_rest_endpoint() ) :
-			$this->prepare_markdown_editor();
-			$this->set_content_filters();
+		if ( ! wp_is_rest_endpoint() ) :
+			return false;
 		endif;
+		$this->prepare_markdown_editor();
+		# Allow markdown on REST API with terms description
+		add_filter( 'rest_prepare_category', array( $this, 'prepare_desc_field' ), 10, 3 );
+		add_filter( 'rest_prepare_post_tag', array( $this, 'prepare_desc_field' ), 10, 3 );
+		if ( function_exists( 'get_taxonomies' ) ) :
+			$my_taxonomies = get_taxonomies( array( 'show_in_rest' => true, '_builtin' => false ) );
+			foreach( $my_taxonomies as $tax ) :
+				add_filter( 'rest_prepare_' . $tax, array( $this, 'prepare_desc_field' ), 10, 3 );
+			endforeach;
+		endif;
+		$this->set_content_filters();
 	}
 
 
@@ -126,20 +176,22 @@ class Support {
 	 */
 	public function prepare_markdown_editor() {
 		if ( ! $this->mmd_syntax ) :
-			$this->mmd_syntax = 0;
-			return FALSE;
+			return false;
 		else:
-			$my_post_type = $this->get_current_post_type();
+			# Classic request with a post type defined. Backend or Frontend follow the rules defined
+			$my_post_type = $this->get_current_post_type(); 
 			if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
 				$this->mmd_syntax = 0;
 			endif;
 			if ( ! is_admin() ) :
+				# Toggle on or off the markdown **editor** on the frontend
 				$mmd_tmpl_enabled = apply_filters( 'mmd_frontend_enabled', false );
 				if ( ! (int)$mmd_tmpl_enabled ) :
-					return FALSE;
+					return false;
 				endif;
-			elseif ( ! $this->mmd_syntax ) :
-				return FALSE;
+			endif;
+			if ( ! $this->mmd_syntax ) :
+				return false;
 			endif;
 		endif;
 		# Markdown can be used with custom fields, so only disable TinyMCE / Guternberg hooks when support is enabled
@@ -159,7 +211,7 @@ class Support {
 		# Disable Gutenberg
 		$this->remove_gutenberg_hooks();
 		# WYSIWYG loading assets has moved to includes/markup-markdown/addons
-		return TRUE;
+		return true;
 	}
 
 
@@ -249,7 +301,7 @@ class Support {
 	 * @return String $content The modified HTML content
 	 */
 	private function content_data( $field_content, $cache_allowed ) {
-		if ( wp_is_rest_endpoint() || ( ( is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
+		if ( wp_is_rest_endpoint() || ( ( is_home() || is_front_page() || is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
 			if ( post_type_supports( get_post_type(), 'markup_markdown' ) ) :
 				return apply_filters( 'post_markdown2html', $field_content, $cache_allowed );
 			else :
@@ -292,6 +344,44 @@ class Support {
 
 
 	/**
+	 * Quick bridge to force disable static cache content with secondary field
+	 *
+	 * @since 3.4.0
+	 * @access public
+	 *
+	 * @param String $field_desc The HTML or raw excerpt field
+	 *
+	 * @return String the filtered content
+	 */
+	public function description_field_mmd2html( $field_desc ) {
+		# Don't use wp_strip_all_tags to break additional input
+		# Don't disable the autoparagraph filters for backward compatibility
+		return apply_filters( 'post_markdown2html', str_replace( [ '<p>', '</p>' ], '', $field_desc ), 0 );
+	}
+
+
+	/**
+	 * Modify a single taxonomy description value within the REST response
+	 * @source https://developer.wordpress.org/reference/hooks/rest_prepare_this-taxonomy/
+	 *
+	 * @since 3.4.1
+	 * @access public
+	 *
+	 * @param \WP_REST_Response $response The response object
+	 * @param \WP_Term          $item     The original term object.
+	 * @param \WP_REST_Request  $request  Request used to generate the response
+	 *
+	 * @return \WP_REST_Response The updated response object
+	 */
+	public function prepare_desc_field( $response, $item, $request ) {
+		if ( isset( $response ) && isset( $response->data ) && isset( $response->data[ 'description' ] ) ) :
+			$response->data[ 'description' ] = $this->description_field_mmd2html( $response->data[ 'description' ] );
+		endif;
+		return $response;
+	}
+
+
+	/**
 	 * Enable or disable the filters regards to the WP_MMD_RAW_DATA constant
 	 *
 	 * @since 1.7.4
@@ -306,11 +396,13 @@ class Support {
 			remove_all_filters( 'the_content' );
 			remove_all_filters( 'the_excerpt' );
 		else :
-			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 ? TRUE : FALSE );
+			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 ? true : false );
 			require_once mmd()->plugin_dir . 'MarkupMarkdown/Core/Parser.php';
 			new \MarkupMarkdown\Core\Parser();
-			add_filter( 'the_content', array( $this, 'post_content_mmd2html' ), 9 , 1 );
-			add_filter( 'the_excerpt', array( $this, 'post_excerpt_mmd2html' ), 9 , 1 );
+			add_filter( 'the_content', array( $this, 'post_content_mmd2html' ), 9, 1 );
+			add_filter( 'the_excerpt', array( $this, 'post_excerpt_mmd2html' ), 9, 1 );
+			add_filter( 'category_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
+			add_filter( 'term_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
 		endif;
 	}
 

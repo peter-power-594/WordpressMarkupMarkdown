@@ -156,6 +156,7 @@ class Addons {
 			return;
 		else :
 			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
+			require_once $this->addon_dir . 'AutoPlugs/Woocommerce.php';
 		endif;
 	 }
 

@@ -78,7 +78,15 @@
 		}
 		var _self = this,
 			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0,
-			isACF = $textarea.parent().hasClass( 'acf-input' ) ? 1 : 0;
+			isSecondary = 0;
+		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
+			// ACF Custom Field
+			isSecondary = 1;
+		}
+		else if ( $textarea.parents( 'form-field' ) ) {
+			// Category / Tag Description field
+			isSecondary = 1;
+		}
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
@@ -150,11 +158,22 @@
 		if ( n < 1 ) {
 			spell_check = { disabled: 1 };
 		}
-		if ( isACF || ! isAdmin ) {
+		if ( isSecondary || ! isAdmin ) {
 			var minimalToolbar = [];
-			for ( var b = 0; b < toolbar.length; b++ ) {
-				if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
-					minimalToolbar.push( toolbar[ b ] );
+			if ( /desc/.test( $textarea.attr( 'name' ) || '' ) ) {
+				// Description field, super tiny version
+				for ( var c = 0; c < toolbar.length; c++ ) {
+					if ( /\||bold|italic|pipe|list|link|image|preview|guide/.test( toolbar[ c ].name || toolbar[ c ] || '' ) ) {
+						minimalToolbar.push( toolbar[ c ] );
+					}
+				}				
+			}
+			else {
+				// Standard custom field
+				for ( var b = 0; b < toolbar.length; b++ ) {
+					if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
+						minimalToolbar.push( toolbar[ b ] );
+					}
 				}
 			}
 			toolbar = minimalToolbar;
@@ -213,8 +232,8 @@
 		if ( ! spell_check || ( spell_check.disabled && spell_check.disabled === 1 ) || spell_check === 'none' ) {
 			// Event need to be triggered manually
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
-			if ( isACF > 0 ) {
-				$textarea.closest( '.acf-input' ).addClass( 'ready' );
+			if ( isSecondary > 0 ) {
+				$textarea.closest( '.acf-input, .form-field' ).addClass( 'ready' );
 			}
 			else {
 				$( '#wp-content-editor-container' ).addClass( 'ready' );
@@ -222,7 +241,7 @@
 				$( _doc.body ).addClass( 'markupmarkdown-ready' );
 			}
 		}
-		if ( isACF > 0 ) {
+		if ( isSecondary > 0 ) {
 			setTimeout(function() {
 				_self.instance.editor.codemirror.refresh();
 			}, 250 );
@@ -349,6 +368,15 @@
 				primaryAreaEnabled = 0;
 			}
 		}
+		var myLauncher = function( sel ) {
+			sel = sel || false;
+			if ( ! sel ) {
+				return false;
+			}
+			$( sel ).each(function() {
+				new MarkupMarkdownWidget( this );
+			});
+		};
 		if ( ! primaryAreaEnabled ) {
 			// Only custom fields or other fields managed by addons are used with Markdown
 			// We just need to setup a few UI options like sticky and exit
@@ -359,6 +387,7 @@
 				$( _doc.body ).addClass( 'markupmarkdown-ready' )
 					.trigger( 'click.mmd_body_sticky_toolbar' );
 			});
+			myLauncher( 'textarea[name="description"]' );
 			return true;
 		}
 		// Primary content used with markdown. Need to separate backend and frontend
@@ -374,24 +403,22 @@
 				.trigger( 'click.mmd_body_sticky_toolbar' );
 		});
 		// Default is backend
-		var $editorContainer = $( '#wp-content-editor-container' );
+		var $editorContainer = $( '#wp-content-editor-container' ).addClass( 'markupmarkdown' );
 		if ( $editorContainer.length ) {
 			// Initialize EasyMDE on the main content
-			$editorContainer.addClass( 'markupmarkdown' )
-				.find( '.wp-editor-area' ).each(function() {
-					new MarkupMarkdownWidget( this );
-				});
+			myLauncher( $editorContainer.find( '.wp-editor-area' ) );
 			return true;
 		}
 		// Fallback with the frontend for layer case with the ACF plugin
 		// Custom fields will be trigger from the addon, only need to check for the main content
-		$editorContainer = $( '.acf-input #acf-_post_content' ).parent();
+		$editorContainer = $( '.acf-input #acf-_post_content' ).parent().addClass( 'markupmarkdown' );
 		if ( $editorContainer.length ) {
 			// Initialize EasyMDE on the main content
-			$editorContainer.addClass( 'markupmarkdown' );
-			new MarkupMarkdownWidget( $( '#acf-_post_content' ) );
+			myLauncher( '#acf-_post_content' );
 			return true;
 		}
+		// Term description
+		myLauncher( 'textarea[name="description"]' );
 	});
 
 

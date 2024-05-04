@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.3.7
-Version: 3.3.7
+Stable Tag: 3.4.1
+Version: 3.4.1
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -17,7 +17,8 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
-- v3.3: Bug fixes, markdown extra with multiple html attributes support, basic compatibility with block styles, compatibility with acf_form added for the frontend
+- v3.4: Adding support for categories, tags and taxonomies description field (Woocommerce and REST API compatible)
+- v3.3: Support for multiple html attributes, compatibility with acf_form added for the frontend, basic compatibility with block styles
 - v3.2: Support to enable markdown only for custom fields
 - v3.1: Side preview panel fixed
 - v3.0: Choose and sort the default toolbar buttons
@@ -84,6 +85,25 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta in
 The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
 == Changelog ==
+
+= 3.4.1 =
+
+Improvements:
+- Adding missing filters in the REST Api
+- Adding a plug for the description field with Woocommerce templates
+
+Bug fix:
+- Undefined variable in array with WP Geshi
+
+= 3.4.0 =
+
+Improvement:
+- Adding markdown support by default for category, tags, and term descriptions
+
+= 3.3.8 =
+
+Bug fix:
+- Activate markdown filters on the front page / home page as well
 
 = 3.3.7 =
 

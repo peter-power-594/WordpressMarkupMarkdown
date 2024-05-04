@@ -29,6 +29,10 @@
   padding: 16px 0 0 0;
 }
 
+.editor-toolbar.tiny,
+.form-field .editor-toolbar {
+	padding: 5px;
+}
 .editor-toolbar .easymde-dropdown,
 .editor-toolbar button {
 	float: none;

@@ -19,7 +19,26 @@ class EngineEasyMDE {
 
 	public $is_admin = FALSE;
 
-	public $frontend_enabled = FALSE;
+
+	/**
+	 * @property Boolean $frontend_enabled
+	 * To know if markdown syntax was enabled - or not on the frontend
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 */
+	public $frontend_enabled = false;
+
+
+	/**
+	 * @property Boolean $backend_enabled
+	 * To know if markdown syntax was enabled - or not on the backend
+	 *
+	 * @since 3.4.0
+	 * @access private
+	 */
+	public $backend_enabled = false;
+
 
 	public function __construct() {
 		if ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) !== FALSE ) :
@@ -114,9 +133,11 @@ class EngineEasyMDE {
 	 * @return Boolean TRUE if we need to load the assets or FALSE
 	 */
 	public function prepare_editor_assets() {
-		if ( $this->is_admin ) :
+		if ( $this->is_admin ) : # Backend called earlier in the *init* hook or similar 
+			# We don't have access to the edit screen property yet so the check will be made in the next hook
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_assets' ) );
-		else :
+		else : # Frontend: we are inside the *wp_head* hook. 
+			# Check if allowed and load straight the asset
 			$this->frontend_enabled = apply_filters( 'mmd_frontend_enabled', false );
 			if ( ! $this->frontend_enabled ) :
 				return false;
@@ -139,7 +160,8 @@ class EngineEasyMDE {
 	 */
 	public function load_assets( $hook = 'unknown.php' ) {
 		if ( $this->is_admin ) : # Backend
-			if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) :
+			$this->backend_enabled = apply_filters( 'mmd_backend_enabled', $hook, false );
+			if ( ! $this->backend_enabled ) :
 				# Not editing a post, do not load asset & exit
 				return false;
 			endif;
@@ -191,7 +213,7 @@ class EngineEasyMDE {
 		$plugin_uri = mmd()->plugin_uri;
 		wp_enqueue_style( 'markup_markdown__cssengine_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.101' );
 		wp_enqueue_style( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/github.css', [ 'markup_markdown__cssengine_editor' ], '8.9.1' );
-		wp_enqueue_style( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/css/wordpress_richedit-easymde.css', [ 'markup_markdown__highlightjs_snippets' ], '1.1.28' );
+		wp_enqueue_style( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/css/wordpress_richedit-easymde.css', [ 'markup_markdown__highlightjs_snippets' ], '1.1.30' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown__wordpress_richedit' ], '5.15.14' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown__font_awesome_regular' ], '5.15.14' );
 	}
@@ -214,7 +236,7 @@ class EngineEasyMDE {
 		wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__sticky' ], '1.1.3', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.20', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.20', true );
-		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.14', true );
+		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.16', true );
 		wp_add_inline_script( 'markup_markdown__wordpress_media', $this->add_inline_editor_conf() );
 	}
 
