@@ -10,8 +10,8 @@ class OPCache {
 
 	private $prop = array(
 		'slug' => 'nopcache',
-		'label' => 'Disable Static Cache',
-		'desc' => 'Static html files can be generated to speed up the rendering if the default PHP OPCache if available. Uncheck to enable.',
+		'label' => __( 'Disable Static Cache', 'markup-markdown' ),
+		'desc' => __( 'Static html files can be generated to speed up the rendering if the default PHP OPCache if available. Uncheck to enable.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 0
 	);

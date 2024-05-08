@@ -9,8 +9,8 @@ class SpellChecker {
 
 	private $prop = array(
 		'slug' => 'hungspellchecker',
-		'label' => 'Hung Spell Checker',
-		'desc' => 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles.',
+		'label' => __( 'Hung Spell Checker', 'markup-markdown' ),
+		'desc' => __( 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles.', 'markup-markdown' ),
 		'release' => 'experimental',
 		'active' => 0
 	);
@@ -377,44 +377,44 @@ class SpellChecker {
 		$my_cnf[ 'spellcheck' ] = defined( 'MMD_SPELL_CHECK' ) ? MMD_SPELL_CHECK : [];
 ?>
 					<div id="tab-spellchecker">
-						<h3>Spell Checker</h3>
+						<h3><?php _e( 'Spell Checker', 'markup-markdown' ); ?></h3>
 
 						<p>
-							Dictionaries available from your browser (Firefox, Chrome, Edge, ...) or your operating system (Linux, Macintosh, Windows, etc...) can't be used or accessed as it, you need to select and install specific dictionaries so they can be downloaded on your server and used with the markdown editor while you input your text.
-							Data are borrowed from 3rd parties software (Sublime, OpenOffice, Mozilla, etc...), some languages are not available and some variants probably missing. Data are free to use (*GPL or similar licenses), try to contribute to the original project mostly done by volunteers if you want better spell checking.
+							<?php _e( 'Dictionaries available from your browser (Firefox, Chrome, Edge, ...) or your operating system (Linux, Macintosh, Windows, etc ...) can\'t be used or accessed as it is, you need to select and install specific dictionaries to be downloaded on your server and used with the markdown editor while you input your text.' ); ?>
+							<?php _e( 'Data are borrowed from 3rd parties software (Sublime, OpenOffice, Mozilla, etc ...), some languages are unavailable, and a few variants missing. Data are free to use (*GPL or similar licenses), try to contribute to the original project mostly done by volunteers if you want better spell checking.' ); ?>
 						</p>
 
 						<h4>
-							Performances
+							<?php _e( 'Performances', 'markup-markdown' ); ?>
 						</h4>
 						<p>
-							<strong>Monolingual: Usable, performances are correct.</strong><br />
-							<strong>Bilingual: Depends on your machine, can be unstable so try to use it with caution.</strong>
+							<strong><?php _e( 'Monolingual: Usable, performances are correct.', 'markup-markdown' ); ?></strong><br />
+							<strong><?php _e( 'Bilingual: Depends on your machine, can be unstable so try to use it with caution.', 'markup-markdown' ); ?></strong>
 						</p>
 						<p>
-							When possible I would advise using dictionaries embedded in two languages like Russian-English.<br />
-							In case you need to activate multiple languages, please read the following disclaimers carefully:
-						</p>
-
-						<h4>
-							Disclaimer 1: <em>Size matters! I don't recommend to activate more than 2 languages</em>
-						</h4>
-						<p>
-							Remember the related files (a few megabytes) will be loaded in the memory of your browser so depending on the weight of the related files AND the specification/ status of your computer, the editor might freeze for a few seconds, especially when accessing the edit screen. Please be gentle and patient... In the worst case well you won't be able to use it and will need to disable it. Can't do better on my side.
+							<?php _e( 'When possible I would advise using dictionaries embedded in two languages like Russian-English.', 'markup-markdown' ); ?><br />
+							<?php _e( 'In case you need to activate multiple languages, please read the following disclaimers carefully:', 'markup-markdown' ); ?>
 						</p>
 
 						<h4>
-							Disclaimer 2: <em>There is no automatic language detection for spell checking</em>
+							<?php _e( 'Disclaimer 1: <em>Size matters! I don\'t recommend to activate more than 2 languages</em>', 'markup-markdown' ); ?>
 						</h4>
 						<p>
-							If you activate more than one dictionary, you have to set one as the default. Then in the editor, new buttons for the alternative languages will be shown in the toolbar so you can select the text and flag it as a different language. Following the markdown specification, it will be displayed as pure custom HTML. The code in your content is gonna look like this: &lt;span lang="XXX"&gt;My text in another language&lt;/span&gt; where XXX is the code of the language as listed below. It might not be the easiest approach, regards accessibilities specifications you should already define the language in case you are using multiple languages on the same page!
+							<?php _e( 'Remember the related files (a few megabytes) will be loaded in the memory of your browser so depending on the weight of the related files AND the specification/status of your computer, the editor might freeze for a few seconds, especially when accessing the edit screen. Please be gentle and patient... In the worst case well you won\'t be able to use it and will need to disable it. Can\'t do better on my side.', 'markup-markdown' ); ?>
 						</p>
 
 						<h4>
-							Disclaimer 3: <em>One specific dictionary per language</em>
+							<?php _e( 'Disclaimer 2: <em>There is no automatic language detection for spell checking</em>', 'markup-markdown' ); ?>
 						</h4>
 						<p>
-							Sounds obvious, multilingual means multiple languages on the same medium. With the current interface you <em>could</em> try activating two variants of the same parent language, for exemple American English and British English, that won't work of course!!! (Or they will be really odd side effects)
+							<?php _e( 'If you activate more than one dictionary, you have to set one as the default. Then in the editor, new buttons for the alternative languages will be shown in the toolbar so you can select the text and flag it as a different language. Following the markdown specification, it will be displayed as pure custom HTML. The code in your content is gonna look like this: &lt;span lang="XXX"&gt;My text in another language&lt;/span&gt; where XXX is the code of the language as listed below. It might not be the easiest approach, regards accessibilities specifications you should already define the language in case you are using multiple languages on the same page!', 'markup-markdown' ); ?>
+						</p>
+
+						<h4>
+							<?php _e( 'Disclaimer 3: <em>One specific dictionary per language</em>', 'markup-markdown' ); ?>
+						</h4>
+						<p>
+							<?php _e( 'Sounds obvious, multilingual means multiple languages on the same medium. With the current interface you <em>could</em> try activating two variants of the same parent language, for exemple American English and British English, that won\'t work of course!!! (Or they will be really odd side effects)', 'markup-markdown' ); ?>
 						</p>
 
 						<table class="form-table" role="presentation">
@@ -437,7 +437,7 @@ class SpellChecker {
 			$isActive = isset( $my_cnf[ 'spellcheck' ] ) && is_array( $my_cnf[ 'spellcheck' ] ) && in_array( $dict_id, $my_cnf[ 'spellcheck' ] ) ? 1 : 0;
 			echo "\n\t\t\t\t\t\t\t\t<label for=\"mmd_spell_check_" . $dict_id . "\">"
 				. "\n\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" name=\"mmd_spell_check[]\" id=\"mmd_spell_check_" . $dict_id . "\" value=\"" . $dict_id . "\"" . (  $isActive ? " checked=\"checked\"" : " " ) . "/>"
-				. "\n\t\t\t\t\t\t\t\t\t" . ( $isActive ? "Active" : "Installed, check to activate" );
+				. "\n\t\t\t\t\t\t\t\t\t" . ( $isActive ? __( 'Active', 'markup-markdown' ) : __( 'Active', 'Installed, check to activate', 'markup-markdown' ) );
 			echo "\n\t\t\t\t\t\t\t\t</label>";
 			echo "\n\t\t\t\t\t\t\t</td>";
 			echo "\n\t\t\t\t\t\t\t<td>";
@@ -445,16 +445,16 @@ class SpellChecker {
 				echo "\n\t\t\t\t\t\t\t\t<label for=\"mmd_default_" . $dict_id . "\">";
 				echo "\n\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"mmd_default_spell_checker\" id=\"mmd_default_" . $dict_id . "\" value=\"" . $dict_id . "\"";
 				if ( array_search( $dict_id, $my_cnf[ 'spellcheck' ] ) === 0 ) :
-					echo " checked=\"checked\" /> Default";
+					echo " checked=\"checked\" /> " . __( 'Default', 'markup-markdown' );
 				else :
-					echo " /> Make default";
+					echo " /> " . __( 'Make default', 'markup-markdown' );
 				endif;
 				echo "\n\t\t\t\t\t\t\t\t</label>";
 			endif;
 			echo "\n\t\t\t\t\t\t\t</td>";
 		else :
 			echo "\n\t\t\t\t\t\t\t<td colspan=\"2\">";
-			echo "\n\t\t\t\t\t\t\t\t<a href=\"" . wp_nonce_url( menu_page_url( "markup-markdown-admin", false ), "spell_checker", "_mmd_sc_nonce" ) . "&dict=" . $dict_id . "#tab-spellchecker\">Install</a>";
+			echo "\n\t\t\t\t\t\t\t\t<a href=\"" . wp_nonce_url( menu_page_url( "markup-markdown-admin", false ), "spell_checker", "_mmd_sc_nonce" ) . "&dict=" . $dict_id . "#tab-spellchecker\">" . __( 'Install', 'markup-markdown' ) . "</a>";
 		endif;
 		echo "\n\t\t\t\t\t\t\t</td>";
 		echo "\n\t\t\t\t\t\t</tr>";

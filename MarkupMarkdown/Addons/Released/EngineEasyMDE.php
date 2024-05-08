@@ -10,8 +10,8 @@ class EngineEasyMDE {
 
 	private $prop = array(
 		'slug' => 'engine__easymde',
-		'label' => 'EasyMde WYSIWYG',
-		'desc' => 'The default Markdown Editor.',
+		'label' => __( 'EasyMde WYSIWYG', 'markup-markdown' ),
+		'desc' => __( 'The default Markdown Editor.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);

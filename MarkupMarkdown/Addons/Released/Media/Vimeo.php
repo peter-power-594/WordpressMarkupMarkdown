@@ -12,8 +12,8 @@ class Vimeo extends \MarkupMarkdown\Abstracts\OEmbedTinyAPI {
 
 	private $prop = array(
 		'slug' => 'vimeo',
-		'label' => 'Vimeo',
-		'desc' => 'Convert automatically Vimeo links to an embedded iframe.',
+		'label' => __( 'Vimeo', 'markup-markdown' ),
+		'desc' => __( 'Convert automatically Vimeo links to an embedded iframe.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);

@@ -295,9 +295,9 @@ class Settings {
 			require_once $conf_screen;
 		endif;
 		$html = '<fieldset class="metabox-prefs">';
-		$html .= '<legend>Addons Used</legend>';
+		$html .= '<legend>' . __( 'Addons used', 'markup-markdown' ) . '</legend>';
 		$html .= '<style>.dashicons-mmd-helpers{margin:5px 0 0 5px}.mmd-addon-helper{display:inline}</style>';
-		$html .= '<p>' . __( 'You can manually activate or desactivate specific addons.' ) . ' ' . __( 'Addons marked with <sup>*</sup> should be used with caution.' ) . '</p>';
+		$html .= '<p>' . __( 'You can manually activate or desactivate specific addons.', 'markup-markdown' ) . ' ' . __( 'Addons marked with <sup>*</sup> should be used with caution.', 'markup-markdown' ) . '</p>';
 		$html .= '<ul>';
 		foreach ( $this->addons->setup as $slug ) :
 			if ( ! $this->addons->inst[ $slug ] ) :

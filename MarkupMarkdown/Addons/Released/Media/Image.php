@@ -9,8 +9,8 @@ class Image {
 
 	private $prop = array(
 		'slug' => 'Image',
-		'label' => 'Responsive Image',
-		'desc' => 'Add basic html code syntax for responsive media.',
+		'label' => __( 'Responsive Image', 'markup-markdown' ),
+		'desc' => __( 'Add basic html code syntax for responsive media.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);

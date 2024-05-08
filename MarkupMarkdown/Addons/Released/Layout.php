@@ -10,8 +10,8 @@ class Layout {
 
 	private $prop = array(
 		'slug' => 'layout',
-		'label' => 'Layout',
-		'desc' => 'A few tools to help you enhancing your layout. (Lightbox, Masonry, etc...)',
+		'label' => __( 'Layout', 'markup-markdown' ),
+		'desc' => __( 'A few tools to help you enhancing your layout. (Lightbox, Masonry, etc...)', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);
