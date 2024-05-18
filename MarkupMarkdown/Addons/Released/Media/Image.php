@@ -9,8 +9,6 @@ class Image {
 
 	private $prop = array(
 		'slug' => 'Image',
-		'label' => __( 'Responsive Image', 'markup-markdown' ),
-		'desc' => __( 'Add basic html code syntax for responsive media.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);
@@ -25,6 +23,8 @@ class Image {
 	public $gutenberg = 0;
 
 	public function __construct( ) {
+		$this->prop[ 'label' ] = esc_html__( 'Responsive Image', 'markup-markdown' );
+		$this->prop[ 'desc' ] = esc_html__( 'Add basic html code syntax for responsive media.', 'markup-markdown' );
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated

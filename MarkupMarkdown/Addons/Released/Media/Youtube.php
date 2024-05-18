@@ -12,14 +12,14 @@ class Youtube extends \MarkupMarkdown\Abstracts\OEmbedTinyAPI {
 
 	private $prop = array(
 		'slug' => 'youtube',
-		'label' => __( 'Youtube', 'markup-markdown' ),
-		'desc' => __( 'Convert automatically Youtube links to an embedded iframe.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);
 
 
 	public function __construct() {
+		$this->prop[ 'label' ] = esc_html__( 'Youtube', 'markup-markdown' );
+		$this->prop[ 'desc' ] = esc_html__( 'Convert automatically Youtube links to an embedded iframe.', 'markup-markdown' );
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated

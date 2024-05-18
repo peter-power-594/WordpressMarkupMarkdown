@@ -1,6 +1,6 @@
 /* global wp */
 
-(function( $, _win, _doc ) {
+(function( $, _win, _doc, EasyMDE ) {
 
 	var mediaFrame = {};
 		mediaPreview = {},
@@ -98,10 +98,35 @@
 				spell_check = { disabled: 1 };
 			}
 		}
-		var n = 0;
-		for ( var b = 0, slug = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
+		var n = 0, defActions = {
+			'mmd_bold': { action: EasyMDE.toggleBold, className: 'fa fa-bold' },
+			'mmd_italic': { action: EasyMDE.toggleItalic, className: 'fa fa-italic' },
+			'mmd_strikethrough': { action: EasyMDE.toggleStrikethrough, className: 'fa fa-strikethrough' },
+			'mmd_heading': { action: EasyMDE.toggleHeadingSmaller, className: 'fa fa-header fa-heading' },
+			'mmd_heading-smaller': { action: EasyMDE.toggleHeadingSmaller, className: 'fa fa-header fa-heading' },
+			'mmd_heading-bigger': { action: EasyMDE.toggleHeadingBigger, className: 'fa fa-lg fa-header fa-heading' },
+			'mmd_heading-1': { action: EasyMDE.toggleHeading1, className: 'fa fa-header fa-heading header-1' },
+			'mmd_heading-2': { action: EasyMDE.toggleHeading2, className: 'fa fa-header fa-heading header-2' },
+			'mmd_heading-3': { action: EasyMDE.toggleHeading3, className: 'fa fa-header fa-heading header-3' },
+			'mmd_code': { action: EasyMDE.toggleCodeBlock, className: 'fa fa-code' },
+			'mmd_quote': { action: EasyMDE.toggleBlockquote, className: 'fa fa-quote-left' },
+			'mmd_unordered-list': { action: EasyMDE.toggleUnorderedList, className: 'fa fa-list-ul' },
+			'mmd_ordered-list': { action: EasyMDE.toggleOrderedList, className: 'fa fa-list-ol' },
+			'mmd_clean-block': { action: EasyMDE.cleanBlock, className: 'fa fa-eraser' },
+			'mmd_link': { action: EasyMDE.drawLink, className: 'fa fa-link' },
+			'mmd_image': { action: EasyMDE.drawImage, className: 'fa fa-picture-o' },
+			'mmd_upload-image': { action: EasyMDE.drawUploadedImage, className: 'fa fa-image' },
+			'mmd_table': { action: EasyMDE.drawTable, className: 'fa fa-table' },
+			'mmd_horizontal-rule': { action: EasyMDE.drawHorizontalRule, className: 'fa fa-minus' },
+			'mmd_preview': { action: EasyMDE.togglePreview, className: 'fa fa-eye no-disable' },
+			'mmd_side-by-side': { action: EasyMDE.toggleSideBySide, className: 'fa fa-columns no-disable no-mobile' },
+			'mmd_fullscreen': { action: EasyMDE.toggleFullScreen, className: 'fa fa-arrows-alt no-disable no-mobile' },
+			'mmd_undo': { action: EasyMDE.undo, className: 'fa fa-undo' },
+			'mmd_redo': { action: EasyMDE.redo, className: 'fa fa-redo' }
+		};
+		for ( var b = 0, slug = '', targetAction = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
 			slug = buttons[ b ];
-			if ( slug === "pipe" ) {
+			if ( /pipe/.test( slug ) ) {
 				toolbar.push( "|" );
 			}
 			else if ( /spell[-_]*check/.test( slug ) ) {
@@ -115,7 +140,7 @@
 							toolbar.push( "|" );
 						}
 						toolbar.push({
-							name: "wpsi18n_" + targetLang.code,
+							name: "mmd_wpsi18n_" + targetLang.code,
 							action: function( editor ) {
 								var cm = _self.instance.editor.codemirror,
 								doc = cm.getDoc(),
@@ -152,7 +177,14 @@
 				});
 			}
 			else {
-				toolbar.push( slug.replace( '_', '-' ) );
+				targetAction = slug.replace( '_', '-' ).replace( 'mmd-', 'mmd_' );
+				if ( defActions[ targetAction ] ) {
+					defActions[ targetAction ].name = targetAction;
+					toolbar.push( defActions[ targetAction ] );
+				}
+				else {
+					toolbar.push( targetAction.replace( 'mmd_', '' ) );
+				}
 			}
 		}
 		if ( n < 1 ) {
@@ -625,4 +657,4 @@
 	};
 
 
-})( window.jQuery, window, document );
+})( window.jQuery, window, document, window.EasyMDE );

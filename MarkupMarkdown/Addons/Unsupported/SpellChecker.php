@@ -9,12 +9,9 @@ class SpellChecker {
 
 	private $prop = array(
 		'slug' => 'hungspellchecker',
-		'label' => __( 'Hung Spell Checker', 'markup-markdown' ),
-		'desc' => __( 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles.', 'markup-markdown' ),
 		'release' => 'experimental',
 		'active' => 0
 	);
-
 
 	/**
 	 * @property Array $dictionaries The languages list for spell checker
@@ -88,6 +85,8 @@ class SpellChecker {
 
 
 	public function __construct() {
+		$this->prop[ 'label' ] = __( 'Hung Spell Checker', 'markup-markdown' );
+		$this->prop[ 'desc' ] = __( 'Multilingual spell checker for your posts! Enable live spellchecking with multiple languages while writing your articles.', 'markup-markdown' );
 		if ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
@@ -361,7 +360,7 @@ class SpellChecker {
 	 * @return Void
 	 */
 	public function add_tabmenu() {
-		echo "\t\t\t\t\t\t<li><a href=\"#tab-spellchecker\">Spell Checker (Experimental)</a></li>\n";
+		echo "\t\t\t\t\t\t<li><a href=\"#tab-spellchecker\">" . __( 'Spell Checker', 'markup-markdown' ) . "</a></li>\n";
 	}
 
 
@@ -377,44 +376,46 @@ class SpellChecker {
 		$my_cnf[ 'spellcheck' ] = defined( 'MMD_SPELL_CHECK' ) ? MMD_SPELL_CHECK : [];
 ?>
 					<div id="tab-spellchecker">
-						<h3><?php _e( 'Spell Checker', 'markup-markdown' ); ?></h3>
+						<h3><?php esc_html_e( 'Spell Checker', 'markup-markdown' ); ?></h3>
 
 						<p>
-							<?php _e( 'Dictionaries available from your browser (Firefox, Chrome, Edge, ...) or your operating system (Linux, Macintosh, Windows, etc ...) can\'t be used or accessed as it is, you need to select and install specific dictionaries to be downloaded on your server and used with the markdown editor while you input your text.' ); ?>
-							<?php _e( 'Data are borrowed from 3rd parties software (Sublime, OpenOffice, Mozilla, etc ...), some languages are unavailable, and a few variants missing. Data are free to use (*GPL or similar licenses), try to contribute to the original project mostly done by volunteers if you want better spell checking.' ); ?>
+							<?php esc_html_e( 'Dictionaries available from your browser (Firefox, Chrome, Edge, ...) or your operating system (Linux, Macintosh, Windows, etc ...) can\'t be used or accessed as it is, you need to select and install specific dictionaries to be downloaded on your server and used with the markdown editor while you input your text.', 'markup-markdown' ); ?>
+						</p>
+						<p>
+							<?php esc_html_e( 'Data are borrowed from 3rd parties software (Sublime, OpenOffice, Mozilla, etc ...), some languages are unavailable, and a few variants missing. Data are free to use (*GPL or similar licenses), try to contribute to the original project mostly done by volunteers if you want better spell checking.', 'markup-markdown' ); ?>
 						</p>
 
 						<h4>
-							<?php _e( 'Performances', 'markup-markdown' ); ?>
+							<?php esc_html_e( 'Performances', 'markup-markdown' ); ?>
 						</h4>
 						<p>
-							<strong><?php _e( 'Monolingual: Usable, performances are correct.', 'markup-markdown' ); ?></strong><br />
-							<strong><?php _e( 'Bilingual: Depends on your machine, can be unstable so try to use it with caution.', 'markup-markdown' ); ?></strong>
+							<strong><?php esc_html_e( 'Monolingual: Usable, performances are correct.', 'markup-markdown' ); ?></strong><br />
+							<strong><?php esc_html_e( 'Bilingual: Depends on your machine, can be unstable so try to use it with caution.', 'markup-markdown' ); ?></strong>
 						</p>
 						<p>
-							<?php _e( 'When possible I would advise using dictionaries embedded in two languages like Russian-English.', 'markup-markdown' ); ?><br />
-							<?php _e( 'In case you need to activate multiple languages, please read the following disclaimers carefully:', 'markup-markdown' ); ?>
-						</p>
-
-						<h4>
-							<?php _e( 'Disclaimer 1: <em>Size matters! I don\'t recommend to activate more than 2 languages</em>', 'markup-markdown' ); ?>
-						</h4>
-						<p>
-							<?php _e( 'Remember the related files (a few megabytes) will be loaded in the memory of your browser so depending on the weight of the related files AND the specification/status of your computer, the editor might freeze for a few seconds, especially when accessing the edit screen. Please be gentle and patient... In the worst case well you won\'t be able to use it and will need to disable it. Can\'t do better on my side.', 'markup-markdown' ); ?>
+							<?php esc_html_e( 'When possible I would advise using dictionaries embedded in two languages like Russian-English.', 'markup-markdown' ); ?><br />
+							<?php esc_html_e( 'In case you need to activate multiple languages, please read the following disclaimers carefully:', 'markup-markdown' ); ?>
 						</p>
 
 						<h4>
-							<?php _e( 'Disclaimer 2: <em>There is no automatic language detection for spell checking</em>', 'markup-markdown' ); ?>
+							1) <em><?php esc_html_e( 'File size matters', 'markup-markdown' ); ?></em>
 						</h4>
 						<p>
-							<?php _e( 'If you activate more than one dictionary, you have to set one as the default. Then in the editor, new buttons for the alternative languages will be shown in the toolbar so you can select the text and flag it as a different language. Following the markdown specification, it will be displayed as pure custom HTML. The code in your content is gonna look like this: &lt;span lang="XXX"&gt;My text in another language&lt;/span&gt; where XXX is the code of the language as listed below. It might not be the easiest approach, regards accessibilities specifications you should already define the language in case you are using multiple languages on the same page!', 'markup-markdown' ); ?>
+							<?php _e( 'I don\'t recommend to activate more than 2 languages. Please remember that the related files (a few megabytes) will be loaded in the memory of your browser so depending on the weight of the related files AND the specification of your computer, the editor might freeze for a few seconds, especially when accessing the edit screen. Please be gentle and patient... In the worst case well you won\'t be able to use it and will need to disable it. Can\'t do better on my side.', 'markup-markdown' ); ?>
 						</p>
 
 						<h4>
-							<?php _e( 'Disclaimer 3: <em>One specific dictionary per language</em>', 'markup-markdown' ); ?>
+							2)  <em><?php esc_html_e( 'No automatic language detection', 'markup-markdown' ); ?></em>
 						</h4>
 						<p>
-							<?php _e( 'Sounds obvious, multilingual means multiple languages on the same medium. With the current interface you <em>could</em> try activating two variants of the same parent language, for exemple American English and British English, that won\'t work of course!!! (Or they will be really odd side effects)', 'markup-markdown' ); ?>
+							<?php esc_html_e( 'If you activate more than one dictionary, you have to pick up one as the default. Then in the editor, new buttons for the alternative languages will be shown in the toolbar so you can select the text and flag it as a different language. The code in your content is gonna look like this: &lt;span lang="XXX"&gt;My text in another language&lt;/span&gt; where XXX is the code of the language as listed below. It might not be the easiest approach, regards accessibilities specifications you should already define the language in case you are using multiple languages on the same page!', 'markup-markdown' ); ?>
+						</p>
+
+						<h4>
+							3) <em><?php esc_html_e( 'One specific dictionary per language', 'markup-markdown' ); ?></em>
+						</h4>
+						<p>
+							<?php esc_html_e( 'Sounds obvious, multilingual means multiple languages on the same medium. With the current interface you could try activating two variants of the same parent language, for exemple American English and British English, that won\'t work of course!!! (Or they will be really odd side effects)', 'markup-markdown' ); ?>
 						</p>
 
 						<table class="form-table" role="presentation">

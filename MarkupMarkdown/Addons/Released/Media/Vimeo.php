@@ -12,14 +12,14 @@ class Vimeo extends \MarkupMarkdown\Abstracts\OEmbedTinyAPI {
 
 	private $prop = array(
 		'slug' => 'vimeo',
-		'label' => __( 'Vimeo', 'markup-markdown' ),
-		'desc' => __( 'Convert automatically Vimeo links to an embedded iframe.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);
 
 
 	public function __construct() {
+		$this->prop[ 'label' ] = esc_html__( 'Vimeo', 'markup-markdown' );
+		$this->prop[ 'desc' ] = esc_html__( 'Convert automatically Vimeo links to an embedded iframe.', 'markup-markdown' );
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated

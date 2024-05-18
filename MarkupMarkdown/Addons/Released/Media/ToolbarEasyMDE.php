@@ -9,160 +9,108 @@ class ToolbarEasyMDE {
 
 	protected $prop = array(
 		"default_buttons" => array(
-			"pipe" => array(
+			"mmd_pipe" => array(
 				"action"  => "none",
-				"tooltip" => "",
-				"label"   => __( 'Pipe', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-pipe\" aria-hidden=\"true\"></i>"
 			),
-			"bold" => array(
+			"mmd_bold" => array(
 				"action"  => "toggleBold",
-				"tooltip" => __( 'Bold', 'markup-markdown' ),
-				"label"   => __( 'Bold', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-bold\" aria-hidden=\"true\"></i>"
 			),
-			"italic" => array(
+			"mmd_italic" => array(
 				"action"  => "toggleItalic",
-				"tooltip" => __( 'Italic', 'markup-markdown' ),
-				"label"   => __( 'Italic', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-italic\" aria-hidden=\"true\"></i>"
 			),
-			"strikethrough" => array(
+			"mmd_strikethrough" => array(
 				"action"  => "toggleStrikethrough",
-				"tooltip" => __( 'Strikethrough', 'markup-markdown' ),
-				"label"   => __( 'Strikethrough', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-strikethrough\" aria-hidden=\"true\"></i>"
 			),
-			"heading" => array(
+			"mmd_heading" => array(
 				"action"  => "toggleHeading",
-				"tooltip" => __( 'Heading', 'markup-markdown' ),
-				"label"   => __( 'Heading', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-header fa-heading\" aria-hidden=\"true\"></i>"
 			),
-			"heading_smaller" => array(
+			"mmd_heading_smaller" => array(
 				"action"  => "toggleHeadingSmaller",
-				"tooltip" => __( 'Smaller Heading', 'markup-markdown' ),
-				"label"   => __( 'Smaller Heading', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-header fa-heading\" aria-hidden=\"true\"></i>"
 			),
-			"heading_bigger" => array(
+			"mmd_heading_bigger" => array(
 				"action"  => "toggleHeadingBigger",
-				"tooltip" => __( 'Bigger Heading', 'markup-markdown' ),
-				"label"   => __( 'Bigger Heading', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-lg fa-header fa-heading\" aria-hidden=\"true\"></i>"
 			),
-			"heading_1" => array(
+			"mmd_heading_1" => array(
 				"action"  => "toggleHeading1",
-				"tooltip" => __( 'Big Heading', 'markup-markdown' ),
-				"label"   => __( 'Big Heading', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-header fa-heading\" aria-hidden=\"true\"></i>"
 			),
-			"heading_2" => array(
+			"mmd_heading_2" => array(
 				"action"  => "toggleHeading2",
-				"tooltip" => __( 'Medium Heading', 'markup-markdown' ),
-				"label"   => __( 'Medium Heading', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-header fa-heading\" aria-hidden=\"true\"></i>"
 			),
-			"heading_3" => array(
+			"mmd_heading_3" => array(
 				"action"  => "toggleHeading3",
-				"tooltip" => __( 'Small Heading', 'markup-markdown' ),
-				"label"   => __( 'Small Heading', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-header fa-heading\" aria-hidden=\"true\"></i>"
 			),
-			"code" => array(
+			"mmd_code" => array(
 				"action"  => "toggleCodeBlock",
-				"tooltip" => __( 'Code', 'markup-markdown' ),
-				"label"   => __( 'Code', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-code\" aria-hidden=\"true\"></i>"
 			),
-			"quote" => array(
+			"mmd_quote" => array(
 				"action"  => "toggleBlockquote",
-				"tooltip" => __( 'Quote', 'markup-markdown' ),
-				"label"   => __( 'Quote', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-quote-left\" aria-hidden=\"true\"></i>"
 			),
-			"unordered_list" => array(
+			"mmd_unordered_list" => array(
 				"action"  => "toggleGenericList",
-				"tooltip" => __( 'Generic List', 'markup-markdown' ),
-				"label"   => __( 'List', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-list-ul\" aria-hidden=\"true\"></i>"
 			),
-			"ordered_list" => array(
+			"mmd_ordered_list" => array(
 				"action"  => "toggleOrderedList",
-				"tooltip" => __( 'Numbered List', 'markup-markdown' ),
-				"label"   => __( 'List', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-list-ol\" aria-hidden=\"true\"></i>"
 			),
-			"clean_block" => array(
+			"mmd_clean_block" => array(
 				"action"  => "cleanBlock",
-				"tooltip" => __( 'Clean block', 'markup-markdown' ),
-				"label"   => __( 'Clean', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-eraser\" aria-hidden=\"true\"></i>"
 			),
-			"link" => array(
+			"mmd_link" => array(
 				"action"  => "drawLink",
-				"tooltip" => __( 'Create Link', 'markup-markdown' ),
-				"label"   => __( 'Link', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-link\" aria-hidden=\"true\"></i>"
 			),
-			"wpsimage" => array( # image
+			"mmd_wpsimage" => array( # image
 				"action"  => "WPLibraryHandler",
-				"tooltip" => __( 'Insert or Upload Media', 'markup-markdown' ),
-				"label"   => __( 'Media Library', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-images\" aria-hidden=\"true\"></i>"
 			),
-			"table" => array(
+			"mmd_table" => array(
 				"action"  => "drawTable",
-				"tooltip" => __( 'Insert Table', 'markup-markdown' ),
-				"label"   => __( 'Table', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-table\" aria-hidden=\"true\"></i>"
 			),
-			"horizontal_rule" => array(
+			"mmd_horizontal_rule" => array(
 				"action"  => "drawHorizontalRule",
-				"tooltip" => __( 'Insert Horizontal Line', 'markup-markdown' ),
-				"label"   => __( 'Horizontal Line', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-minus\" aria-hidden=\"true\"></i>"
 			),
-			"preview" => array(
+			"mmd_preview" => array(
 				"action"  => "togglePreview",
-				"tooltip" => __( 'Toggle Preview', 'markup-markdown' ),
-				"label"   => __( 'Preview', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-eye no-disable\" aria-hidden=\"true\"></i>"
 			),
-			"side_by_side" => array(
+			"mmd_side_by_side" => array(
 				"action"  => "toggleSideBySide",
-				"tooltip" => __( 'Toggle Side by Side', 'markup-markdown' ),
-				"label"   => __( 'Side by Side', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-columns no-disable no-mobile\" aria-hidden=\"true\"></i>"
 			),
-			"fullscreen" => array(
+			"mmd_fullscreen" => array(
 				"action"  => "toggleFullScreen",
-				"tooltip" => __( 'Toggle Fullscreen', 'markup-markdown' ),
-				"label"   => __( 'Fullscreen', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-arrows-alt no-disable no-mobile\" aria-hidden=\"true\"></i>"
 			),
-			"guide" => array(
+			"mmd_guide" => array(
 				"action"  => "This link",
-				"tooltip" => __( 'Markdown Guide', 'markup-markdown' ),
-				"label"   => __( 'Guide', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-question-circle\" aria-hidden=\"true\"></i>"
 			),
-			"undo" => array(
+			"mmd_undo" => array(
 				"action"  => "undo",
-				"tooltip" => __( 'Undo', 'markup-markdown' ),
-				"label"   => __( 'Undo', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-undo\" aria-hidden=\"true\"></i>"
 			),
-			"redo" => array(
+			"mmd_redo" => array(
 				"action"  => "redo",
-				"tooltip" => __( 'Redo', 'markup-markdown' ),
-				"label"   => __( 'Redo', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-redo\" aria-hidden=\"true\"></i>"
 			),
-			"spell_check" => array(
+			"mmd_spell_check" => array(
 				"action"  => "spellcheck",
-				"tooltip" => __( 'Spellchecker', 'markup-markdown' ),
-				"label"   => __( 'Spellchecker', 'markup-markdown' ),
 				"icon"    => "<i class=\"fa fa-globe\" aria-hidden=\"true\"></i>"
 			)
 		),
@@ -179,16 +127,73 @@ class ToolbarEasyMDE {
 
 
 	public function __construct( $json = '' ) {
+		$this->prop[ 'default_buttons' ][ 'mmd_pipe' ][ 'tooltip' ] = '';
+		$this->prop[ 'default_buttons' ][ 'mmd_pipe' ][ 'label' ] = esc_html__( 'Pipe', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_bold' ][ 'tooltip' ] = esc_html__( 'Bold', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_bold' ][ 'label' ] = esc_html__( 'Bold', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_italic' ][ 'tooltip' ] = esc_html__( 'Italic', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_italic' ][ 'label' ] = esc_html__( 'Italic', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_strikethrough' ][ 'tooltip' ] = esc_html__( 'Strikethrough', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_strikethrough' ][ 'label' ] = esc_html__( 'Strikethrough', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading' ][ 'tooltip' ] = esc_html__( 'Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading' ][ 'label' ] = esc_html__( 'Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_smaller' ][ 'tooltip' ] = esc_html__( 'Smaller Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_smaller' ][ 'label' ] = esc_html__( 'Smaller Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_bigger' ][ 'tooltip' ] = esc_html__( 'Bigger Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_bigger' ][ 'label' ] = esc_html__( 'Bigger Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_1' ][ 'tooltip' ] = esc_html__( 'Big Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_1' ][ 'label' ] = esc_html__( 'Big Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_2' ][ 'tooltip' ] = esc_html__( 'Medium Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_2' ][ 'label' ] = esc_html__( 'Medium Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_3' ][ 'tooltip' ] = esc_html__( 'Small Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_heading_3' ][ 'label' ] = esc_html__( 'Small Heading', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_code' ][ 'tooltip' ] = esc_html__( 'Code', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_code' ][ 'label' ] = esc_html__( 'Code', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_quote' ][ 'tooltip' ] = esc_html__( 'Quote', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_quote' ][ 'label' ] = esc_html__( 'Quote', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_unordered_list' ][ 'tooltip' ] = esc_html__( 'Generic List', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_unordered_list' ][ 'label' ] = esc_html__( 'List', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_ordered_list' ][ 'tooltip' ] = esc_html__( 'Numbered List', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_ordered_list' ][ 'label' ] = esc_html__( 'List', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_clean_block' ][ 'tooltip' ] = esc_html__( 'Clean block', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_clean_block' ][ 'label' ] = esc_html__( 'Clean', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_link' ][ 'tooltip' ] = esc_html__( 'Create Link', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_link' ][ 'label' ] = esc_html__( 'Link', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_wpsimage' ][ 'tooltip' ] = esc_html__( 'Insert or Upload Media', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_wpsimage' ][ 'label' ] = esc_html__( 'Media Library', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_table' ][ 'tooltip' ] = esc_html__( 'Insert Table', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_table' ][ 'label' ] = esc_html__( 'Table', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_horizontal_rule' ][ 'tooltip' ] = esc_html__( 'Insert Horizontal Line', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_horizontal_rule' ][ 'label' ] = esc_html__( 'Horizontal Line', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_preview' ][ 'tooltip' ] = esc_html__( 'Toggle Preview', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_preview' ][ 'label' ] = esc_html__( 'Preview', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_side_by_side' ][ 'tooltip' ] = esc_html__( 'Toggle Side by Side', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_side_by_side' ][ 'label' ] = esc_html__( 'Side by Side', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_fullscreen' ][ 'tooltip' ] = esc_html__( 'Toggle Fullscreen', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_fullscreen' ][ 'label' ] = esc_html__( 'Fullscreen', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_guide' ][ 'tooltip' ] = esc_html__( 'Markdown Guide', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_guide' ][ 'label' ] = esc_html__( 'Guide', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_undo' ][ 'tooltip' ] = esc_html__( 'Undo', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_undo' ][ 'label' ] = esc_html__( 'Undo', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_redo' ][ 'tooltip' ] = esc_html__( 'Redo', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_redo' ][ 'label' ] = esc_html__( 'Redo', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_spell_check' ][ 'tooltip' ] = esc_html__( 'Spellchecker', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_spell_check' ][ 'label' ] = esc_html__( 'Spellchecker', 'markup-markdown' );
 		if ( empty( $json ) ) :
 			return FALSE;
 		endif;
 		if ( ! file_exists( $json ) ) :
-			$toolbar_conf = [ "bold", "italic", "heading", "spell_check", "pipe", "quote", "unordered_list", "ordered_list", "pipe", "link", "wpsimage", "table", "pipe", "fullscreen", "side_by_side", "preview", "guide" ];
+			$toolbar_conf = [ "mmd_bold", "mmd_italic", "mmd_heading", "mmd_spell_check", "mmd_pipe", "mmd_quote", "mmd_unordered_list", "mmd_ordered_list", "mmd_pipe", "mmd_link", "mmd_wpsimage", "mmd_table", "mmd_pipe", "mmd_fullscreen", "mmd_side_by_side", "mmd_preview", "mmd_guide" ];
 			file_put_contents( $json, '{"my_buttons":' . json_encode( $toolbar_conf ) . '}' );
 		endif;
 		mmd()->clear_cache( $json );
 		$toolbar_conf = json_decode( file_get_contents( $json ) );
 		$this->logger( ( ! isset( $toolbar_conf ) || ! $toolbar_conf ) ? "Unable to read the json file " . $json : '' );
+		foreach ( $toolbar_conf->my_buttons as $idx => $button_slug ) :
+			if ( strpos( $button_slug, "mmd_" ) === FALSE ) :
+				$toolbar_conf->my_buttons[ $idx ] = "mmd_" . $button_slug;
+			endif;
+		endforeach;
 		foreach ( $toolbar_conf->my_buttons as $button_slug ) :
 			if ( ! in_array( $button_slug, $this->prop[ 'active_buttons' ] ) && isset( $this->prop[ 'default_buttons' ][ $button_slug ] ) ) :
 				$this->prop[ 'active_buttons' ][] = array_merge( [ "slug" => $button_slug ], $this->prop[ 'default_buttons' ][ $button_slug ] );

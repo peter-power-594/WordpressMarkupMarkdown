@@ -10,8 +10,6 @@ class EngineEasyMDE {
 
 	private $prop = array(
 		'slug' => 'engine__easymde',
-		'label' => __( 'EasyMde WYSIWYG', 'markup-markdown' ),
-		'desc' => __( 'The default Markdown Editor.', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);
@@ -41,6 +39,8 @@ class EngineEasyMDE {
 
 
 	public function __construct() {
+		$this->prop[ 'label' ] = __( 'EasyMde WYSIWYG', 'markup-markdown' );
+		$this->prop[ 'desc' ] = __( 'The default Markdown Editor.', 'markup-markdown' );
 		if ( defined( 'MMD_ADDONS' ) && in_array( 'engine__summernote', MMD_ADDONS ) !== FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated (SummerNote activated)
@@ -133,10 +133,10 @@ class EngineEasyMDE {
 	 * @return Boolean TRUE if we need to load the assets or FALSE
 	 */
 	public function prepare_editor_assets() {
-		if ( $this->is_admin ) : # Backend called earlier in the *init* hook or similar 
+		if ( $this->is_admin ) : # Backend called earlier in the *init* hook or similar
 			# We don't have access to the edit screen property yet so the check will be made in the next hook
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_assets' ) );
-		else : # Frontend: we are inside the *wp_head* hook. 
+		else : # Frontend: we are inside the *wp_head* hook.
 			# Check if allowed and load straight the asset
 			$this->frontend_enabled = apply_filters( 'mmd_frontend_enabled', false );
 			if ( ! $this->frontend_enabled ) :

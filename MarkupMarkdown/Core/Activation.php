@@ -14,6 +14,8 @@ class Activation {
 		register_activation_hook( MMD_FILE_URL, array( $this, 'plugin_activate' ) );
 		# Plugin Upgrade
 		add_action( 'upgrader_process_complete', array( $this, 'plugin_patches' ), 10, 2 );
+		# Translated Strings
+		add_filter( 'load_textdomain_mofile', array( $this, 'plugin_textdomain' ), 10, 2 );
 		# Plugin Properties
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_custom_metas' ), 10, 2 );
 		# Add options and allow setup from the admin and edit screen
@@ -38,6 +40,24 @@ class Activation {
 		$mmd_settings = new \MarkupMarkdown\Core\Settings( $mmd_addons );
 		# Just in case
 		$this->prepare_cache( $mmd_settings );
+	}
+
+
+	/**
+	 * Load the local mo files inside the plugin folder
+	 *
+	 * @since  3.4.2
+	 *
+	 * @param String $mofile The file containing the translation string
+	 * @param String $domain The plugin or asset related domain
+	 * @return String $mofile The language specific translation file
+	 */
+	function plugin_textdomain( $mofile, $domain ) {
+		if ( 'markup-markdown' === $domain && false !== strpos( $mofile, WP_LANG_DIR . '/plugins/' ) ) :
+			$locale = apply_filters( 'plugin_locale', determine_locale(), $domain );
+			$mofile = mmd()->plugin_dir . 'languages/' . $domain . '-' . $locale . '.mo';
+		endif;
+		return $mofile;
 	}
 
 

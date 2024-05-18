@@ -110,6 +110,7 @@ class Support {
 		foreach( $post_types as $post_type ) :
 			add_post_type_support( $post_type, 'markup_markdown' );
 		endforeach;
+		load_plugin_textdomain( 'markup-markdown', false, mmd()->plugin_dir . 'languages' );
 	}
 
 
@@ -179,7 +180,7 @@ class Support {
 			return false;
 		else:
 			# Classic request with a post type defined. Backend or Frontend follow the rules defined
-			$my_post_type = $this->get_current_post_type(); 
+			$my_post_type = $this->get_current_post_type();
 			if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
 				$this->mmd_syntax = 0;
 			endif;

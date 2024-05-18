@@ -10,8 +10,6 @@ class Layout {
 
 	private $prop = array(
 		'slug' => 'layout',
-		'label' => __( 'Layout', 'markup-markdown' ),
-		'desc' => __( 'A few tools to help you enhancing your layout. (Lightbox, Masonry, etc...)', 'markup-markdown' ),
 		'release' => 'stable',
 		'active' => 1
 	);
@@ -24,6 +22,8 @@ class Layout {
 
 
 	public function __construct() {
+		$this->prop[ 'label' ] = __( 'Layout', 'markup-markdown' );
+		$this->prop[ 'desc' ] = __( 'A few tools to help you enhancing your layout. (Lightbox, Masonry, etc...)', 'markup-markdown' );
 		mmd()->default_conf = array( 'MMD_USE_LIGHTBOX' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
@@ -105,7 +105,7 @@ class Layout {
 	 * @return Void
 	 */
 	public function add_tabmenu() {
-		echo "\t\t\t\t\t\t<li><a href=\"#tab-layout\">Layout</a></li>\n";
+		echo "\t\t\t\t\t\t<li><a href=\"#tab-layout\">" . __( 'Layout', 'markup-markdown' ) . "</a></li>\n";
 	}
 
 

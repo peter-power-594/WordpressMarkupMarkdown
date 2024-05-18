@@ -33,7 +33,6 @@
 	float: left;
 	padding: 8px 16px;
 	text-decoration: none;
-	text-transform: capitalize;
 }
 .ui-tabs-panel, .ui-tabs-nav {
 	padding-right: 36px;
@@ -55,7 +54,7 @@
 	padding-bottom: 1px;
 	background: #efefef;
 }
-.form-table th.lang-code{ 
+.form-table th.lang-code{
 	width: 100px;
 	max-width: 100px;
 }
@@ -167,16 +166,19 @@ h4.ui-widget-header + p {
 #my_toolbar li:hover .ui-trash-link {
 	visibility: visible;
 }
-#my_toolbar li.button_spell_check .ui-widget-item .fa {
+#my_toolbar li.button_spell_check .ui-widget-item .fa,
+#my_toolbar li.button_mmd_spell_check .ui-widget-item .fa {
 	opacity: 0.5;
 }
-#my_toolbar li.button_pipe .ui-widget-item {
+#my_toolbar li.button_pipe .ui-widget-item,
+#my_toolbar li.button_mmd_pipe .ui-widget-item {
 	border: 0;
 	background: transparent;
 	margin: 5px -5px;
 	font-size: 18px;
 }
-#my_toolbar li.button_pipe .ui-trash-link {
+#my_toolbar li.button_pipe .ui-trash-link,
+#my_toolbar li.button_mmd_pipe .ui-trash-link {
 	font-size: 11px;
 }
 #toolbar_buttons {

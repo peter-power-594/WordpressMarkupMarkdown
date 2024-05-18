@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.4.1
-Version: 3.4.1
+Stable Tag: 3.4.2
+Version: 3.4.2
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
