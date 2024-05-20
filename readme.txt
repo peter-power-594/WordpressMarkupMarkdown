@@ -86,6 +86,15 @@ The current version is based on components that are not compatible with assistiv
 
 == Changelog ==
 
+= 3.4.2 =
+
+Improvement:
+- Basic internationalization strings added
+- French version released as local forn now
+
+Bug fix:
+- Adding css namespace for the toolbar buttons to avoid collision with Bootstrap on the frontend
+
 = 3.4.1 =
 
 Improvements:
