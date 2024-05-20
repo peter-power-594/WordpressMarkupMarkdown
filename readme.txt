@@ -52,7 +52,7 @@ All done! That's all you should do.
 = Is it still compatible with Gutenberg or any other builder?
 
 **Yes but you can't use both at the same time ;-)**
-Data are saved as pure markdown code in the database, for the other editors on the market data are saved as HTML or custom markups like shortcodes. Currently data are still saved but won't be converted or rendered correctly if you revert back or switch between editors.
+Data are saved as pure markdown code in the database, for the other builders on the market data are saved as HTML or custom markups like shortcodes. Currently data are still saved but won't be converted or rendered correctly if you revert back or switch between editors.
 
 = Can I switch between editors or allow the markdown editor for specific users ? =
 
@@ -78,7 +78,7 @@ If you need to render iframes or others elements, instead of using:
 = What's the deal with the beta interface? =
 
 The default editor is based on EasyMDE so you can write in markdown and use Wordpress feature at the same time. The side panel preview mode has been fixed since 3.0.
-The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta interface has been removed since 3.0 and will be available as a separate addon._ It's a custom version so you can get a live rendering when typing your content or adding medias. It's not perfect, it's still working well but for now you will have to modify the code on your own (builder or database) if something goes wrong. To find you more check my article here: https://www.markup-markdown.com/blog/wordpress-plugins/dynamic-input-method-markdown/
+The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta interface has been removed since 3.0 and will be available as a separate addon._ It's a custom version so you can get a live rendering when typing your content or adding medias. It's not perfect, it's still working well but for now you will have to modify the code on your own (builder or database) if something goes wrong. To find out more check my article here: https://www.markup-markdown.com/blog/wordpress-plugins/dynamic-input-method-markdown/
 
 = Accessibility =
 

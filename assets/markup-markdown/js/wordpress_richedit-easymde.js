@@ -1,6 +1,6 @@
-/* global wp */
+/* global wp, mmd_wpr_vars, EasyMDE */
 
-(function( $, _win, _doc, EasyMDE ) {
+(function( $, _win, _doc ) {
 
 	var mediaFrame = {};
 		mediaPreview = {},
@@ -173,13 +173,16 @@
 						mediaFrame.open();
 					},
 					className: "fa fa-images",
-					title: "Image"
+					title: mmd_wpr_vars && mmd_wpr_vars.wpsimage ? mmd_wpr_vars.wpsimage : "Image"
 				});
 			}
 			else {
 				targetAction = slug.replace( '_', '-' ).replace( 'mmd-', 'mmd_' );
 				if ( defActions[ targetAction ] ) {
 					defActions[ targetAction ].name = targetAction;
+					if ( mmd_wpr_vars && mmd_wpr_vars[ targetAction ] ) {
+						defActions[ targetAction ].title = mmd_wpr_vars[ targetAction ];
+					}
 					toolbar.push( defActions[ targetAction ] );
 				}
 				else {
@@ -657,4 +660,4 @@
 	};
 
 
-})( window.jQuery, window, document, window.EasyMDE );
+})( window.jQuery, window, document );

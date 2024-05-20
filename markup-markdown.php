@@ -32,7 +32,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 		protected $parser;
 
 		protected $settings = array(
-			'version' => '3.4.1',
+			'version' => '3.4.2',
 			'plugin_uri' => '',
 			'plugin_dir' => '',
 			'plugin_slug' => '',

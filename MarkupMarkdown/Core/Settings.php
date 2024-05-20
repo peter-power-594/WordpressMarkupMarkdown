@@ -328,7 +328,7 @@ class Settings {
 	public function enqueue_setting_scripts() {
 		$plugin_uri = mmd()->plugin_uri;
 		wp_enqueue_style( 'markup_markdown-options', $plugin_uri . '/assets/markup-markdown/css/plugin_options.css', [], '1.0.4' );
-		wp_enqueue_style( 'markup_markdown-easymde_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.0' );
+		wp_enqueue_style( 'markup_markdown-easymde_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.102' );
 		wp_enqueue_style( 'markup_markdown-font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown-easymde_editor' ], '5.15.14' );
 		wp_enqueue_style( 'markup_markdown-font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown-font_awesome_regular' ], '5.15.14' );
 		foreach ( [ 'core', 'tabs', 'draggable', 'droppable', 'sortable', 'button' ] as $jq_component ) :

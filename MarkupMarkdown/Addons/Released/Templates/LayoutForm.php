@@ -91,7 +91,7 @@
 										if ( strpos( $button[ 'slug' ], "pipe" ) !== FALSE ) :
 											echo "|";
 										else :
-											echo "<button class=\"" . str_replace( '_', '-', $button[ 'slug' ] ) . "\">" . $button[ 'icon' ] . "</button>";
+											echo "<button class=\"" . str_replace( 'mmd-', 'mmd_', str_replace( '_', '-', $button[ 'slug' ] ) ) . "\">" . $button[ 'icon' ] . "</button>";
 										endif;
 									?>
 									</span>
@@ -116,10 +116,10 @@
 									<span class="ui-widget-item" title="<?php echo $button[ 'tooltip' ]; ?>">
 										<h5 class="ui-widget-header"><?php echo $button[ 'label' ]; ?></h5>
 									<?php
-										if ( $button[ 'slug' ] === "pipe" ) :
+										if ( strpos( $button[ 'slug' ], "pipe" ) !== FALSE ) :
 											echo "|";
 										else :
-											echo "<button class=\"" . str_replace( '_', '-', $button[ 'slug' ] ) . "\">" . $button[ 'icon' ] . "</button>";
+											echo "<button class=\"" . str_replace( 'mmd-', 'mmd_', str_replace( '_', '-', $button[ 'slug' ] ) ) . "\">" . $button[ 'icon' ] . "</button>";
 										endif;
 									?>
 									</span>

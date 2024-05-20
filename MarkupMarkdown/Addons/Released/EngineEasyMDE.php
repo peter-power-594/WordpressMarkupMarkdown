@@ -211,7 +211,7 @@ class EngineEasyMDE {
 	 */
 	public function load_engine_stylesheets() {
 		$plugin_uri = mmd()->plugin_uri;
-		wp_enqueue_style( 'markup_markdown__cssengine_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.101' );
+		wp_enqueue_style( 'markup_markdown__cssengine_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.102' );
 		wp_enqueue_style( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/github.css', [ 'markup_markdown__cssengine_editor' ], '8.9.1' );
 		wp_enqueue_style( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/css/wordpress_richedit-easymde.css', [ 'markup_markdown__highlightjs_snippets' ], '1.1.30' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown__wordpress_richedit' ], '5.15.14' );
@@ -237,6 +237,34 @@ class EngineEasyMDE {
 		wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.20', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.js', [ 'markup_markdown__wordpress_preview' ], '1.0.20', true );
 		wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.js', [ 'markup_markdown__wordpress_media' ], '1.4.16', true );
+		wp_localize_script( 'markup_markdown__wordpress_richedit', 'mmd_wpr_vars', array(
+			'mmd_pipe'            => esc_html__( 'Pipe', 'markup-markdown' ),
+			'mmd_bold'            => esc_html__( 'Bold', 'markup-markdown' ),
+			'mmd_italic'          => esc_html__( 'Italic', 'markup-markdown' ),
+			'mmd_strikethrough'   => esc_html__( 'Strikethrough', 'markup-markdown' ),
+			'mmd_heading'         => esc_html__( 'Heading', 'markup-markdown' ),
+			'mmd_heading-smaller' => esc_html__( 'Smaller Heading', 'markup-markdown' ),
+			'mmd_heading-bigger'  => esc_html__( 'Bigger Heading', 'markup-markdown' ),
+			'mmd_heading-1'       => esc_html__( 'Big Heading', 'markup-markdown' ),
+			'mmd_heading-2'       => esc_html__( 'Medium Heading', 'markup-markdown' ),
+			'mmd_heading-3'       => esc_html__( 'Small Heading', 'markup-markdown' ),
+			'mmd_code'            => esc_html__( 'Code', 'markup-markdown' ),
+			'mmd_quote'           => esc_html__( 'Quote', 'markup-markdown' ),
+			'mmd_unordered-list'  => esc_html__( 'Generic List', 'markup-markdown' ),
+			'mmd_ordered-list'    => esc_html__( 'Numbered List', 'markup-markdown' ),
+			'mmd_clean-block'     => esc_html__( 'Clean block', 'markup-markdown' ),
+			'mmd_link'            => esc_html__( 'Create Link', 'markup-markdown' ),
+			'mmd_wpsimage'        => esc_html__( 'Insert or Upload Media', 'markup-markdown' ),
+			'mmd_table'           => esc_html__( 'Insert Table', 'markup-markdown' ),
+			'mmd_horizontal-rule' => esc_html__( 'Insert Horizontal Line', 'markup-markdown' ),
+			'mmd_preview'         => esc_html__( 'Toggle Preview', 'markup-markdown' ),
+			'mmd_side-by-side'    => esc_html__( 'Toggle Side by Side', 'markup-markdown' ),
+			'mmd_fullscreen'      => esc_html__( 'Toggle Fullscreen', 'markup-markdown' ),
+			'mmd_guide'           => esc_html__( 'Markdown Guide', 'markup-markdown' ),
+			'mmd_undo'            => esc_html__( 'Undo', 'markup-markdown' ),
+			'mmd_redo'            => esc_html__( 'Redo', 'markup-markdown' ),
+			'mmd_spell-check'     => esc_html__( 'Spellchecker', 'markup-markdown' )
+		));
 		wp_add_inline_script( 'markup_markdown__wordpress_media', $this->add_inline_editor_conf() );
 	}
 
