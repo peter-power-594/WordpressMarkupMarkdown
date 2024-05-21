@@ -90,7 +90,7 @@ The current version is based on components that are not compatible with assistiv
 
 Improvement:
 - Basic internationalization strings added
-- French version released as local forn now
+- French version released as local for now
 
 Bug fix:
 - Adding css namespace for the toolbar buttons to avoid collision with Bootstrap on the frontend
