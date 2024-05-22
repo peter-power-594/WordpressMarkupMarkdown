@@ -125,11 +125,13 @@ class Activation {
 
 	public function plugin_patches( $upgrader_object, $options ) {
 		if ( $options[ 'action' ] == 'update' && $options[ 'type' ] == 'plugin' ) :
-			foreach( $options[ 'plugins' ] as $my_plugin ) :
-				if ( $my_plugin === 'markup-markdown/markup-markdown.php' ) :
-					$this->prepare_cache();
-				endif;
-			endforeach;
+			if ( isset( $options[ 'plugins' ] ) && is_array( $options[ 'plugins' ] ) ) :
+				foreach( $options[ 'plugins' ] as $my_plugin ) :
+					if ( 'markup-markdown/markup-markdown.php' === $my_plugin ) :
+						$this->prepare_cache();
+					endif;
+				endforeach;
+			endif;
 		endif;
 	}
 
