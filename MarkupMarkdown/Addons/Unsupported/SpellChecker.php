@@ -141,7 +141,6 @@ class SpellChecker {
 
 
 	public function load_spellchecker_assets( $hook ) {
-		error_log( $hook );
 		if ( 'post.php' === $hook || 'post-new.php' === $hook ) :
 			add_action( 'admin_footer', array( $this, 'load_engine_assets' ) );
 		elseif ( 'settings_page_markup-markdown-admin' === $hook ) :
