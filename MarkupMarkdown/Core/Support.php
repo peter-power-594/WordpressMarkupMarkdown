@@ -34,7 +34,7 @@ class Support {
 
 	public function __construct() {
 		# Add Support. When possible we let developers take benefit of the default 10 priority
-		add_action( 'init', array( $this, 'add_markdown_support' ) ); # Priority 10
+		add_action( 'init', array( $this, 'add_markdown_support' ), 11 ); # Priority 11
 		if ( is_admin() ) :
 			# Check then enable or disable the markdown editor on the backend
 			add_filter( 'mmd_backend_enabled', array( $this, 'current_hook_allowed' ) );
@@ -178,22 +178,23 @@ class Support {
 	public function prepare_markdown_editor() {
 		if ( ! $this->mmd_syntax ) :
 			return false;
-		else:
-			# Classic request with a post type defined. Backend or Frontend follow the rules defined
-			$my_post_type = $this->get_current_post_type();
-			if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
-				$this->mmd_syntax = 0;
-			endif;
-			if ( ! is_admin() ) :
-				# Toggle on or off the markdown **editor** on the frontend
-				$mmd_tmpl_enabled = apply_filters( 'mmd_frontend_enabled', false );
-				if ( ! (int)$mmd_tmpl_enabled ) :
-					return false;
-				endif;
-			endif;
-			if ( ! $this->mmd_syntax ) :
+		endif;
+		# Classic request with a post type defined. Backend or Frontend follow the rules defined
+		$my_post_type = $this->get_current_post_type();
+		if ( ! isset( $my_post_type ) || ! $my_post_type || empty( $my_post_type ) ) :
+			$this->mmd_syntax = 0;
+		elseif ( ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
+			$this->mmd_syntax = 0;
+		endif;
+		if ( ! is_admin() ) :
+			# Toggle on or off the markdown **editor** on the frontend
+			$mmd_tmpl_enabled = apply_filters( 'mmd_frontend_enabled', false );
+			if ( ! (int)$mmd_tmpl_enabled ) :
 				return false;
 			endif;
+		endif;
+		if ( ! $this->mmd_syntax ) :
+			return false;
 		endif;
 		# Markdown can be used with custom fields, so only disable TinyMCE / Guternberg hooks when support is enabled
 		# Clear static cache when post is saved
@@ -218,13 +219,11 @@ class Support {
 
 	public function clear_post_cache( $post_ID, $post, $update ) {
 		# If a modification was made, we must clear the cache to refresh it
-		$cache_content = WP_CONTENT_DIR . "/mmd-cache/." . get_main_site_id() . '_' . $post_ID . ".html";
+		$cache_content = WP_CONTENT_DIR . '/mmd-cache/.' . get_current_network_id() . '_' . get_current_blog_id() . '_' . $post_ID . '.html';
 		if ( file_exists( $cache_content ) ) :
 			@unlink( $cache_content );
 		endif;
-		if ( function_exists( 'opcache_invalidate' ) ) :
-			opcache_invalidate( $cache_content );
-		endif;
+		mmd()->clear_cache( $cache_content );
 	}
 
 

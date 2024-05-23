@@ -37,6 +37,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			'plugin_dir' => '',
 			'plugin_slug' => '',
 			'cache_dir' => '',
+			'conf_dir' => '',
 			'default_conf' => array()
 		);
 
@@ -46,6 +47,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			$this->settings[ 'plugin_uri' ] = plugin_dir_url( __FILE__ );
 			$this->settings[ 'plugin_dir' ] = plugin_dir_path( __FILE__ );
 			$this->settings[ 'cache_dir' ] = WP_CONTENT_DIR . "/mmd-cache";
+			$this->settings[ 'conf_dir' ] = WP_CONTENT_DIR . "/mmd-conf";
 			require_once $this->settings[ 'plugin_dir' ] . '/MarkupMarkdown/Core/Activation.php';
 		}
 

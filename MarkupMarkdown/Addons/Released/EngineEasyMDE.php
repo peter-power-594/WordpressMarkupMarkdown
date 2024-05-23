@@ -282,7 +282,7 @@ class EngineEasyMDE {
 		$js = "window.wp = window.wp || {};\n"; # Just in case
 		$js .= "wp.pluginMarkupMarkdown = wp.pluginMarkupMarkdown || {};\n";
 		$js .= "wp.pluginMarkupMarkdown.homeURL = \"" . $home_url . "\";\n";
-		$json = mmd()->cache_dir . '/conf_easymde_toolbar.json';
+		$json = mmd()->conf_dir . '/' . get_current_network_id() . '_conf_easymde_toolbar.json';
 		if ( ! file_exists( $json ) ) :
 			$toolbarSetup = mmd()->plugin_dir . "/MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php";
 			if ( file_exists( $toolbarSetup ) ) :

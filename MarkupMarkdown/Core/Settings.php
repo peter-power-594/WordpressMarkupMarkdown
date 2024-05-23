@@ -57,18 +57,15 @@ class Settings {
 	 * @returns boolean TRUE if the file already exists or was updated
 	 */
 	private function make_conf( $params = [], $new = FALSE ) {
-		$conf_file = mmd()->cache_dir . '/conf.php';
+		$conf_file = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf.php';
 		if ( $new && file_exists( $conf_file ) ) :
 			return FALSE;
 		endif;
-		if ( ! file_exists( $conf_file ) ) :
-			touch( $conf_file );
-		endif;
+		touch( $conf_file );
 		if ( ! isset( $params ) || ! is_array( $params ) ) :
 			$params = mmd()->default_conf;
 		endif;
-		$php_code = [ "<?php" ];
-		$php_code[] = "\n\tdefined( 'ABSPATH' ) || exit;";
+		$php_code = array( "<?php", "\n\tdefined( 'ABSPATH' ) || exit;" );
 		foreach ( $params as $const => $val ) :
 			if ( is_integer( $val ) ) :
 				$php_code[] = "\n\tdefine( '" . $const . "', " . (int)$val . " );";
@@ -80,9 +77,7 @@ class Settings {
 		endforeach;
 		$php_code[] = "\n?>";
 		$this->updated = file_put_contents( $conf_file, implode( '', $php_code ) ) > 0 ? 1 : 0;
-		if ( function_exists( 'opcache_invalidate' ) ) :
-			opcache_invalidate( $conf_file );
-		endif;
+		mmd()->clear_cache( $conf_file );
 	}
 
 
@@ -207,8 +202,9 @@ class Settings {
 		if ( ! check_admin_referer( 'screen-options-nonce', 'screenoptionnonce' ) ) :
 			return FALSE;
 		endif;
+		error_log( get_current_network_id() );
 		$my_addons = filter_input( INPUT_POST, 'mmd_addons', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-		$my_cnf_screen = mmd()->cache_dir . '/conf_screen.php';
+		$my_cnf_screen = mmd()->conf_dir . '/' . get_current_network_id() . '_conf_screen.php';
 		if ( ! file_exists( $my_cnf_screen ) ) :
 			touch( $my_cnf_screen );
 		endif;
@@ -228,9 +224,7 @@ class Settings {
 			. ' );'
 			. "\n\t" . 'endif;';
 		if ( file_put_contents( $my_cnf_screen, implode( '', $php_code ) ) ) :
-			if ( function_exists( 'opcache_invalidate' ) ) :
-				opcache_invalidate( $my_cnf_screen );
-			endif;
+			mmd()->clear_cache( $my_cnf_screen );
 			$redirect_url = \menu_page_url( 'markup-markdown-admin', false )
 				. '&options_saved=' . ( $this->updated > 0 ? '1' : '0' );
 				\wp_redirect( $redirect_url, 302 );
@@ -290,7 +284,7 @@ class Settings {
 		if ( ! is_object( $screen ) || ( isset( $screen->id ) && $screen->id !== 'settings_page_markup-markdown-admin' ) ) :
 			return $panel;
 		endif;
-		$conf_screen = mmd()->cache_dir . '/conf_screen.php';
+		$conf_screen = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf_screen.php';
 		if ( file_exists( $conf_screen ) ) :
 			require_once $conf_screen;
 		endif;

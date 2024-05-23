@@ -28,7 +28,7 @@ class Layout {
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
 		mmd()->default_conf = array( 'MMD_CUSTOM_TOOLBAR' => 0 );
-		$this->toolbar_conf = mmd()->cache_dir . '/conf_easymde_toolbar.json';
+		$this->toolbar_conf = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf_easymde_toolbar.json';
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
@@ -118,7 +118,7 @@ class Layout {
 	 * @return Void
 	 */
 	public function add_tabcontent() {
-		$conf_file = mmd()->cache_dir . '/conf.php';
+		$conf_file = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf.php';
 		if ( file_exists( $conf_file ) ) :
 			require_once $conf_file;
 		endif;
