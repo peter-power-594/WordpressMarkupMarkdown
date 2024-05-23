@@ -202,9 +202,8 @@ class Settings {
 		if ( ! check_admin_referer( 'screen-options-nonce', 'screenoptionnonce' ) ) :
 			return FALSE;
 		endif;
-		error_log( get_current_network_id() );
 		$my_addons = filter_input( INPUT_POST, 'mmd_addons', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-		$my_cnf_screen = mmd()->conf_dir . '/' . get_current_network_id() . '_conf_screen.php';
+		$my_cnf_screen = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf_screen.php';
 		if ( ! file_exists( $my_cnf_screen ) ) :
 			touch( $my_cnf_screen );
 		endif;

@@ -95,7 +95,7 @@
 										endif;
 									?>
 									</span>
-								<?php if ( strpos( $button[ 'slug' ], 'spell_check' ) !== FALSE ) : ?>
+								<?php if ( strpos( $button[ 'slug' ], 'spell_check' ) === FALSE ) : ?>
 									<a href="#button_<?php echo $button[ 'slug' ]; ?>" class="ui-trash-link" title="Delete button"><i class="fa fa-times" aria-hidden="true"></i></a>
 								<?php endif; ?>
 								</li>
