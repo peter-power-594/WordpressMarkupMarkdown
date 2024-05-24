@@ -80,7 +80,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			if ( isset( $this->settings[ $name ] ) && is_array( $this->settings[ $name ] ) && is_array( $val ) ) :
 				$this->settings[ $name ] = array_merge( $this->settings[ $name ], $val );
 			else :
-				$fixed = array( 'plugin_uri', 'plugin_dir', 'plugin_slug', 'cache_dir', 'default_conf' );
+				$fixed = array( 'plugin_uri', 'plugin_dir', 'plugin_slug', 'cache_dir', 'conf_dir', 'default_conf' );
 				if ( ! in_array( $name, $fixed ) ) :
 					$this->settings[ $name ] = $val;
 				endif;

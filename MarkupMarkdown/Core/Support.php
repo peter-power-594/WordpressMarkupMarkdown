@@ -181,9 +181,8 @@ class Support {
 		endif;
 		# Classic request with a post type defined. Backend or Frontend follow the rules defined
 		$my_post_type = $this->get_current_post_type();
-		if ( ! isset( $my_post_type ) || ! $my_post_type || empty( $my_post_type ) ) :
-			$this->mmd_syntax = 0;
-		elseif ( ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
+		if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
+			# Warning: Keep empty fonction, we DO NOT DISABLE markdown in case it's not with post related template / edit screen
 			$this->mmd_syntax = 0;
 		endif;
 		if ( ! is_admin() ) :

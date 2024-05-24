@@ -229,7 +229,8 @@
 					$( _win ).trigger( 'resize.mmd_win_sticky_toolbar' );
 				}, 10);
 				return text;
-			}
+			},
+			direction: ( ( window.isRTL || 0 ) > 1 || ( 'rtl' === ( document.documentElement.dir || '' ) ) ) ? 'rtl' : 'ltr'
 		};
 		if ( spell_check && spell_check !== 'none' && ! spell_check.disabled ) {
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files

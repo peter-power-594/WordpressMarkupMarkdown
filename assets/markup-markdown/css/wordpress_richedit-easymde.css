@@ -29,6 +29,9 @@
   padding: 16px 0 0 0;
 }
 
+.editor-toolbar {
+	display: flex;
+}
 .editor-toolbar.tiny,
 .form-field .editor-toolbar {
 	padding: 5px;
@@ -40,9 +43,15 @@
 
 .editor-toolbar button.preview:last-child,
 .editor-toolbar button.guide:last-child {
-	float: right;
+	margin-left: auto;
+	margin-right: 0;
 }
 
+html[dir=rtl] .editor-toolbar button.preview:last-child,
+html[dir=rtl] .editor-toolbar button.guide:last-child {
+	margin-left: 0;
+	margin-right: auto;
+}
 
 .EasyMDEContainer .editor-toolbar {
   background: #f1f1f1;
@@ -401,6 +410,9 @@
 }
 .admin-bar .editor-toolbar.fullscreen {
 	top: 32px;
+	width: auto;
+	left: 0;
+	right: 0;
 }
 .admin-bar .EasyMDEContainer .CodeMirror-fullscreen,
 .admin-bar .EasyMDEContainer .CodeMirror-fullscreen + .editor-preview-side {
@@ -410,10 +422,27 @@
 .EasyMDEContainer .CodeMirror-fullscreen {
 	left: 160px;
 }
+html[dir=rtl] .editor-toolbar.fullscreen,
+html[dir=rtl] .EasyMDEContainer .CodeMirror-fullscreen {
+	left: 0;
+	right: 160px;
+}
 .EasyMDEContainer .CodeMirror-sided,
 .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 	width: calc(50% - 80px) !important;
 }
+html[dir=rtl] .EasyMDEContainer .CodeMirror-sided {
+	left: auto;
+}
+html[dir=rtl] .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+	right: auto;
+	left: 0;
+}
+html[dir=rtl] .editor-preview,
+html[dir=rtl] .editor-preview-side {
+	direction: rtl;
+}
+/* Fullscreen with folded sidebar */
 .folded .editor-toolbar.fullscreen,
 .folded .EasyMDEContainer .CodeMirror-fullscreen {
 	left: 36px;
@@ -422,10 +451,24 @@
 .folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 	width: calc(50% - 18px) !important;
 }
+html[dir=rtl] .folded .editor-toolbar.fullscreen,
+html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-fullscreen {
+	left: auto;
+	right: 36px;
+}
+html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+	right: auto;
+	left: 0;
+}
 @media only screen and (max-width: 960px) {
 	.auto-fold .editor-toolbar.fullscreen,
 	.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
 		left: 36px;
+	}
+	html[dir=rtl] .auto-fold .editor-toolbar.fullscreen,
+	html[dir=rtl] .auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+		left: auto;
+		right: 36px;
 	}
 	.auto-fold .EasyMDEContainer .CodeMirror-sided,
 	.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
@@ -440,6 +483,15 @@
 	.auto-fold .editor-toolbar.fullscreen,
 	.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
 		left: 0;
+	}
+	html[dir=rtl] .editor-toolbar.fullscreen,
+	html[dir=rtl] .folded .editor-toolbar.fullscreen,
+	html[dir=rtl] .EasyMDEContainer .CodeMirror-fullscreen,
+	html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-fullscreen,
+	html[dir=rtl] .auto-fold .editor-toolbar.fullscreen,
+	html[dir=rtl] .auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+		left: auto;
+		right: 0;
 	}
 	.admin-bar .editor-toolbar.fullscreen {
 		top: 46px;
