@@ -133,7 +133,8 @@
 			'mmd_fullscreen': { action: EasyMDE.toggleFullScreen, className: 'fa fa-arrows-alt no-disable no-mobile' },
 			'mmd_undo': { action: EasyMDE.undo, className: 'fa fa-undo' },
 			'mmd_redo': { action: EasyMDE.redo, className: 'fa fa-redo' },
-			'mmd_textdir': { action: }
+			'mmd_rtltextdir': { action: EasyMDE.switchHTMLDir, className: 'fa' + ( targetDir === 'rtl' ? 's' : 'r' ) + ' fa-caret-square-left' },
+			'mmd_ltrtextdir': { action: EasyMDE.switchHTMLDir, className: 'fa' + ( targetDir === 'ltr' ? 's' : 'r' ) + ' fa-caret-square-right' }
 		};
 		for ( var b = 0, slug = '', targetAction = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
 			slug = buttons[ b ];
@@ -241,7 +242,7 @@
 				}, 10);
 				return text;
 			},
-			direction: 
+			direction: targetDir
 		};
 		if ( spell_check && spell_check !== 'none' && ! spell_check.disabled ) {
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files

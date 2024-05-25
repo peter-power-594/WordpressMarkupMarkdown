@@ -1,0 +1,71 @@
+/*! easymde v2.19.103
+ * Copyright Jeroen Akkerman
+ * Modified by Pierre-Henri Lavigne (.cm-spell-error rules)
+ * @link https://github.com/ionaru/easy-markdown-editor
+ * @license MIT
+ */
+@import 'easymde.min';
+.editor-toolbar {
+	button {
+		position: relative;
+		&:after{
+			font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+			font-size: 65%;
+			vertical-align: bottom;
+			position: relative;
+			top: 0px;
+			line-height: 1;
+		}
+		&.heading-1:after,
+		&.mmd_heading-1:after {
+			content: "1";
+		}
+		&.heading-2:after,
+		&.mmd_heading-2:after {
+			content: "2";
+		}
+		&.heading-3:after,
+		&.mmd_heading-3:after {
+			content: "3";
+		}
+		&.heading-bigger:after,
+		&.mmd_heading-bigger:after{
+			content: "▲";
+		}
+		&.heading-smaller:after,
+		&.mmd_heading-smaller:after{
+			content:"▼";
+		}
+		&.mmd_rtltextdir:after,
+		&.mmd_ltrtextdir:after {
+			position: absolute;
+			left: -5px;
+			right: -5px;
+			top: auto;
+			bottom: -1px;
+			margin: 0;
+			font-size: 8px;
+			font-weight: 400;
+			text-align: center;
+		}
+		&.mmd_rtltextdir:after {
+			content: "RTL";
+		}
+		&.mmd_ltrtextdir:after {
+			content: "LTR";
+		}
+	}
+	.ui-widget-item {
+		button {
+			&.mmd_rtltextdir:after,
+			&.mmd_ltrtextdir:after {
+				bottom: -8px;
+			}
+		}
+	}
+}
+.CodeMirror {
+	.cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word):not(.cm-attribute) {
+		background: rgba(255,0,0,.15);
+	}
+}
