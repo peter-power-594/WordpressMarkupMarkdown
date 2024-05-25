@@ -91,12 +91,22 @@
 		_self.mediaUploader();
 		// Build the toolbar
 		var spell_check = { disabled: 1 },
-			toolbar = [];
+			toolbar = [],
+			targetDir;
 		if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.spellChecker ) {
 			spell_check = _win.wp.pluginMarkupMarkdown.spellChecker;
 			if ( typeof spell_check !== 'object' ) {
 				spell_check = { disabled: 1 };
 			}
+		}
+		if ( /^mmd_dir\=(ltr|rtl)$/.test( window.location.search || '' ) ) {
+			targetDir = window.location.search.match( /mmd_dir\=(ltr|rtl)/ )[ 1 ];
+		}
+		else if ( ( window.isRTL || 0 ) > 1 || ( 'rtl' === ( document.documentElement.dir || '' ) ) ) {
+			targetDir = 'rtl';
+		}
+		else {
+			targetDir = 'ltr';
 		}
 		var n = 0, defActions = {
 			'mmd_bold': { action: EasyMDE.toggleBold, className: 'fa fa-bold' },
@@ -122,7 +132,8 @@
 			'mmd_side-by-side': { action: EasyMDE.toggleSideBySide, className: 'fa fa-columns no-disable no-mobile' },
 			'mmd_fullscreen': { action: EasyMDE.toggleFullScreen, className: 'fa fa-arrows-alt no-disable no-mobile' },
 			'mmd_undo': { action: EasyMDE.undo, className: 'fa fa-undo' },
-			'mmd_redo': { action: EasyMDE.redo, className: 'fa fa-redo' }
+			'mmd_redo': { action: EasyMDE.redo, className: 'fa fa-redo' },
+			'mmd_textdir': { action: }
 		};
 		for ( var b = 0, slug = '', targetAction = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
 			slug = buttons[ b ];
@@ -230,7 +241,7 @@
 				}, 10);
 				return text;
 			},
-			direction: ( ( window.isRTL || 0 ) > 1 || ( 'rtl' === ( document.documentElement.dir || '' ) ) ) ? 'rtl' : 'ltr'
+			direction: 
 		};
 		if ( spell_check && spell_check !== 'none' && ! spell_check.disabled ) {
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files

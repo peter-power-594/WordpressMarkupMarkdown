@@ -85,8 +85,8 @@
 		$toolbar_fields[] = $button[ 'slug' ];
 ?>
 								<li data-slug="<?php echo $button[ 'slug' ]; ?>" class="ui-widget-content button_<?php echo $button[ 'slug' ];  ?>">
-									<span class="ui-widget-item"<?php if ( ! empty( $button[ 'tooltip' ] ) ) : ?> title="<?php echo $button[ 'tooltip' ]; ?>"<?php endif; ?>>
-										<h5 class="ui-widget-header"><?php echo $button[ 'label' ]; ?></h5>
+									<span class="ui-widget-item"<?php if ( isset( $button[ 'tooltip' ] ) && ! empty( $button[ 'tooltip' ] ) ) : ?> title="<?php echo $button[ 'tooltip' ]; ?>"<?php endif; ?>>
+										<h5 class="ui-widget-header"><?php if ( isset( $button[ 'label' ] ) ) : echo $button[ 'label' ]; endif; ?></h5>
 									<?php
 										if ( strpos( $button[ 'slug' ], "pipe" ) !== FALSE ) :
 											echo "|";
@@ -113,8 +113,8 @@
 	foreach( $my_toolbar->unused_buttons as $button ) :
 ?>
 								<li data-slug="<?php echo $button[ 'slug' ]; ?>" class="ui-widget-content button_<?php echo $button[ 'slug' ]; ?>">
-									<span class="ui-widget-item" title="<?php echo $button[ 'tooltip' ]; ?>">
-										<h5 class="ui-widget-header"><?php echo $button[ 'label' ]; ?></h5>
+									<span class="ui-widget-item"<?php if ( isset( $button[ 'tooltip' ] ) && ! empty( $button[ 'tooltip' ] ) ) : ?> title="<?php echo $button[ 'tooltip' ]; ?>"<?php endif; ?>>
+										<h5 class="ui-widget-header"><?php if ( isset( $button[ 'label' ] ) ) : echo $button[ 'label' ]; endif; ?></h5>
 									<?php
 										if ( strpos( $button[ 'slug' ], "pipe" ) !== FALSE ) :
 											echo "|";

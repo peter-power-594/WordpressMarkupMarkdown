@@ -112,6 +112,10 @@ class ToolbarEasyMDE {
 			"mmd_spell_check" => array(
 				"action"  => "spellcheck",
 				"icon"    => "<i class=\"fa fa-globe\" aria-hidden=\"true\"></i>"
+			),
+			"mmd_textdir" => array(
+				"action"  => "textdir",
+				"icon"    => "<i class=\"fa fa-map\" aria-hidden=\"true\"></i>"
 			)
 		),
 		"unused_buttons" => array(),
@@ -179,6 +183,8 @@ class ToolbarEasyMDE {
 		$this->prop[ 'default_buttons' ][ 'mmd_redo' ][ 'label' ] = esc_html__( 'Redo', 'markup-markdown' );
 		$this->prop[ 'default_buttons' ][ 'mmd_spell_check' ][ 'tooltip' ] = esc_html__( 'Spellchecker', 'markup-markdown' );
 		$this->prop[ 'default_buttons' ][ 'mmd_spell_check' ][ 'label' ] = esc_html__( 'Spellchecker', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_textdir' ][ 'tooltip' ] = esc_html__( 'Switch text direction', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_textdir' ][ 'label' ] = esc_html__( 'Text direction', 'markup-markdown' );
 		if ( empty( $json ) ) :
 			return FALSE;
 		endif;
