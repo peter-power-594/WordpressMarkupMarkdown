@@ -14,17 +14,44 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+		jshint: {
+			all: [
+				'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
+				'AA_src/markup-markdown/js/wordpress_richedit-media.js',
+				'AA_src/markup-markdown/js/wordpress_richedit-preview.js'
+			]
+		},
+		uglify: {
+			options: {
+				ouput: {
+					comments: 'some'
+				}
+			},
+			build: {
+				files: {
+					'assets/markup-markdown/js/wordpress_richedit-easymde.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
+					'assets/markup-markdown/js/wordpress_richedit-media.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-media.js',
+					'assets/markup-markdown/js/wordpress_richedit-preview.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-preview.js'
+				}
+			}
+		},
 		watch: {
 			sass: {
 				files: [
 					'AA_src/**/*.scss'
 				],
 				tasks: [ 'sass' ]
+			},
+			js: {
+				files: [
+					'AA_src/**/*.js'
+				],
+				tasks: [ 'jshint', 'uglify' ]
 			}
 		},
 		concurrent: {
 			target: {
-				tasks: [ 'watch:sass' ],
+				tasks: [ 'watch:sass', 'watch:js' ],
 				options: {
 					logConcurrentOutput: true
 				}
