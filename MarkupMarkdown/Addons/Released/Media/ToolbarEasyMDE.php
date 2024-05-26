@@ -216,6 +216,10 @@ class ToolbarEasyMDE {
 				$this->prop[ 'unused_buttons' ][] = array_merge( [ "slug" => $button_slug ], $button_prop );
 			endif;
 		endforeach;
+		# Add a few pipes
+		$this->prop[ 'unused_buttons' ][] = array( "slug" => "pipe" );
+		$this->prop[ 'unused_buttons' ][] = array( "slug" => "pipe" );
+		$this->prop[ 'unused_buttons' ][] = array( "slug" => "pipe" );
 	}
 
 
