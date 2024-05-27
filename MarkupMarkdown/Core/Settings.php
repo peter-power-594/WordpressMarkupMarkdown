@@ -57,7 +57,7 @@ class Settings {
 	 * @returns boolean TRUE if the file already exists or was updated
 	 */
 	private function make_conf( $params = [], $new = FALSE ) {
-		$conf_file = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf.php';
+		$conf_file = mmd()->conf_blog_prefix . 'conf.php';
 		if ( $new && file_exists( $conf_file ) ) :
 			return FALSE;
 		endif;
@@ -203,7 +203,7 @@ class Settings {
 			return FALSE;
 		endif;
 		$my_addons = filter_input( INPUT_POST, 'mmd_addons', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-		$my_cnf_screen = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf_screen.php';
+		$my_cnf_screen = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( ! file_exists( $my_cnf_screen ) ) :
 			touch( $my_cnf_screen );
 		endif;
@@ -283,7 +283,7 @@ class Settings {
 		if ( ! is_object( $screen ) || ( isset( $screen->id ) && $screen->id !== 'settings_page_markup-markdown-admin' ) ) :
 			return $panel;
 		endif;
-		$conf_screen = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf_screen.php';
+		$conf_screen = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( file_exists( $conf_screen ) ) :
 			require_once $conf_screen;
 		endif;

@@ -88,7 +88,7 @@ class WPGeshi {
 			endif;
 			echo '<style id="wpgeshi-wp-geshi-highlight-inline-css" type="text/css">' . $this->mmd_geshi_css_code . '</style>';
 			$post_geshi_css = ob_get_clean();
-			$post_content = mmd()->cache_dir . "/." . get_main_site_id() . '_' . get_the_id() . ".html";
+			$post_content = mmd()->cache_blog_prefix . get_the_id() . '.html';
 			if ( file_exists( $post_content ) ) :
 				file_put_contents( $post_content, $post_geshi_css, FILE_APPEND );
 			endif;

@@ -42,7 +42,7 @@ class Parser {
 	 * @return String HTML rendered from the markdown
 	 */
 	private function static_html( $content ) {
-		$cache_content = mmd()->cache_dir . '/.' . get_current_network_id() . '_' . get_current_blog_id() . '_' . get_the_id() . '.html';
+		$cache_content = mmd()->cache_blog_prefix . get_the_id() . '.html';
 		if ( $this->preview !== 'true' && file_exists( $cache_content ) ) :
 			# Cache file already exists
 			$my_content = file_get_contents( $cache_content );

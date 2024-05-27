@@ -23,13 +23,13 @@ class Activation {
 		# Just in case
 		$this->prepare_cache();
 		# Get the otions
-		$addon_options = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf.php';
+		$addon_options = mmd()->conf_blog_prefix . 'conf.php';
 		if ( file_exists( $addon_options ) ) :
 			require_once $addon_options;
 		endif;
 		$core_dir = mmd()->plugin_dir . '/MarkupMarkdown/Core/';
 		# Load the conf.
-		$active_addons = mmd()->conf_dir . '/' . get_current_network_id() . '_' . get_current_blog_id() . '_conf_screen.php';
+		$active_addons = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( file_exists( $active_addons ) ) : 
 			# If not present, wait for the addons to be loaded !
 			require_once $active_addons;

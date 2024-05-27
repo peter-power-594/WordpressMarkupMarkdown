@@ -38,6 +38,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			'plugin_slug' => '',
 			'cache_dir' => '',
 			'conf_dir' => '',
+			'curr_blog' => '1_1',
 			'default_conf' => array()
 		);
 
@@ -46,8 +47,10 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			$this->settings[ 'plugin_slug' ] = plugin_basename( __DIR__ );
 			$this->settings[ 'plugin_uri' ] = plugin_dir_url( __FILE__ );
 			$this->settings[ 'plugin_dir' ] = plugin_dir_path( __FILE__ );
-			$this->settings[ 'cache_dir' ] = WP_CONTENT_DIR . "/mmd-cache";
-			$this->settings[ 'conf_dir' ] = WP_CONTENT_DIR . "/mmd-conf";
+			$this->settings[ 'cache_dir' ] = WP_CONTENT_DIR . '/mmd-cache';
+			$this->settings[ 'conf_dir' ] = WP_CONTENT_DIR . '/mmd-conf';
+			$this->settings[ 'cache_blog_prefix' ] = WP_CONTENT_DIR . '/mmd-cache/' . get_current_network_id() . '_' . get_current_blog_id() . '_';
+			$this->settings[ 'conf_blog_prefix' ] = WP_CONTENT_DIR . '/mmd-conf/' . get_current_network_id() . '_' . get_current_blog_id() . '_';
 			require_once $this->settings[ 'plugin_dir' ] . '/MarkupMarkdown/Core/Activation.php';
 		}
 
@@ -80,7 +83,7 @@ if ( ! class_exists( 'Markup_Markdown' ) ) :
 			if ( isset( $this->settings[ $name ] ) && is_array( $this->settings[ $name ] ) && is_array( $val ) ) :
 				$this->settings[ $name ] = array_merge( $this->settings[ $name ], $val );
 			else :
-				$fixed = array( 'plugin_uri', 'plugin_dir', 'plugin_slug', 'cache_dir', 'conf_dir', 'default_conf' );
+				$fixed = array( 'plugin_uri', 'plugin_dir', 'plugin_slug', 'cache_dir', 'conf_dir', 'curr_blog', 'default_conf' );
 				if ( ! in_array( $name, $fixed ) ) :
 					$this->settings[ $name ] = $val;
 				endif;
