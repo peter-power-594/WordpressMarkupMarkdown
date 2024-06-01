@@ -30,7 +30,7 @@ class Activation {
 		$core_dir = mmd()->plugin_dir . '/MarkupMarkdown/Core/';
 		# Load the conf.
 		$active_addons = mmd()->conf_blog_prefix . 'conf_screen.php';
-		if ( file_exists( $active_addons ) ) : 
+		if ( file_exists( $active_addons ) ) :
 			# If not present, wait for the addons to be loaded !
 			require_once $active_addons;
 		endif;
@@ -127,10 +127,10 @@ class Activation {
 
 	/**
 	 * Create default configuration file
-	 * 
+	 *
 	 * @access private
 	 * @sine 3.5.0
-	 * 
+	 *
 	 * @param Integer $curr_network_id The network ID when multisite is enabled. Wordpress default is 1.
 	 * @param Integer $curr_blog_id The blog Id when multisite is enabled. Wordpress default is 1.
 	 * @return Boolean true in case of success or false is an error occured

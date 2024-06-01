@@ -34,7 +34,7 @@ class Support {
 
 	public function __construct() {
 		# Add Support. When possible we let developers take benefit of the default 10 priority
-		add_action( 'init', array( $this, 'add_markdown_support' ), 11 ); # Priority 11
+		add_action( 'init', array( $this, 'add_markdown_support' ) );
 		if ( is_admin() ) :
 			# Check then enable or disable the markdown editor on the backend
 			add_filter( 'mmd_backend_enabled', array( $this, 'current_hook_allowed' ) );
@@ -181,7 +181,8 @@ class Support {
 		endif;
 		# Classic request with a post type defined. Backend or Frontend follow the rules defined
 		$my_post_type = $this->get_current_post_type();
-		if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
+		global $_wp_post_type_features; error_log( print_r( $_wp_post_type_features[ $my_post_type ], true ) );
+		if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup-markdown' ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
 			# Warning: Keep empty fonction, we DO NOT DISABLE markdown in case it's not with post related template / edit screen
 			$this->mmd_syntax = 0;
 		endif;
@@ -301,7 +302,7 @@ class Support {
 	 */
 	private function content_data( $field_content, $cache_allowed ) {
 		if ( wp_is_rest_endpoint() || ( ( is_home() || is_front_page() || is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
-			if ( post_type_supports( get_post_type(), 'markup_markdown' ) ) :
+			if ( post_type_supports( get_post_type(), 'markup-markdown' ) || post_type_supports( get_post_type(), 'markup_markdown' ) ) :
 				return apply_filters( 'post_markdown2html', $field_content, $cache_allowed );
 			else :
 				return $field_content;

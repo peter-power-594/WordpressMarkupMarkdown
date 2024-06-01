@@ -45,6 +45,10 @@ class AdvancedCustomField {
 		endif;
 		require_once mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomField/mmd_acf_field_markdown.php';
 		acf_register_field_type( 'mmd_acf_field_markdown' );
+		add_filter( 'acf/post_type/available_supports', function( $acf_available_supports, $acf_post_type ) {
+			$acf_available_supports[ 'markup-markdown' ] = 'Markup Markdown';
+			return $acf_available_supports;
+		}, 10, 2);
 	}
 
 
