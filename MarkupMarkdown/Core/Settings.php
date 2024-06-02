@@ -57,18 +57,15 @@ class Settings {
 	 * @returns boolean TRUE if the file already exists or was updated
 	 */
 	private function make_conf( $params = [], $new = FALSE ) {
-		$conf_file = mmd()->cache_dir . '/conf.php';
+		$conf_file = mmd()->conf_blog_prefix . 'conf.php';
 		if ( $new && file_exists( $conf_file ) ) :
 			return FALSE;
 		endif;
-		if ( ! file_exists( $conf_file ) ) :
-			touch( $conf_file );
-		endif;
+		touch( $conf_file );
 		if ( ! isset( $params ) || ! is_array( $params ) ) :
 			$params = mmd()->default_conf;
 		endif;
-		$php_code = [ "<?php" ];
-		$php_code[] = "\n\tdefined( 'ABSPATH' ) || exit;";
+		$php_code = array( "<?php", "\n\tdefined( 'ABSPATH' ) || exit;" );
 		foreach ( $params as $const => $val ) :
 			if ( is_integer( $val ) ) :
 				$php_code[] = "\n\tdefine( '" . $const . "', " . (int)$val . " );";
@@ -80,9 +77,7 @@ class Settings {
 		endforeach;
 		$php_code[] = "\n?>";
 		$this->updated = file_put_contents( $conf_file, implode( '', $php_code ) ) > 0 ? 1 : 0;
-		if ( function_exists( 'opcache_invalidate' ) ) :
-			opcache_invalidate( $conf_file );
-		endif;
+		mmd()->clear_cache( $conf_file );
 	}
 
 
@@ -208,7 +203,7 @@ class Settings {
 			return FALSE;
 		endif;
 		$my_addons = filter_input( INPUT_POST, 'mmd_addons', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-		$my_cnf_screen = mmd()->cache_dir . '/conf_screen.php';
+		$my_cnf_screen = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( ! file_exists( $my_cnf_screen ) ) :
 			touch( $my_cnf_screen );
 		endif;
@@ -228,9 +223,7 @@ class Settings {
 			. ' );'
 			. "\n\t" . 'endif;';
 		if ( file_put_contents( $my_cnf_screen, implode( '', $php_code ) ) ) :
-			if ( function_exists( 'opcache_invalidate' ) ) :
-				opcache_invalidate( $my_cnf_screen );
-			endif;
+			mmd()->clear_cache( $my_cnf_screen );
 			$redirect_url = \menu_page_url( 'markup-markdown-admin', false )
 				. '&options_saved=' . ( $this->updated > 0 ? '1' : '0' );
 				\wp_redirect( $redirect_url, 302 );
@@ -290,7 +283,7 @@ class Settings {
 		if ( ! is_object( $screen ) || ( isset( $screen->id ) && $screen->id !== 'settings_page_markup-markdown-admin' ) ) :
 			return $panel;
 		endif;
-		$conf_screen = mmd()->cache_dir . '/conf_screen.php';
+		$conf_screen = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( file_exists( $conf_screen ) ) :
 			require_once $conf_screen;
 		endif;
@@ -329,8 +322,9 @@ class Settings {
 		$plugin_uri = mmd()->plugin_uri;
 		wp_enqueue_style( 'markup_markdown-options', $plugin_uri . '/assets/markup-markdown/css/plugin_options.css', [], '1.0.4' );
 		wp_enqueue_style( 'markup_markdown-easymde_editor',  $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.css', [], '2.19.102' );
-		wp_enqueue_style( 'markup_markdown-font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown-easymde_editor' ], '5.15.14' );
-		wp_enqueue_style( 'markup_markdown-font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown-font_awesome_regular' ], '5.15.14' );
+		wp_enqueue_style( 'markup_markdown-font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/regular.min.css', [ 'markup_markdown-easymde_editor' ], '5.15.14' );
+		wp_enqueue_style( 'markup_markdown-font_awesome_solid', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown-font_awesome_regular' ], '5.15.14' );
+		wp_enqueue_style( 'markup_markdown-font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown-font_awesome_solid' ], '5.15.14' );
 		foreach ( [ 'core', 'tabs', 'draggable', 'droppable', 'sortable', 'button' ] as $jq_component ) :
 			wp_enqueue_script( 'jquery-ui-' . $jq_component );
 		endforeach;

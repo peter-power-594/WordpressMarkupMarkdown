@@ -20,13 +20,16 @@ class Activation {
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_custom_metas' ), 10, 2 );
 		# Add options and allow setup from the admin and edit screen
 		define( 'MMD_PLUGIN_ACTIVATED', 1 );
-		$addon_options = mmd()->cache_dir . '/conf.php';
+		# Just in case
+		$this->prepare_cache();
+		# Get the otions
+		$addon_options = mmd()->conf_blog_prefix . 'conf.php';
 		if ( file_exists( $addon_options ) ) :
 			require_once $addon_options;
 		endif;
 		$core_dir = mmd()->plugin_dir . '/MarkupMarkdown/Core/';
 		# Load the conf.
-		$active_addons = mmd()->cache_dir . '/conf_screen.php';
+		$active_addons = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( file_exists( $active_addons ) ) :
 			# If not present, wait for the addons to be loaded !
 			require_once $active_addons;
@@ -37,9 +40,7 @@ class Activation {
 		require_once $core_dir . 'Addons.php';
 		$mmd_addons = new \MarkupMarkdown\Core\Addons( $mmd_cpt );
 		require_once $core_dir . 'Settings.php';
-		$mmd_settings = new \MarkupMarkdown\Core\Settings( $mmd_addons );
-		# Just in case
-		$this->prepare_cache( $mmd_settings );
+		new \MarkupMarkdown\Core\Settings( $mmd_addons );
 	}
 
 
@@ -86,25 +87,61 @@ class Activation {
 
 
 	private function prepare_cache() {
-		$cache_directory = mmd()->cache_dir;
-		if ( ! is_dir( $cache_directory ) ) :
-			mkdir( $cache_directory );
-		else :
-			return FALSE;
-		endif;
-		if ( ! file_exists( $cache_directory . '/index.php' ) ) :
-			touch( $cache_directory . '/index.php' );
-			file_put_contents( $cache_directory . '/index.php', '<?php /* Silence is gold */ ?>' );
-		endif;
-		$this->make_default_conf();
-		return TRUE;
+		$mmd_folders = array( mmd()->conf_dir, mmd()->cache_dir );
+		foreach( $mmd_folders as $my_folder ) :
+			if ( is_dir( $my_folder ) ) :
+				continue;
+			endif;
+			mkdir( $my_folder );
+			if ( ! file_exists( $my_folder . '/index.php' ) ) :
+				touch( $my_folder . '/index.php' );
+				file_put_contents( $my_folder . '/index.php', '<?php /* Silence is gold */ ?>' );
+			endif;
+		endforeach;
+		return $this->make_default_conf( get_current_network_id(), get_current_blog_id() );
 	}
 
 
-	private function make_default_conf() {
-		$conf_file = mmd()->cache_dir . '/conf.php';
+	/**
+	 * Migrate the settings file for network websites
+	 *
+	 * @since  3.5.0
+	 *
+	 * @param   string $ver  The current plugin version
+	 * @return  Boolean true if data were migrated or false
+	 */
+	private function migrate_conf( $ver = '3.5.1' ) {
+		if ( version_compare( $ver, '3.5.1', '>=' ) || ! is_dir( mmd()->conf_dir ) ) :
+			return false;
+		endif;
+		$conf_files = array( 'conf.php', 'conf_screen.php', 'conf_easymde_toolbar.json' );
+		$file_prefix = '1_1_';
+		foreach( $conf_files as $my_conf_file ) :
+			if ( file_exists( mmd()->cache_dir . '/' . $my_conf_file ) ):
+				rename( mmd()->cache_dir . '/' . $my_conf_file, mmd()->conf_dir . '/' . $file_prefix . $my_conf_file );
+			endif;
+		endforeach;
+		return true;
+	}
+
+
+	/**
+	 * Create default configuration file
+	 *
+	 * @access private
+	 * @sine 3.5.0
+	 *
+	 * @param Integer $curr_network_id The network ID when multisite is enabled. Wordpress default is 1.
+	 * @param Integer $curr_blog_id The blog Id when multisite is enabled. Wordpress default is 1.
+	 * @return Boolean true in case of success or false is an error occured
+	 */
+	private function make_default_conf( $curr_network_id = 1, $curr_blog_id = 1) {
+		$conf_file = mmd()->conf_dir . '/' . $curr_network_id . '_' . $curr_blog_id . '_conf.php';
 		if ( file_exists( $conf_file ) ) :
-			return TRUE;
+			return true;
+		endif;
+		if ( $curr_network_id === 1 && $curr_blog_id === 1 && $this->migrate_conf( mmd()->ver ) ) :
+			return true;
 		endif;
 		touch( $conf_file );
 		$params = mmd()->default_conf;
@@ -114,7 +151,7 @@ class Activation {
 			$php_code[] = "\n\tdefine( '" . $const . "', " . ( is_integer( $val ) ? $val : (int)$val ) . " );";
 		endforeach;
 		$php_code[] = "\n?>";
-		return file_put_contents( $conf_file, implode( '', $php_code ) ) > 0 ? TRUE : FALSE;
+		return file_put_contents( $conf_file, implode( '', $php_code ) ) > 0 ? true : false;
 	}
 
 
@@ -124,13 +161,17 @@ class Activation {
 
 
 	public function plugin_patches( $upgrader_object, $options ) {
-		if ( $options[ 'action' ] == 'update' && $options[ 'type' ] == 'plugin' ) :
-			foreach( $options[ 'plugins' ] as $my_plugin ) :
-				if ( $my_plugin === 'markup-markdown/markup-markdown.php' ) :
-					$this->prepare_cache();
-				endif;
-			endforeach;
+		if ( $options[ 'action' ] != 'update' || $options[ 'type' ] !== 'plugin' ) :
+			return true;
 		endif;
+		if ( ! isset( $options[ 'plugins' ] ) || ! is_array( $options[ 'plugins' ] ) ) :
+			return true;
+		endif;
+		foreach( $options[ 'plugins' ] as $my_plugin ) :
+			if ( $my_plugin === 'markup-markdown/markup-markdown.php' ) :
+				$this->prepare_cache();
+			endif;
+		endforeach;
 	}
 
 }

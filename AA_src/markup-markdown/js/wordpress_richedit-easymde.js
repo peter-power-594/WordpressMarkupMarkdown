@@ -2,7 +2,7 @@
 
 (function( $, _win, _doc ) {
 
-	var mediaFrame = {};
+	var mediaFrame = {},
 		mediaPreview = {},
 		activeWidget = {},
 		fieldNumber = 0,
@@ -90,15 +90,7 @@
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
-		var spell_check = { disabled: 1 },
-			toolbar = [];
-		if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.spellChecker ) {
-			spell_check = _win.wp.pluginMarkupMarkdown.spellChecker;
-			if ( typeof spell_check !== 'object' ) {
-				spell_check = { disabled: 1 };
-			}
-		}
-		var n = 0, defActions = {
+		var toolbar = [], defActions = {
 			'mmd_bold': { action: EasyMDE.toggleBold, className: 'fa fa-bold' },
 			'mmd_italic': { action: EasyMDE.toggleItalic, className: 'fa fa-italic' },
 			'mmd_strikethrough': { action: EasyMDE.toggleStrikethrough, className: 'fa fa-strikethrough' },
@@ -124,6 +116,70 @@
 			'mmd_undo': { action: EasyMDE.undo, className: 'fa fa-undo' },
 			'mmd_redo': { action: EasyMDE.redo, className: 'fa fa-redo' }
 		};
+		EasyMDE.wpsImage = function( editor ) {
+			activeWidget = _self;
+			if ( ! activeWidget.widgetCounter ) {
+				activeWidget.widgetCounter = 1;
+			}
+			if( ! mediaFrame || ! mediaFrame.title ) {
+				mediaFrame.initialize();
+			}
+			mediaFrame.open();
+		};
+		// First we check the spell checker options
+		var spell_check = { disabled: 1 };
+		if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.spellChecker ) {
+			spell_check = _win.wp.pluginMarkupMarkdown.spellChecker;
+			if ( typeof spell_check !== 'object' ) {
+				spell_check = { disabled: 1 };
+			}
+		}
+		var n = 0;
+		var spellCheckLanguages = function ( myLang, targetLang ) {
+			n++;
+			if ( n <= 1 ) {
+				return true; // Skip first default language
+			}
+			if ( n === 2 ) {
+				toolbar.push( "|" );
+			}
+			var targetLangEditor = function( editor ) {
+				var cm = _self.instance.editor.codemirror,
+				doc = cm.getDoc(),
+				sel = doc.getSelection() || false;
+				if ( sel && sel.length ) {
+					_self.instance.i18nAdded = 1;
+					return doc.replaceSelection(
+						'<span lang="' + targetLang.code + '">' + sel + '</span>'
+					);
+				}
+			};
+			toolbar.push({
+				name: "mmd_wpsi18n_" + targetLang.code,
+				action: targetLangEditor,
+				className: "i18n " + targetLang.code,
+				text: targetLang.code.toUpperCase(),
+				title: targetLang.label
+			});
+		};
+		// Then we check the language dir
+		var langDir = 'ltr';
+		if ( /mmd_dir\=(ltr|rtl)/.test( window.location.search || '' ) ) {
+			langDir = window.location.search.match( /mmd_dir\=(ltr|rtl)/ )[ 1 ];
+		}
+		else if ( ( window.isRTL || 0 ) > 1 || ( 'rtl' === ( document.documentElement.dir || '' ) ) ) {
+			langDir = 'rtl';
+		}
+		EasyMDE.switchHTMLDir = function() {
+			var targetLangDir = langDir && langDir === 'ltr' ? 'rtl' : 'ltr';
+			document.location.href = [
+				document.location.href.replace( /mmd_dir=[a-z]+/, '' ),
+				'&mmd_dir=' + targetLangDir
+			].join( '' );
+		};
+		defActions.mmd_rtltextdir = { action: EasyMDE.switchHTMLDir, className: 'fa' + ( langDir === 'rtl' ? 's' : 'r' ) + ' fa-caret-square-left' };
+		defActions.mmd_ltrtextdir = { action: EasyMDE.switchHTMLDir, className: 'fa' + ( langDir === 'ltr' ? 's' : 'r' ) + ' fa-caret-square-right' };
+		// Build the toolbar
 		for ( var b = 0, slug = '', targetAction = '', buttons = _self.toolbarButtons; b < buttons.length; b++ ) {
 			slug = buttons[ b ];
 			if ( /pipe/.test( slug ) ) {
@@ -131,47 +187,13 @@
 			}
 			else if ( /spell[-_]*check/.test( slug ) ) {
 				if ( ! spell_check.disabled ) {
-					$.each(spell_check, function(myLang, targetLang) {
-						n++;
-						if ( n <= 1 ) {
-							return true; // Skip first default language
-						}
-						if ( n === 2 ) {
-							toolbar.push( "|" );
-						}
-						toolbar.push({
-							name: "mmd_wpsi18n_" + targetLang.code,
-							action: function( editor ) {
-								var cm = _self.instance.editor.codemirror,
-								doc = cm.getDoc(),
-								sel = doc.getSelection() || false;
-								if ( sel && sel.length ) {
-									_self.instance.i18nAdded = 1;
-									return doc.replaceSelection(
-										'<span lang="' + targetLang.code + '">' + sel + '</span>'
-									);
-								}
-							},
-							className: "i18n " + targetLang.code,
-							text: targetLang.code.toUpperCase(),
-							title: targetLang.label
-						});
-					});					
+					$.each(spell_check, spellCheckLanguages);					
 				}
 			}
 			else if ( /wps[-_]*image/.test( slug ) ) {
 				toolbar.push({
 					name: "wpsimage",
-					action: function( editor ) {
-						activeWidget = _self;
-						if ( ! activeWidget.widgetCounter ) {
-							activeWidget.widgetCounter = 1;
-						}
-						if( ! mediaFrame || ! mediaFrame.title ) {
-							mediaFrame.initialize();
-						}
-						mediaFrame.open();
-					},
+					action: EasyMDE.wpsImage,
 					className: "fa fa-images",
 					title: mmd_wpr_vars && mmd_wpr_vars.wpsimage ? mmd_wpr_vars.wpsimage : "Image"
 				});
@@ -205,9 +227,9 @@
 			}
 			else {
 				// Standard custom field
-				for ( var b = 0; b < toolbar.length; b++ ) {
-					if ( ! /fullscreen|side/.test( toolbar[ b ] || '' ) ) {
-						minimalToolbar.push( toolbar[ b ] );
+				for ( var d = 0; d < toolbar.length; d++ ) {
+					if ( ! /fullscreen|side/.test( toolbar[ d ] || '' ) ) {
+						minimalToolbar.push( toolbar[ d ] );
 					}
 				}
 			}
@@ -229,7 +251,8 @@
 					$( _win ).trigger( 'resize.mmd_win_sticky_toolbar' );
 				}, 10);
 				return text;
-			}
+			},
+			direction: langDir
 		};
 		if ( spell_check && spell_check !== 'none' && ! spell_check.disabled ) {
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files
@@ -255,8 +278,8 @@
 		var mediaCounters = $( textarea ).val().match( /\"myset.*?\s/g );
 		if ( mediaCounters && mediaCounters.length ) {
 			var startCounter = 0;
-			for ( var c = 0, tmp; c < mediaCounters.length; c++ ) {
-				tmp = parseInt( mediaCounters[ c ].replace( /\d_/, '' ).replace( /[^\d]+/, '' ), 10 );
+			for ( var e = 0, tmp; e < mediaCounters.length; e++ ) {
+				tmp = parseInt( mediaCounters[ e ].replace( /\d_/, '' ).replace( /[^\d]+/, '' ), 10 );
 				if ( tmp > startCounter ) {
 					startCounter = tmp;
 				}
@@ -338,18 +361,15 @@
 			};
 		text = text.replace( /\[gallery([^\]]*)\]/g, function( wpGallery ) {
 			galCounter++;
-			return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_gallery-' + galCounter + '">'
-				+ mediaPreview.add2Queue( 'gallery', wpGallery, galCounter ) + '</div>';
+			return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_gallery-' + galCounter + '">' + mediaPreview.add2Queue( 'gallery', wpGallery, galCounter ) + '</div>';
 		});
 		text = text.replace( /\[playlist([^\]]*)\]/g, function( wpPlaylist ) {
 			galCounter++;
 			if ( /type\=\"video\"/.test( wpPlaylist ) ) {
-				return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_video_playlist-' + galCounter + '">'
-					+ mediaPreview.add2Queue( 'videoPlaylist', wpPlaylist, galCounter ) + '</div>';
+				return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_video_playlist-' + galCounter + '">' + mediaPreview.add2Queue( 'videoPlaylist', wpPlaylist, galCounter ) + '</div>';
 			}
 			else {
-				return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_audio_playlist-' + galCounter + '">'
-					+ mediaPreview.add2Queue( 'audioPlaylist', wpPlaylist, galCounter ) + '</div>';
+				return '<div id="' + getRandomNodeID() + '" class="tmp_media" data-pointer="tmp_audio_playlist-' + galCounter + '">' + mediaPreview.add2Queue( 'audioPlaylist', wpPlaylist, galCounter ) + '</div>';
 			}
 		});
 		// Render the images

@@ -69,20 +69,17 @@
 			return false;
 		}
 		var myWidget = myFrameState.get( 'library' ),
-			myAttributes = myWidget && myWidget.props ? myWidget.props[ 'attributes' ] || {} : {};
+			myAttributes = myWidget && myWidget.props ? myWidget.props.attributes || {} : {};
 		if ( ! myAttributes.type ) {
 			return false;
 		}
 		switch ( myAttributes.type || 'image' ) {
 			case 'audio':
 				return callback( wp.media.playlist.shortcode( myWidget ).string() );
-			break;
 			case 'video':
 				return callback( wp.media.playlist.shortcode( myWidget ).string() );
-			break;
 			default: // Image Gallery
 				return callback( wp.media.gallery.shortcode( myWidget ).string() );
-			break;
 		}
 	};
 
