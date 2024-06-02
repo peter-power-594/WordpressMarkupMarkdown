@@ -181,7 +181,6 @@ class Support {
 		endif;
 		# Classic request with a post type defined. Backend or Frontend follow the rules defined
 		$my_post_type = $this->get_current_post_type();
-		global $_wp_post_type_features; error_log( print_r( $_wp_post_type_features[ $my_post_type ], true ) );
 		if ( isset( $my_post_type ) && ! empty( $my_post_type ) && ! post_type_supports( $my_post_type, 'markup-markdown' ) && ! post_type_supports( $my_post_type, 'markup_markdown' ) ) :
 			# Warning: Keep empty fonction, we DO NOT DISABLE markdown in case it's not with post related template / edit screen
 			$this->mmd_syntax = 0;
