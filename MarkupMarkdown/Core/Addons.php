@@ -20,7 +20,7 @@ class Addons {
 
 	public function __construct() {
 		add_filter( 'mmd_autoplugs_enabled', array( $this, 'should_load_plugs' ), 10, 1 );
-		$addon_conf = mmd()->cache_dir . '/conf_screen.php';
+		$addon_conf = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( file_exists( $addon_conf ) ) :
 			require_once $addon_conf;
 		endif;

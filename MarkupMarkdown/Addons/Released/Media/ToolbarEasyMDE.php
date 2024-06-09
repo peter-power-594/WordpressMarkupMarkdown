@@ -112,6 +112,14 @@ class ToolbarEasyMDE {
 			"mmd_spell_check" => array(
 				"action"  => "spellcheck",
 				"icon"    => "<i class=\"fa fa-globe\" aria-hidden=\"true\"></i>"
+			),
+			"mmd_rtltextdir" => array(
+				"action"  => "textdir",
+				"icon"    => "<i class=\"far fa-caret-square-left\" aria-hidden=\"true\"></i>"
+			),
+			"mmd_ltrtextdir" => array(
+				"action"  => "textdir",
+				"icon"    => "<i class=\"far fa-caret-square-right\" aria-hidden=\"true\"></i>"
 			)
 		),
 		"unused_buttons" => array(),
@@ -179,8 +187,12 @@ class ToolbarEasyMDE {
 		$this->prop[ 'default_buttons' ][ 'mmd_redo' ][ 'label' ] = esc_html__( 'Redo', 'markup-markdown' );
 		$this->prop[ 'default_buttons' ][ 'mmd_spell_check' ][ 'tooltip' ] = esc_html__( 'Spellchecker', 'markup-markdown' );
 		$this->prop[ 'default_buttons' ][ 'mmd_spell_check' ][ 'label' ] = esc_html__( 'Spellchecker', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_rtltextdir' ][ 'tooltip' ] = esc_html__( 'Switch text direction to right', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_rtltextdir' ][ 'label' ] = esc_html__( 'Right to Left text direction', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_ltrtextdir' ][ 'tooltip' ] = esc_html__( 'Switch text direction to left', 'markup-markdown' );
+		$this->prop[ 'default_buttons' ][ 'mmd_ltrtextdir' ][ 'label' ] = esc_html__( 'Left to Right text direction', 'markup-markdown' );
 		if ( empty( $json ) ) :
-			return FALSE;
+			return false;
 		endif;
 		if ( ! file_exists( $json ) ) :
 			$toolbar_conf = [ "mmd_bold", "mmd_italic", "mmd_heading", "mmd_spell_check", "mmd_pipe", "mmd_quote", "mmd_unordered_list", "mmd_ordered_list", "mmd_pipe", "mmd_link", "mmd_wpsimage", "mmd_table", "mmd_pipe", "mmd_fullscreen", "mmd_side_by_side", "mmd_preview", "mmd_guide" ];
@@ -204,6 +216,10 @@ class ToolbarEasyMDE {
 				$this->prop[ 'unused_buttons' ][] = array_merge( [ "slug" => $button_slug ], $button_prop );
 			endif;
 		endforeach;
+		# Add a few pipes
+		$this->prop[ 'unused_buttons' ][] = array( "slug" => "pipe" );
+		$this->prop[ 'unused_buttons' ][] = array( "slug" => "pipe" );
+		$this->prop[ 'unused_buttons' ][] = array( "slug" => "pipe" );
 	}
 
 

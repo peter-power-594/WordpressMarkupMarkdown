@@ -164,12 +164,12 @@
 		for ( var e = 0, extra, tmp; e < extras.length; e++ ) {
 			extra = extras[ e ];
 			if ( /^#/.test( extra ) ) {
-				attrs[ 'id' ] = attrs[ 'id' ] || '';
-				attrs[ 'id' ] += extra.replace( '#', '' );
+				attrs.id = attrs.id || '';
+				attrs.id += extra.replace( '#', '' );
 			}
 			else if ( /^\./.test( extra ) ) {
-				attrs[ 'class' ] = attrs[ 'class' ] || '';
-				attrs[ 'class' ] += ' ' + extra.replace( '.', '' );
+				attrs.class = attrs.class || '';
+				attrs.class += ' ' + extra.replace( '.', '' );
 			}
 			else if ( /\=/.test( extra ) ) {
 				tmp = extra.split( '=' );
@@ -181,7 +181,7 @@
 			html.push( key + '="' + attrs[ key ].replace( /^\s*|\s*$/, '' ) + '"' );
 		}
 		return ' ' + html.join( ' ' );
-	}
+	};
 
 
 	renderEngine.prototype.convertHeadingTags = function( wpHeading ) {
@@ -362,16 +362,16 @@
 			return wpImage;
 		}
 		for ( var m = 0, links = [], link = '', item = [], figure = '', extras = [], alt = [], sizes = [], caption = ''; m < matches.length; m++ ) {
-			links = wpImage.match( '<a href="(.*?)"[^>]*>' + items[ m ] ),
-			link = links && links.length > 0 ? links[ 1 ] : '',
-			item = matches[ m ].match( /<img(.*?)>\{(.*?)\}/ ),
+			links = wpImage.match( '<a href="(.*?)"[^>]*>' + items[ m ] );
+			link = links && links.length > 0 ? links[ 1 ] : '';
+			item = matches[ m ].match( /<img(.*?)>\{(.*?)\}/ );
 			figure = '<figure' + ( myRenderApp.extractExtra( matches[ 2 ] ) || '' ) + '>';
 			if ( link && link.length ) {
 				figure += '<a href="' + link + '" target="_blank">'; // New tab for the preview
 			}
 			figure += '<img' + item[ 1 ] + '>';
-			alt = item[ 1 ].match( /alt\=\"(.*?)\"/ ),
-			sizes = item[ 1 ].match( /src\=\"(.*?)-(\d+)x(\d+)\.(\w+)\"/ ),
+			alt = item[ 1 ].match( /alt\=\"(.*?)\"/ );
+			sizes = item[ 1 ].match( /src\=\"(.*?)-(\d+)x(\d+)\.(\w+)\"/ );
 			caption = '';
 			if ( alt && alt[ 1 ] && /--/.test( alt[ 1 ] ) ) {
 				var txt = alt[ 1 ].split( '--' );

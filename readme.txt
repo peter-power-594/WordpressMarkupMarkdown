@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.4.2
-Version: 3.4.2
+Stable Tag: 3.5.0
+Version: 3.5.0
 Requires at least: 4.9
 Tested up to: 6.5.2
 Requires PHP: 5.6.0
@@ -85,6 +85,15 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta in
 The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
 == Changelog ==
+
+= 3.5.0 =
+
+New feature:
+- Adding buttons and support for RTL
+
+Improvement:
+- Better support with multisite
+- Hooks more friendly with plugins like CPT UI (Custom Post Type) and ACF (Advanced Custom Field)
 
 = 3.4.2 =
 
