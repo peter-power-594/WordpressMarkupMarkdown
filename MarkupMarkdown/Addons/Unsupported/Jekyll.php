@@ -23,6 +23,7 @@ class Jekyll {
 		endif;
 		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_JEKYLL_MANAGER' => 1 );
+		add_action( 'current_screen', array( $this, 'scandir_for_posts' ) );
 		# New screen?
 	}
 
@@ -50,6 +51,8 @@ class Jekyll {
 			echo "filename: $file : filetype: " . filetype($posts_dir . '/' . $file) . "\n";
 		endwhile;
 		closedir( $dh );
+		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/edit.php';
+		exit;
 	}
 
 
