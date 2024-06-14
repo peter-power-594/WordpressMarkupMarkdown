@@ -40,19 +40,41 @@ class Jekyll {
 		if ( ! is_dir( $posts_dir ) ) :
 			return false;
 		endif;
+		if ( ! file_exists( mmd()->cache_dir . '/jekyll_posts.json' ) ) :
+			$this->cache_posts( $posts_dir );
+		endif;
+		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/list-posts.php';
+		exit;
+	}
+
+
+	/**
+	 * Parse the target posts directory and generate the json file
+	 *
+	 * @param String $posts_dir The folder with the static markdown post
+	 * @return Boolean TRUE in case of success or FALSE
+	 */
+	private function cache_posts( $posts_dir = '' ) {
+		if ( empty( $posts_dir ) ) :
+			return false;
+		endif;
 		$dh = opendir( $posts_dir );
 		if ( ! $dh ) :
 			return false;
 		endif;
+		$files = [];
 		while ( ( $file = readdir( $dh ) ) !== false ) :
 			if ( $file === '.' || $file === '..' ) :
 				continue;
 			endif;
-			echo "filename: $file : filetype: " . filetype($posts_dir . '/' . $file) . "\n";
+			$file_mime = pathinfo( $posts_dir . '/' . $file, PATHINFO_EXTENSION );
+			if ( in_array( $file_mime, array( 'md', 'markdown' ) ) !== false ) :
+				$files[] = $file;
+			endif;
 		endwhile;
 		closedir( $dh );
-		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/edit.php';
-		exit;
+		file_put_contents( mmd()->cache_dir . '/jekyll_posts.json', json_encode( array( "data" => $files ) ) );
+		return true;
 	}
 
 
