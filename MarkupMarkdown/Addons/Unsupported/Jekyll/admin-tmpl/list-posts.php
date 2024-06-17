@@ -67,7 +67,7 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 			continue;
 		endif;
 		$post_row_headers = explode( "\n", explode( '---', $post_tmp )[ 1 ] );
-		unset( $tmp ); $post_headers = [];
+		unset( $post_tmp ); $post_headers = [];
 		foreach( $post_row_headers as $row_data ) :
 			if ( strpos( $row_data, ':' ) === false ) :
 				continue;
