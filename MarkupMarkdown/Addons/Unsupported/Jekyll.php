@@ -63,10 +63,32 @@ class MarkdownPost {
 				endforeach;
 			else :
 				$row_val = preg_replace( '#(^\"|\"$)#', '', $row_data );
+				if ( 'true' === $row_val ) :
+					$row_val = true;
+				elseif ( 'false' === $row_val ) :
+					$row_val = false;
+				endif;
 			endif;
 			$my_rows[ $row_key[ 1 ] ] = $row_val;
 		endforeach;
+		if ( ! isset( $my_rows[ 'published' ] ) ) :
+			$my_rows[ 'published'] = $this->get_post_status( $my_rows );
+		endif;
 		return $my_rows;
+	}
+
+
+	/**
+	 * Get post status regards the pulish or future field
+	 *
+	 * @params Array $post The current post attributes
+	 * @returns String The post status
+	 */
+	private function get_post_status( $post = [] ) {
+		if ( is_array( $post ) || ! isset( $post[ 'date' ] ) ) :
+			return true;
+		endif;
+		return gmdate( 'U' ) < strtotime( $post[ 'date' ] ) ? true : false;
 	}
 
 
