@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
 	grunt.initConfig({
-		sass: {
+		'dart-sass': {
 			options: {
 				style: 'compressed',
 				// sourcemap: 'none'
@@ -36,13 +36,13 @@ module.exports = function(grunt) {
 			}
 		},
 		watch: {
-			sass: {
+			mysass: {
 				files: [
 					'AA_src/**/*.scss'
 				],
-				tasks: [ 'sass' ]
+				tasks: [ 'dart-sass' ]
 			},
-			js: {
+			myjs: {
 				files: [
 					'AA_src/**/*.js'
 				],
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
 		},
 		concurrent: {
 			target: {
-				tasks: [ 'watch:sass', 'watch:js' ],
+				tasks: [ 'watch:mysass', 'watch:myjs' ],
 				options: {
 					logConcurrentOutput: true
 				}
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks( 'grunt-concurrent' );
-	grunt.loadNpmTasks( 'grunt-contrib-sass' );
+	grunt.loadNpmTasks( 'grunt-dart-sass' );
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-concat' );

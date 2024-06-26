@@ -61,13 +61,18 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 
 		<tbody id="the-list"><?php
 	$my_posts = json_decode( file_get_contents( mmd()->cache_dir . '/jekyll_posts.json' ) );
+	$post_shown = 0;
 	foreach( $my_posts->data as $my_post ) :
+		if ( ! file_exists( $posts_dir . '/' . $my_post ) ) :
+			continue;
+		endif;
 		$post_tmp = file_get_contents( $posts_dir . '/' . $my_post );
 		if ( strpos( $post_tmp, '---' ) === false ) :
 			continue;
 		endif;
+		$post_shown++;
 		$post_row_headers = explode( "\n", explode( '---', $post_tmp )[ 1 ] );
-		unset( $post_tmp ); $post_headers = [];
+		unset( $tmp ); $post_headers = [];
 		foreach( $post_row_headers as $row_data ) :
 			if ( strpos( $row_data, ':' ) === false ) :
 				continue;
@@ -76,16 +81,37 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 			$post_headers[ $row_key[ 1 ] ] = preg_replace( '#[a-z]+:[\s\t]*#', '', $row_data );
 		endforeach;
 		$my_date_format = get_option( 'date_format' );
+		$post_edit_url = add_query_arg(
+			array(
+				'post' => urlencode( htmlspecialchars( $my_post ) )
+			),
+			admin_url( 'post.php' )
+		);
 ?>
 			<tr class="status-publish hentry">
 				<td class="title column-title has-row-actions column-primary page-title" data-colname="Title">
-					<a class="row-title" href="/wp-admin/post.php?post=<?php echo urlencode( htmlspecialchars( $my_post ) ); ?>&amp;action=edit" aria-label="“test” (Edit)"><?php echo isset( $post_headers[ 'title' ] ) ? $post_headers[ 'title' ] : __( 'Untitled' ); ?></a>
+					<a class="row-title" href="<?php echo $post_edit_url; ?>&amp;action=edit" aria-label="“<?php echo isset( $post_headers[ 'title' ] ) ? htmlspecialchars( $post_headers[ 'title' ] ) : __( 'Untitled' ); ?>” (<?php _e( 'Edit' ); ?>)"><?php echo isset( $post_headers[ 'title' ] ) ? $post_headers[ 'title' ] : __( 'Untitled' ); ?></a>
 				</td>
 				<td class="categories column-categories" data-colname="<?php _e( 'Categories' ); ?>"><?php if ( isset( $post_headers[ 'categories' ] ) ) : echo $post_headers[ 'categories' ]; else: ?><span aria-hidden="true">—</span><span class="screen-reader-text"><?php _e( 'No categories' ); ?></span><?php endif; ?></td>
 				<td class="date column-date" data-colname="<?php _e( 'Dated' ); ?>"><?php _e( 'Published' ); if ( isset( $post_headers[ 'date' ] ) ) : echo ' ' . date_i18n( $my_date_format, strtotime( $post_headers[ 'date' ] ) ); endif; ?></td>
 			</tr>
 		<?php
 	endforeach;
+	if ( ! $post_shown ) :
+		?>
+			<tr class="no-items">
+				<td class="colspanchange" colspan="3"><?php
+					_e( 'No posts were found in the ' . $posts_dir . ' directory.', 'markup-markdown' );
+					$trigger_scan_url = add_query_arg(
+						array(
+							'action' => 'scan_dir'
+						),
+						admin_url( 'edit.php' )
+					);
+				?>. <a href="<?php echo wp_nonce_url( $trigger_scan_url, 'scan-dir', 'mmd_scan_dir' ); ?>">Rescan the posts directory.</a></td>
+			</tr>
+		<?php
+	endif;
 		?></tbody>
 
 		<tfoot>

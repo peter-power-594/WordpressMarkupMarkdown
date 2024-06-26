@@ -1,14 +1,6 @@
 <?php
-/**
- * Edit post administration panel.
- *
- * Manage Post actions: post, edit, delete, etc.
- *
- * @package WordPress
- * @subpackage Administration
- */
 
-/** WordPress Administration Bootstrap */
+defined( 'ABSPATH' ) || exit;
 require_once ABSPATH . 'wp-admin/admin.php';
 
 $parent_file  = 'edit.php';

@@ -4,103 +4,6 @@ namespace MarkupMarkdown\Addons\Unsupported;
 
 defined( 'ABSPATH' ) || exit;
 
-class MarkdownPost {
-
-
-	private $data = array();
-
-
-	public function __construct( $file ) {
-		$this->parse_file( apply_filters( 'mmd_jekyll_posts_folder', ABSPATH . '_posts' ), $file );
-	}
-
-
-	private function parse_file( $path = '', $file = '' ) {
-		if ( empty( $path ) || empty( $file ) || ! is_dir( $path ) ) :
-			return false;
-		endif;
-		$my_post = $path . '/' . $file;
-		if ( ! file_exists( $my_post ) ) :
-			return false;
-		endif;
-		$cache_file = mmd()->cache_dir . '/' . mmd()->curr_blog . '_' . preg_replace( '#\.[a-z]+$#', '.json', $file );
-		if ( file_exists( $cache_file ) ) :
-			$this->data = json_decode( file_get_contents( $cache_file ) );
-			if ( function_exists( 'md5_file' ) && md5_file( $my_post ) === $this->data->md5 ) :
-				return true;
-			endif;
-		endif;
-		$post_tmp = file_get_contents( $my_post );
-		if ( ! $post_tmp || strpos( $post_tmp, '---' ) === false ) :
-			return false;
-		endif;
-		$post_row = $this->extract_headers( explode( "\n", explode( "---\n", $post_tmp )[ 1 ] ) );
-		if ( ! isset( $post_row[ 'post_type' ] ) ) :
-			$post_row[ 'post_type' ] = 'post';
-		endif;
-		if ( file_exists( 'md5_file' ) ) :
-			$post_row[ 'md5' ] = md5_file( $my_post );
-		endif;
-		$post_row[ 'content' ] = explode( "---\n", $post_tmp )[ 2 ];
-		unset( $post_tmp );
-		file_put_contents( $cache_file, json_encode( $post_row ) );
-		return true;
-	}
-
-
-	private function extract_headers( $header_rows = array() ) {
-		$my_rows = array();
-		foreach( $header_rows as $row_data ) :
-			if ( strpos( $row_data, ':' ) === false ) :
-				continue;
-			endif;
-			preg_match( '#([a-z]+):#', $row_data, $row_key );
-			$row_data = preg_replace( '#[a-z]+:[\s\t]*#', '', $row_data );
-			if ( substr( $row_data, 0, 1 ) === '[' && substr( $row_data, -1 ) === ']' ) :
-				$row_val = explode( ',', preg_replace( '#(^\[|\]$)#', '', $row_data ) );
-				foreach( $row_val as $idx => $val ) :
-					$row_val[ $idx ] = preg_replace( '#(^\"|\"$)#', '', trim( $val ) );
-				endforeach;
-			else :
-				$row_val = preg_replace( '#(^\"|\"$)#', '', $row_data );
-				if ( 'true' === $row_val ) :
-					$row_val = true;
-				elseif ( 'false' === $row_val ) :
-					$row_val = false;
-				endif;
-			endif;
-			$my_rows[ $row_key[ 1 ] ] = $row_val;
-		endforeach;
-		if ( ! isset( $my_rows[ 'published' ] ) ) :
-			$my_rows[ 'published'] = $this->get_post_status( $my_rows );
-		endif;
-		return $my_rows;
-	}
-
-
-	/**
-	 * Get post status regards the pulish or future field
-	 *
-	 * @params Array $post The current post attributes
-	 * @returns String The post status
-	 */
-	private function get_post_status( $post = [] ) {
-		if ( is_array( $post ) || ! isset( $post[ 'date' ] ) ) :
-			return true;
-		endif;
-		return gmdate( 'U' ) < strtotime( $post[ 'date' ] ) ? true : false;
-	}
-
-
-	public function __get( $name ) {
-		if ( isset( $this->data->$name ) ) {
-			return $this->data->$name;
-		}
-		return null;
-	}
-}
-
-
 class Jekyll {
 
 
@@ -120,45 +23,64 @@ class Jekyll {
 		endif;
 		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_JEKYLL_MANAGER' => 1 );
-		add_action( 'current_screen', array( $this, 'plug_mmd_posts' ) );
+		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ) );
 		# New screen?
 	}
 
 
-	public function plug_mmd_posts() {
+	public function wp_screen_proxy() {
 		if ( ! function_exists( 'get_current_screen' ) ) :
 			return false; # Hook not ready
 		endif;
 		$screen = get_current_screen();
 		if ( ! isset( $screen ) || ! is_object( $screen ) || ! isset( $screen->id ) ) :
-			return false; # Not editing a post
+			return false; # Not an interesting screen
 		endif;
-		error_log( $screen->id );
 		if ( 'edit-post' === $screen->id ) :
-			return $this->list_mmd_posts();
+			$this->list_posts();
 		elseif ( 'post' === $screen->id ) :
-			return $this->edit_mmd_post();
+			$this->edit_post( filter_input( INPUT_GET, 'POST', FILTER_SANITIZE_SPECIAL_CHARS ) );
 		endif;
 	}
 
 
-	private function edit_mmd_post() {
-		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/edit-post.php';
-		exit;
-	}
-
-
-	private function list_mmd_posts() {
+	/**
+	 * List the posts from the Jekyll post directory
+	 * 
+	 * @return Bolean false if something went wrong
+	 */
+	private function list_posts() {
 		$posts_dir = apply_filters( 'mmd_jekyll_posts_folder', ABSPATH . '_posts' );
 		if ( ! is_dir( $posts_dir ) ) :
 			return false;
 		endif;
 		if ( ! file_exists( mmd()->cache_dir . '/jekyll_posts.json' ) ) :
 			$this->cache_posts( $posts_dir );
+		else:
+			$scan_nonce = filter_input( INPUT_GET, 'mmd_scan_dir', FILTER_SANITIZE_SPECIAL_CHARS );
+			if ( isset( $scan_nonce ) && wp_verify_nonce( $scan_nonce, 'scan-dir' ) ) :
+				@unlink( mmd()->cache_dir . '/jekyll_posts.json' );
+				$this->cache_posts( $posts_dir );
+			endif;
 		endif;
 		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/list-posts.php';
 		exit;
 	}
+
+
+	/**
+	 * Edit the post from a markdown file
+	 * 
+	 * @return Bolean false if something went wrong
+	 */
+	private function edit_post( $post = '' ) {
+		if ( ! empty( $post ) ) :
+			return false;
+		endif;
+		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/list-posts.php';
+		exit;
+	}
+
 
 	/**
 	 * Parse the target posts directory and generate the json file
