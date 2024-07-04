@@ -26,13 +26,17 @@ $post_ID = $post_id;
  */
 global $post_type, $post_type_object, $post;
 
-if ( $post_id ) {
-	$post = new \MarkupMarkdown\Addons\Unsupported\MarkdownPost( $post_id );
+if ( $post_ID ) { # post_id = filename
+	require_once mmd()->plugin_dir . '/MarkupMarkdown/Core/Post.php';
+	$post = new \MarkupMarkdown\Core\Post( $post_ID );
 }
 
+global $title;
+$title = '';
 if ( $post ) {
 	$post_type        = $post->post_type;
 	$post_type_object = get_post_type_object( $post_type );
+	$title = __( 'Edit' ) . ' ' . $post->title;
 }
 
 # Quick fix
@@ -44,6 +48,7 @@ remove_post_type_support( $post_type, 'author' );
 
 $form_action = 'editpost';
 
+
 if ( isset( $_POST['post_type'] ) && $post && $post_type !== $_POST['post_type'] ) {
 	wp_die( __( 'A post type mismatch has been detected.' ), __( 'Sorry, you are not allowed to edit this item.' ), 400 );
 }
@@ -53,10 +58,7 @@ wp_enqueue_script( 'post' );
 $_wp_editor_expand   = false;
 $_content_editor_dfw = false;
 
-if ( post_type_supports( $post_type, 'editor' )
-	&& ! wp_is_mobile()
-	&& ! ( $is_IE && preg_match( '/MSIE [5678]/', $_SERVER['HTTP_USER_AGENT'] ) )
-) {
+if ( post_type_supports( $post_type, 'editor' ) && ! wp_is_mobile() ) {
 	if ( apply_filters( 'wp_editor_expand', true, $post_type ) ) {
 		wp_enqueue_script( 'editor-expand' );
 		$_content_editor_dfw = true;
@@ -76,16 +78,14 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 <h1><?php _e( 'Edit' ); if ( $post->post_type !== 'post' ) : _e( $post->post_type ); endif; ?></h1>
 <hr class="wp-header-end">
 <form name="post" action="post.php" method="post" id="post">
-<?php wp_nonce_field( $nonce_action ); ?>
-<input type="hidden" id="user-id" name="user_ID" value="<?php echo (int) $user_ID; ?>" />
+<?php wp_nonce_field( 'update-post_' . $post_ID ); ?>
+<input type="hidden" id="user-id" name="user_ID" value="<?php echo get_current_user_id(); ?>" />
 <input type="hidden" id="hiddenaction" name="action" value="<?php echo esc_attr( $form_action ); ?>" />
 <input type="hidden" id="originalaction" name="originalaction" value="<?php echo esc_attr( $form_action ); ?>" />
 <input type="hidden" id="post_type" name="post_type" value="<?php echo esc_attr( $post_type ); ?>" />
 <input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo esc_attr( $post->status ); ?>" />
-<input type="hidden" id="referredby" name="referredby" value="<?php echo $referer ? esc_url( $referer ) : ''; ?>" />
+<input type="hidden" id="referredby" name="referredby" value="<?php echo isset( $referer ) ? esc_url( $referer ) : ''; ?>" />
 <?php
-
-echo $form_extra;
 
 wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
 wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
@@ -141,14 +141,14 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 						<div class="submitbox" id="submitpost">
 							<div id="minor-publishing-actions">
 								<div id="save-action">
-										<input type="submit" name="save" id="save-post" value="<?php echo $post->published ? __( 'Publish' ) : __( 'Save draft' ); ?>" class="button">
-										<span class="spinner"></span>
+									<input type="submit" name="save" id="save-post" value="<?php echo $post->published ? __( 'Publish' ) : __( 'Save draft' ); ?>" class="button">
+									<span class="spinner"></span>
 								</div>
 								<div class="clear"></div>
 							</div>
 							<div id="misc-publishing-actions">
 								<div class="misc-pub-section misc-pub-post-status">
-									<?php _e( 'Status'); ?>&nbsp;:	<span id="post-status-display"><?php echo $post->published ? __( 'Published' ) : __( 'Draft' ); ?></span>
+									<?php _e( 'Status'); ?>&nbsp;: <span id="post-status-display"><?php echo $post->published ? __( 'Published' ) : __( 'Draft' ); ?></span>
 
 										<a href="#post_status" class="edit-post-status hide-if-no-js" role="button">
 											<span aria-hidden="true"><?php _e( 'Edit' ); ?></span>
@@ -157,20 +157,19 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 
 									<div id="post-status-select" class="hide-if-js">
 										<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="draft">
-										<label for="post_status" class="screen-reader-text">
-											État					</label>
+										<label for="post_status" class="screen-reader-text"><?php _e( 'Status' ); ?></label>
 										<select name="post_status" id="post_status">
-																		<option value="pending">En attente de relecture</option>
-																		<option selected="selected" value="draft">Brouillon</option>
-																</select>
+											<option value="pending"><?php _e( 'Pending Review' ); ?></option>
+											<option value="draft"><?php _e( 'Draft' ); ?></option>
+										</select>
 										<a href="#post_status" class="save-post-status hide-if-no-js button">OK</a>
 										<a href="#post_status" class="cancel-post-status hide-if-no-js button-cancel">Annuler</a>
 									</div>
 								</div>
 
 									<div class="misc-pub-section curtime misc-pub-curtime">
-							<span id="timestamp">
-								Publier le&nbsp;: <b>9 septembre 1999 à 15h 20 min</b>				</span>
+										<?php $my_date_format = get_option( 'date_format' ); ?>
+										<span id="timestamp"><?php _e( 'Published on' ); ?> <b><?php if ( isset( $post->date ) ) : date_i18n( $my_date_format, strtotime( $post->date ) ); endif; ?></b></span>
 							<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" role="button">
 								<span aria-hidden="true">Modifier</span>
 								<span class="screen-reader-text">

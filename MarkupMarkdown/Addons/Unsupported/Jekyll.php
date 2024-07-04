@@ -23,7 +23,7 @@ class Jekyll {
 		endif;
 		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_JEKYLL_MANAGER' => 1 );
-		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ) );
+		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
 		# New screen?
 	}
 
@@ -39,7 +39,7 @@ class Jekyll {
 		if ( 'edit-post' === $screen->id ) :
 			$this->list_posts();
 		elseif ( 'post' === $screen->id ) :
-			$this->edit_post( filter_input( INPUT_GET, 'POST', FILTER_SANITIZE_SPECIAL_CHARS ) );
+			$this->edit_post( filter_input( INPUT_GET, 'post', FILTER_SANITIZE_SPECIAL_CHARS ) );
 		endif;
 	}
 
@@ -63,7 +63,7 @@ class Jekyll {
 				$this->cache_posts( $posts_dir );
 			endif;
 		endif;
-		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/list-posts.php';
+		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/mmd-list-posts.php';
 		exit;
 	}
 
@@ -73,11 +73,11 @@ class Jekyll {
 	 * 
 	 * @return Bolean false if something went wrong
 	 */
-	private function edit_post( $post = '' ) {
-		if ( ! empty( $post ) ) :
+	private function edit_post( $post ) {
+		if ( ! isset( $post ) || empty( $post ) || is_numeric( $post ) ) :
 			return false;
 		endif;
-		require mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/list-posts.php';
+		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/mmd-edit-post.php';
 		exit;
 	}
 
@@ -120,10 +120,3 @@ class Jekyll {
 	}
 
 }
-
-if ( ! function_exists( 'mmd_get_post' ) ) :
-	function mmd_get_post( $post_file ) {
-		$posts_dir = apply_filters( 'mmd_jekyll_posts_folder', ABSPATH . '_posts' );
-		$my_posts = \MarkupMarkdown\Addons\Unsupported\MarkdownPost( $posts_dir, $post_file );
-	}
-endif;
