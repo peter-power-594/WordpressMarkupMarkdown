@@ -6,7 +6,14 @@ defined( 'ABSPATH' ) || exit;
 class Post {
 
 
-	private $data = array();
+	public $ID = -1;
+	public $post_author = 1;
+	public $title = '';
+	public $post_date = '2024-01-01 10:10:10';
+	public $post_date_gmt = '2024-01-01 10:10:10';
+	public $post_content = '';
+	public $post_type = 'post';
+	public $filter = 'raw';
 
 
 	public function __construct( $file ) {
@@ -58,8 +65,8 @@ class Post {
 			# The file does not exist
 			return false;
 		endif;
-		$this->data = $this->friendly_data( json_decode( file_get_contents( $cache_file ) ) );
-		if ( ! isset( $this->data ) || ! $this->data ) :
+		$hasData = $this->friendly_data( json_decode( file_get_contents( $cache_file ) ) );
+		if ( ! $hasData ) :
 			# Something's wrong
 			return false;
 		endif;
@@ -67,7 +74,7 @@ class Post {
 			# Can't be sure at 100%
 			return false;
 		endif;
-		return isset( $this->data->md5 ) && $this->data->md5 === md5_file( $source_file ) ? true : false;
+		return isset( $this->md5 ) && $this->md5 === md5_file( $source_file ) ? true : false;
 	}
 
 
@@ -91,7 +98,7 @@ class Post {
 			return false;
 		endif;
 		file_put_contents( $cache_file, json_encode( $post_row ) );
-		$this->data = $this->friendly_data( $post_row );
+		$this->friendly_data( $post_row );
 		return true;
 	}
 
@@ -104,15 +111,20 @@ class Post {
 	 * @since 3.6.0
 	 * 
 	 * @param Object $data Object created from a json file
-	 * @return Object Modified data with new properties
+	 * @return Void
 	 */
 	private function friendly_data( $data ) {
 		if ( ! is_object( $data ) ) :
 			return $data;
 		endif;
-		$data->ID = 0;
-		$data->filter = 'raw';
-		return $data;
+		$this->ID = -1 * rand(1, 999);
+		$this->post_author = get_current_user_id();
+		$this->filter = 'raw';
+		foreach( $data as $key => $value ) :
+			if ( ! method_exists( $this, $key ) ) :
+				$this->$key = $value;
+			endif;
+		endforeach;
 	}
 
 
@@ -216,18 +228,6 @@ class Post {
 			return true;
 		endif;
 		return gmdate( 'U' ) < strtotime( $post[ 'date' ] ) ? true : false;
-	}
-
-
-	public function __get( $name ) {
-		if ( isset( $this->data->$name ) ) {
-			return $this->data->$name;
-		}
-		return null;
-	}
-
-	public function __set( $name, $value ) {
-		# Dummy
 	}
 
 
