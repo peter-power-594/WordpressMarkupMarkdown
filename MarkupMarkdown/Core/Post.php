@@ -11,7 +11,11 @@ class Post {
 	public $title = '';
 	public $post_date = '2024-01-01 10:10:10';
 	public $post_date_gmt = '2024-01-01 10:10:10';
-	public $post_content = '';
+	public $post_title = 'New Post';
+	public $post_content = 'Lorem Ipsum Dolor Imet';
+	public $comment_status = 'closed';
+	public $ping_status = 'closed';
+	public $post_name = 'postname';
 	public $post_type = 'post';
 	public $filter = 'raw';
 
@@ -65,7 +69,7 @@ class Post {
 			# The file does not exist
 			return false;
 		endif;
-		$hasData = $this->friendly_data( json_decode( file_get_contents( $cache_file ) ) );
+		$hasData = $this->wp_raw_post( json_decode( file_get_contents( $cache_file ) ) );
 		if ( ! $hasData ) :
 			# Something's wrong
 			return false;
@@ -98,33 +102,78 @@ class Post {
 			return false;
 		endif;
 		file_put_contents( $cache_file, json_encode( $post_row ) );
-		$this->friendly_data( $post_row );
+		$this->wp_raw_post( $post_row );
 		return true;
 	}
 
 
 	/**
+	 * Object key name modified to match WP_Post attributes
+	 * 
+	 * @access private
+	 * @since 3.6.0
+	 * 
+	 * @param String $key The markdown key name
+	 * @return String The modified key name
+	 */
+	private function wp_key_filter( $key = ''  ) {
+		if ( empty( $key ) ) :
+			return 'undefined';
+		endif;
+		return str_replace( 
+			array( 'title', 'published' ),
+			array( 'post_title', 'post_status' ),
+			$key
+		);
+	}
+
+
+	/**
+	 * Object key name modified to match WP_Post attributes
+	 * 
+	 * @access private
+	 * @since 3.6.0
+	 * 
+	 * @param String $val The markdown value
+	 * @param String $key The markdown key name
+	 * @return String The modified value
+	 */
+	private function wp_value_filter( $val = '', $key = ''  ) {
+		if ( empty( $key ) ) :
+			return $val;
+		endif;
+		if ( $key === 'post_status' ) :
+			return $val ? 'published' : 'draft';
+		else:
+			return $val;
+		endif;
+	}
+
+
+	/**
 	 * Wordpress friendly format adjustements for the cache file
-	 * to avoid warnings or errors with native methods. Mostly dummy properties
+	 * to avoid warnings or errors with native methods.
 	 * 
 	 * @access private
 	 * @since 3.6.0
 	 * 
 	 * @param Object $data Object created from a json file
-	 * @return Void
+	 * @return TRUE in case of success or FALSE in case of troubles
 	 */
-	private function friendly_data( $data ) {
+	private function wp_raw_post( $data ) {
 		if ( ! is_object( $data ) ) :
-			return $data;
+			return false;
 		endif;
 		$this->ID = -1 * rand(1, 999);
 		$this->post_author = get_current_user_id();
 		$this->filter = 'raw';
 		foreach( $data as $key => $value ) :
+			$key = $this->wp_key_filter( $key );
 			if ( ! method_exists( $this, $key ) ) :
-				$this->$key = $value;
+				$this->$key = $this->wp_value_filter( $value, $key );
 			endif;
 		endforeach;
+		return true;
 	}
 
 
