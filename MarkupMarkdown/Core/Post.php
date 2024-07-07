@@ -121,8 +121,8 @@ class Post {
 			return 'undefined';
 		endif;
 		return str_replace( 
-			array( 'title', 'published' ),
-			array( 'post_title', 'post_status' ),
+			array( 'title', 'published', 'date' ),
+			array( 'post_title', 'post_status', 'post_date_gmt' ),
 			$key
 		);
 	}
@@ -144,6 +144,8 @@ class Post {
 		endif;
 		if ( $key === 'post_status' ) :
 			return $val ? 'published' : 'draft';
+		elseif ( $key === 'post_date_gmt' ) :
+			return gmdate( 'Y-m-d', strtotime( $val ) ) . ' 12:00:00';
 		else:
 			return $val;
 		endif;
@@ -173,6 +175,11 @@ class Post {
 				$this->$key = $this->wp_value_filter( $value, $key );
 			endif;
 		endforeach;
+		if ( function_exists( 'current_time' ) ) :
+			$this->post_date = current_time( $this->post_date_gmt );
+		else :
+			$this->post_date = date( 'Y-m-d H:i:s', $this->post_date_gmt );					
+		endif;
 		return true;
 	}
 
@@ -202,7 +209,7 @@ class Post {
 		if ( function_exists( 'md5_file' ) ) :
 			$post_row->md5 = md5_file( $file );
 		endif;
-		$post_row->content = explode( "---\n", $data )[ 2 ];
+		$post_row->post_content = explode( "---\n", $data )[ 2 ];
 		return $post_row;
 	}
 
