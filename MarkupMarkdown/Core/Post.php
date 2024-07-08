@@ -3,21 +3,29 @@
 namespace MarkupMarkdown\Core;
 defined( 'ABSPATH' ) || exit;
 
+
 class Post {
 
 
+	# Native Wordpress properties
 	public $ID = -1;
 	public $post_author = 1;
-	public $title = '';
 	public $post_date = '2024-01-01 10:10:10';
 	public $post_date_gmt = '2024-01-01 10:10:10';
 	public $post_title = 'New Post';
 	public $post_content = 'Lorem Ipsum Dolor Imet';
+	public $post_status = 'publish';
 	public $comment_status = 'closed';
 	public $ping_status = 'closed';
 	public $post_name = 'postname';
 	public $post_type = 'post';
 	public $filter = 'raw';
+	# Markup Markdown additional properties
+	public $post_md5 = '';
+	public $post_categories = array();
+	public $post_tags = array();
+	public $post_template = '';
+	public $post_excerpt = '';
 
 
 	public function __construct( $file ) {
@@ -78,7 +86,7 @@ class Post {
 			# Can't be sure at 100%
 			return false;
 		endif;
-		return isset( $this->md5 ) && $this->md5 === md5_file( $source_file ) ? true : false;
+		return isset( $this->post_md5 ) && $this->post_md5 === md5_file( $source_file ) ? true : false;
 	}
 
 
@@ -120,11 +128,23 @@ class Post {
 		if ( empty( $key ) ) :
 			return 'undefined';
 		endif;
-		return str_replace( 
-			array( 'title', 'published', 'date' ),
-			array( 'post_title', 'post_status', 'post_date_gmt' ),
-			$key
-		);
+		if ( $key === 'title' ) :
+			return 'post_title';
+		elseif ( $key === 'published' ) :
+			return 'post_status';
+		elseif ( $key === 'date' ) :
+			return 'post_date_gmt';
+		elseif ( $key === 'categories' ) :
+			return 'post_categories';
+		elseif ( $key === 'tags' ) :
+			return 'post_tags';
+		elseif ( $key === 'description' || $key === 'excerpt' ) :
+			return 'post_excerpt';
+		elseif ( $key === 'layout' ) :
+			return 'post_template';
+		else :
+			return $key;
+		endif;
 	}
 
 
@@ -143,7 +163,7 @@ class Post {
 			return $val;
 		endif;
 		if ( $key === 'post_status' ) :
-			return $val ? 'published' : 'draft';
+			return $val ? 'publish' : 'draft';
 		elseif ( $key === 'post_date_gmt' ) :
 			return gmdate( 'Y-m-d', strtotime( $val ) ) . ' 12:00:00';
 		else:
@@ -207,7 +227,7 @@ class Post {
 			$post_row->post_type = 'post';
 		endif;
 		if ( function_exists( 'md5_file' ) ) :
-			$post_row->md5 = md5_file( $file );
+			$post_row->post_md5 = md5_file( $file );
 		endif;
 		$post_row->post_content = explode( "---\n", $data )[ 2 ];
 		return $post_row;
@@ -229,15 +249,16 @@ class Post {
 			if ( strpos( $row_data, ':' ) === false ) :
 				continue;
 			endif;
-			$row_key = array();
-			preg_match( '#([a-z]+):#', $row_data, $row_key );
-			$row_data = preg_replace( '#[a-z]+:[\s\t]*#', '', $row_data );
+			$row_keys = array();
+			preg_match( '#^([a-z]+):#', $row_data, $row_keys );
+			$row_data = preg_replace( '#^[a-z]+:[\s\t]*#', '', $row_data );
 			if ( substr( $row_data, 0, 1 ) === '[' && substr( $row_data, -1 ) === ']' ) :
 				$row_val = explode( ',', preg_replace( '#(^\[|\]$)#', '', $row_data ) );
 			else :
 				$row_val = preg_replace( '#(^\"|\"$)#', '', $row_data );
 			endif;
-			$my_rows->$row_key[ 1 ] = $this->sanitize_row_value( $row_val );
+			$row_key = $row_keys[ 1 ];
+			$my_rows->$row_key = $this->sanitize_row_value( $row_val );
 		endforeach;
 		if ( ! isset( $my_rows->published ) ) :
 			$my_rows->published = $this->get_post_status( $my_rows );
@@ -280,10 +301,15 @@ class Post {
 	 * @returns String The post status
 	 */
 	private function get_post_status( $post ) {
-		if ( ! isset( $post ) || ! is_object( $post ) || ! isset( $post->date ) ) :
+		if ( ! isset( $post ) || ! is_object( $post ) ) :
 			return true;
 		endif;
-		return gmdate( 'U' ) < strtotime( $post[ 'date' ] ) ? true : false;
+		if ( isset( $post->post_date_gmt ) ) :
+			return gmdate( 'U' ) < strtotime( $post->post_date_gmt ) ? true : false;
+		elseif ( isset( $post->date ) ) :
+			return gmdate( 'U' ) < $post->date ? true : false;
+		endif;
+		return true;
 	}
 
 

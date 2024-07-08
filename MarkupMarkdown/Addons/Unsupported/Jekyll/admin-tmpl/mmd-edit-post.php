@@ -28,7 +28,7 @@ global $post_type, $post_type_object, $post;
 
 if ( $post_ID ) { # post_id = filename
 	require_once mmd()->plugin_dir . '/MarkupMarkdown/Core/Post.php';
-	$post = new \MarkupMarkdown\Core\Post( $post_ID );
+	$post = new WP_Post( new \MarkupMarkdown\Core\Post( $post_ID ) );
 }
 
 global $title;
@@ -83,7 +83,7 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 <input type="hidden" id="hiddenaction" name="action" value="<?php echo esc_attr( $form_action ); ?>" />
 <input type="hidden" id="originalaction" name="originalaction" value="<?php echo esc_attr( $form_action ); ?>" />
 <input type="hidden" id="post_type" name="post_type" value="<?php echo esc_attr( $post_type ); ?>" />
-<input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo esc_attr( $post->status ); ?>" />
+<input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo esc_attr( $post->post_status ); ?>" />
 <input type="hidden" id="referredby" name="referredby" value="<?php echo isset( $referer ) ? esc_url( $referer ) : ''; ?>" />
 <?php
 
@@ -110,7 +110,7 @@ wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post );
 ?>
 					<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo $title_placeholder; ?></label>
-					<input type="text" name="post_title" size="30" value="<?php echo esc_attr( $post->title ); ?>" id="title" spellcheck="true" autocomplete="off" />
+					<input type="text" name="post_title" size="30" value="<?php echo esc_attr( $post->post_title ); ?>" id="title" spellcheck="true" autocomplete="off" />
 				</div><!-- /titlewrap -->
 			</div><!-- /titlediv -->
 		<?php endif; ?>
@@ -123,7 +123,7 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 		?>
 
 		<div id="postdivrich" class="postarea<?php echo $_wp_editor_expand_class; ?>">
-			<?php wp_editor( $post->content, 'content' ); ?>
+			<?php wp_editor( $post->post_content, 'content' ); ?>
 		</div><!-- /postdivrich -->
 
 		<?php endif; ?>
@@ -141,14 +141,14 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 						<div class="submitbox" id="submitpost">
 							<div id="minor-publishing-actions">
 								<div id="save-action">
-									<input type="submit" name="save" id="save-post" value="<?php echo $post->published ? __( 'Publish' ) : __( 'Save draft' ); ?>" class="button">
+									<input type="submit" name="save" id="save-post" value="<?php echo $post->post_status === 'publish' ? __( 'Publish' ) : __( 'Save draft' ); ?>" class="button">
 									<span class="spinner"></span>
 								</div>
 								<div class="clear"></div>
 							</div>
 							<div id="misc-publishing-actions">
 								<div class="misc-pub-section misc-pub-post-status">
-									<?php _e( 'Status'); ?>&nbsp;: <span id="post-status-display"><?php echo $post->published ? __( 'Published' ) : __( 'Draft' ); ?></span>
+									<?php _e( 'Status'); ?>&nbsp;: <span id="post-status-display"><?php echo $post->post_status === 'publish' ? __( 'Published' ) : __( 'Draft' ); ?></span>
 
 										<a href="#post_status" class="edit-post-status hide-if-no-js" role="button">
 											<span aria-hidden="true"><?php _e( 'Edit' ); ?></span>
@@ -168,30 +168,40 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 								</div>
 
 									<div class="misc-pub-section curtime misc-pub-curtime">
-										<?php $my_date_format = get_option( 'date_format' ); ?>
-										<span id="timestamp"><?php _e( 'Published on' ); ?> <b><?php if ( isset( $post->date ) ) : date_i18n( $my_date_format, strtotime( $post->date ) ); endif; ?></b></span>
-							<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" role="button">
-								<span aria-hidden="true">Modifier</span>
-								<span class="screen-reader-text">
-									Modifier la date et l’heure					</span>
-							</a>
-							<fieldset id="timestampdiv" class="hide-if-js">
-								<legend class="screen-reader-text">
-									Date et heure					</legend>
-								<div class="timestamp-wrap"><label><span class="screen-reader-text">Jour</span><input type="text" id="jj" name="jj" value="09" size="2" maxlength="2" autocomplete="off" class="form-required"></label> <label><span class="screen-reader-text">Mois</span><select class="form-required" id="mm" name="mm">
-						<option value="01" data-text="Jan">01-Jan</option>
-						<option value="02" data-text="Fév">02-Fév</option>
-						<option value="03" data-text="Mar">03-Mar</option>
-						<option value="04" data-text="Avr">04-Avr</option>
-						<option value="05" data-text="Mai">05-Mai</option>
-						<option value="06" data-text="Juin">06-Juin</option>
-						<option value="07" data-text="Juil">07-Juil</option>
-						<option value="08" data-text="Août">08-Août</option>
-						<option value="09" data-text="Sep" selected="selected">09-Sep</option>
-						<option value="10" data-text="Oct">10-Oct</option>
-						<option value="11" data-text="Nov">11-Nov</option>
-						<option value="12" data-text="Déc">12-Déc</option>
-			</select></label> <label><span class="screen-reader-text">Année</span><input type="text" id="aa" name="aa" value="1999" size="4" maxlength="4" autocomplete="off" class="form-required"></label> à <label><span class="screen-reader-text">Heure</span><input type="text" id="hh" name="hh" value="15" size="2" maxlength="2" autocomplete="off" class="form-required"></label>h<label><span class="screen-reader-text">Minute</span><input type="text" id="mn" name="mn" value="20" size="2" maxlength="2" autocomplete="off" class="form-required"></label></div><input type="hidden" id="ss" name="ss" value="50">
+										<?php $my_date_format = get_option( 'date_format' ); $my_post_date = strtotime( $post->post_date ); ?>
+										<span id="timestamp"><?php _e( 'Published on' ); ?> <b><?php if ( isset( $post->post_date ) ) : date_i18n( $my_date_format, $my_post_date ); endif; ?></b></span>
+										<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" role="button">
+											<span aria-hidden="true"><?php _e( 'Edit' ); ?></span>
+											<span class="screen-reader-text"><?php _e( 'Edit post date' ); ?></span>
+										</a>
+										<fieldset id="timestampdiv" class="hide-if-js">
+											<legend class="screen-reader-text"><?php _e( 'Datetime' ); ?></legend>
+											<div class="timestamp-wrap">
+												<label>
+													<span class="screen-reader-text"><?php _e( 'Day' ); ?></span>
+													<input type="text" id="jj" name="jj" value="<?php echo gmdate( 'd', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
+												</label>
+												<label>
+													<span class="screen-reader-text"><?php _e( 'Month' ); ?></span>
+													<?php $my_post_month = gmdate( 'm', $my_post_date ); $selected = ' selected="selected"'; ?>
+													<select class="form-required" id="mm" name="mm">
+														<option value="01" <?php if ( $my_post_month === '01' ) : echo $selected; endif; ?>>01</option>
+														<option value="02" <?php if ( $my_post_month === '02' ) : echo $selected; endif; ?>>02</option>
+														<option value="03" <?php if ( $my_post_month === '03' ) : echo $selected; endif; ?>>03</option>
+														<option value="04" <?php if ( $my_post_month === '04' ) : echo $selected; endif; ?>>04</option>
+														<option value="05" <?php if ( $my_post_month === '05' ) : echo $selected; endif; ?>>05</option>
+														<option value="06" <?php if ( $my_post_month === '06' ) : echo $selected; endif; ?>>06</option>
+														<option value="07" <?php if ( $my_post_month === '07' ) : echo $selected; endif; ?>>07</option>
+														<option value="08" <?php if ( $my_post_month === '08' ) : echo $selected; endif; ?>>08</option>
+														<option value="09" <?php if ( $my_post_month === '09' ) : echo $selected; endif; ?>>09</option>
+														<option value="10" <?php if ( $my_post_month === '10' ) : echo $selected; endif; ?>>10</option>
+														<option value="11" <?php if ( $my_post_month === '11' ) : echo $selected; endif; ?>>11</option>
+														<option value="12" <?php if ( $my_post_month === '12' ) : echo $selected; endif; ?>>12</option>
+													</select>
+												</label>
+												<label>
+													<span class="screen-reader-text"><?php _e( 'Year' ); ?></span>
+													<input type="text" id="aa" name="aa" value="1999" size="4" maxlength="4" autocomplete="off" class="form-required"></label> à <label><span class="screen-reader-text">Heure</span><input type="text" id="hh" name="hh" value="15" size="2" maxlength="2" autocomplete="off" class="form-required"></label>h<label><span class="screen-reader-text">Minute</span><input type="text" id="mn" name="mn" value="20" size="2" maxlength="2" autocomplete="off" class="form-required"></label></div><input type="hidden" id="ss" name="ss" value="50">
 
 			<input type="hidden" id="hidden_mm" name="hidden_mm" value="09">
 			<input type="hidden" id="cur_mm" name="cur_mm" value="06">
