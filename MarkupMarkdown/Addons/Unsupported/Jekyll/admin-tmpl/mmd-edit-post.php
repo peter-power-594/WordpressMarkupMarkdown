@@ -138,14 +138,18 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 						<div class="handle-actions hide-if-no-js"><button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="submitdiv-handle-order-higher-description"><span class="screen-reader-text">Monter</span><span class="order-higher-indicator" aria-hidden="true"></span></button><span class="hidden" id="submitdiv-handle-order-higher-description">Déplacer la boite Publier vers le haut</span><button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="submitdiv-handle-order-lower-description"><span class="screen-reader-text">Descendre</span><span class="order-lower-indicator" aria-hidden="true"></span></button><span class="hidden" id="submitdiv-handle-order-lower-description">Déplacer la boite Publier vers le bas</span><button type="button" class="handlediv" aria-expanded="true"><span class="screen-reader-text">Ouvrir/fermer la section Publier</span><span class="toggle-indicator" aria-hidden="true"></span></button></div>
 					</div>
 					<div class="inside">
+
 						<div class="submitbox" id="submitpost">
+
+						<?php if ( $post->post_status === 'draft' ) : ?>
 							<div id="minor-publishing-actions">
 								<div id="save-action">
-									<input type="submit" name="save" id="save-post" value="<?php echo $post->post_status === 'publish' ? __( 'Publish' ) : __( 'Save draft' ); ?>" class="button">
+									<input type="submit" name="save" id="save-post" value="<?php esc_html_e( 'Save draft' ); ?>" class="button">
 									<span class="spinner"></span>
 								</div>
 								<div class="clear"></div>
 							</div>
+						<?php endif; ?>
 							<div id="misc-publishing-actions">
 								<div class="misc-pub-section misc-pub-post-status">
 									<?php _e( 'Status'); ?>&nbsp;: <span id="post-status-display"><?php echo $post->post_status === 'publish' ? __( 'Published' ) : __( 'Draft' ); ?></span>
@@ -155,97 +159,122 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 											<span class="screen-reader-text"><?php _e( 'Edit status' ); ?></span>
 										</a>
 
-									<div id="post-status-select" class="hide-if-js">
+									<div id="post-status-select" class="hide-if-js"><?php echo $post->post_status; ?>
 										<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="draft">
-										<label for="post_status" class="screen-reader-text"><?php _e( 'Status' ); ?></label>
+										<label for="post_status" class="screen-reader-text"><?php esc_html_e( 'Status' ); ?></label>
 										<select name="post_status" id="post_status">
-											<option value="pending"><?php _e( 'Pending Review' ); ?></option>
-											<option value="draft"><?php _e( 'Draft' ); ?></option>
+											<option value="draft"><?php esc_html_e( 'Draft' ); ?></option>
 										</select>
-										<a href="#post_status" class="save-post-status hide-if-no-js button">OK</a>
-										<a href="#post_status" class="cancel-post-status hide-if-no-js button-cancel">Annuler</a>
+										<a href="#post_status" class="save-post-status hide-if-no-js button"><?php esc_html_e( 'OK' ); ?></a>
+										<a href="#post_status" class="cancel-post-status hide-if-no-js button-cancel"><?php esc_html_e( 'Cancel' ); ?></a>
 									</div>
 								</div>
 
-									<div class="misc-pub-section curtime misc-pub-curtime">
-										<?php $my_date_format = get_option( 'date_format' ); $my_post_date = strtotime( $post->post_date ); ?>
-										<span id="timestamp"><?php _e( 'Published on' ); ?> <b><?php if ( isset( $post->post_date ) ) : date_i18n( $my_date_format, $my_post_date ); endif; ?></b></span>
-										<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" role="button">
-											<span aria-hidden="true"><?php _e( 'Edit' ); ?></span>
-											<span class="screen-reader-text"><?php _e( 'Edit post date' ); ?></span>
-										</a>
-										<fieldset id="timestampdiv" class="hide-if-js">
-											<legend class="screen-reader-text"><?php _e( 'Datetime' ); ?></legend>
-											<div class="timestamp-wrap">
+								<div class="misc-pub-section curtime misc-pub-curtime">
+									<?php $my_date_format = get_option( 'date_format' ); $my_post_date = strtotime( $post->post_date ); ?>
+									<span id="timestamp"><?php printf( esc_html__( 'Published on: %s' ), '<b>' . ( isset( $post->post_date ) ? date_i18n( $my_date_format, $my_post_date ) : '' ) . '</b>' ); ?></span>
+									<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" role="button">
+										<span aria-hidden="true"><?php esc_html_e( 'Edit' ); ?></span>
+										<span class="screen-reader-text"><?php esc_html_e( 'Edit post date' ); ?></span>
+									</a>
+									<fieldset id="timestampdiv" class="hide-if-js">
+										<legend class="screen-reader-text"><?php esc_html_e( 'Datetime' ); ?></legend>
+										<div class="timestamp-wrap">
+											<label>
+												<span class="screen-reader-text"><?php esc_html_e( 'Day' ); ?></span>
+												<input type="text" id="jj" name="jj" value="<?php echo gmdate( 'd', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
+											</label>
+											<label>
+												<span class="screen-reader-text"><?php esc_html_e( 'Month' ); ?></span>
+												<?php $my_post_month = gmdate( 'm', $my_post_date ); $selected = ' selected="selected"'; ?>
+												<select class="form-required" id="mm" name="mm">
+													<option value="01" <?php if ( $my_post_month === '01' ) : echo $selected; endif; ?>>01</option>
+													<option value="02" <?php if ( $my_post_month === '02' ) : echo $selected; endif; ?>>02</option>
+													<option value="03" <?php if ( $my_post_month === '03' ) : echo $selected; endif; ?>>03</option>
+													<option value="04" <?php if ( $my_post_month === '04' ) : echo $selected; endif; ?>>04</option>
+													<option value="05" <?php if ( $my_post_month === '05' ) : echo $selected; endif; ?>>05</option>
+													<option value="06" <?php if ( $my_post_month === '06' ) : echo $selected; endif; ?>>06</option>
+													<option value="07" <?php if ( $my_post_month === '07' ) : echo $selected; endif; ?>>07</option>
+													<option value="08" <?php if ( $my_post_month === '08' ) : echo $selected; endif; ?>>08</option>
+													<option value="09" <?php if ( $my_post_month === '09' ) : echo $selected; endif; ?>>09</option>
+													<option value="10" <?php if ( $my_post_month === '10' ) : echo $selected; endif; ?>>10</option>
+													<option value="11" <?php if ( $my_post_month === '11' ) : echo $selected; endif; ?>>11</option>
+													<option value="12" <?php if ( $my_post_month === '12' ) : echo $selected; endif; ?>>12</option>
+												</select>
+											</label>
+											<label>
+												<span class="screen-reader-text"><?php esc_html_e( 'Year' ); ?></span>
+												<input type="text" id="aa" name="aa" value="1999" size="4" maxlength="4" autocomplete="off" class="form-required">
+											</label>
+											<div class="screen-reader-text">
+													<?php esc_html_e( 'at' ); ?>
 												<label>
-													<span class="screen-reader-text"><?php _e( 'Day' ); ?></span>
-													<input type="text" id="jj" name="jj" value="<?php echo gmdate( 'd', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
+													<span class="screen-reader-text"><?php esc_html_e( 'Hour' ); ?></span>
+													<input type="text" id="hh" name="hh" value="12" size="2" maxlength="2" autocomplete="off" class="form-required">
+												</label>h
+												<label>
+													<span class="screen-reader-text"><?php esc_html_e( 'Minute' ); ?></span>
+													<input type="text" id="mn" name="mn" value="00" size="2" maxlength="2" autocomplete="off" class="form-required">
 												</label>
-												<label>
-													<span class="screen-reader-text"><?php _e( 'Month' ); ?></span>
-													<?php $my_post_month = gmdate( 'm', $my_post_date ); $selected = ' selected="selected"'; ?>
-													<select class="form-required" id="mm" name="mm">
-														<option value="01" <?php if ( $my_post_month === '01' ) : echo $selected; endif; ?>>01</option>
-														<option value="02" <?php if ( $my_post_month === '02' ) : echo $selected; endif; ?>>02</option>
-														<option value="03" <?php if ( $my_post_month === '03' ) : echo $selected; endif; ?>>03</option>
-														<option value="04" <?php if ( $my_post_month === '04' ) : echo $selected; endif; ?>>04</option>
-														<option value="05" <?php if ( $my_post_month === '05' ) : echo $selected; endif; ?>>05</option>
-														<option value="06" <?php if ( $my_post_month === '06' ) : echo $selected; endif; ?>>06</option>
-														<option value="07" <?php if ( $my_post_month === '07' ) : echo $selected; endif; ?>>07</option>
-														<option value="08" <?php if ( $my_post_month === '08' ) : echo $selected; endif; ?>>08</option>
-														<option value="09" <?php if ( $my_post_month === '09' ) : echo $selected; endif; ?>>09</option>
-														<option value="10" <?php if ( $my_post_month === '10' ) : echo $selected; endif; ?>>10</option>
-														<option value="11" <?php if ( $my_post_month === '11' ) : echo $selected; endif; ?>>11</option>
-														<option value="12" <?php if ( $my_post_month === '12' ) : echo $selected; endif; ?>>12</option>
-													</select>
-												</label>
-												<label>
-													<span class="screen-reader-text"><?php _e( 'Year' ); ?></span>
-													<input type="text" id="aa" name="aa" value="1999" size="4" maxlength="4" autocomplete="off" class="form-required"></label> à <label><span class="screen-reader-text">Heure</span><input type="text" id="hh" name="hh" value="15" size="2" maxlength="2" autocomplete="off" class="form-required"></label>h<label><span class="screen-reader-text">Minute</span><input type="text" id="mn" name="mn" value="20" size="2" maxlength="2" autocomplete="off" class="form-required"></label></div><input type="hidden" id="ss" name="ss" value="50">
+											</div>
+										</div>
+										<input type="hidden" id="ss" name="ss" value="50">
+										<input type="hidden" id="hidden_mm" name="hidden_mm" value="<?php echo gmdate( 's' ); ?>">
+										<input type="hidden" id="cur_mm" name="cur_mm" value="06">
+										<input type="hidden" id="hidden_jj" name="hidden_jj" value="09">
+										<input type="hidden" id="cur_jj" name="cur_jj" value="18">
+										<input type="hidden" id="hidden_aa" name="hidden_aa" value="<?php echo date_i18n( 'Y', $my_post_date ); ?>">
+										<input type="hidden" id="cur_aa" name="cur_aa" value="<?php echo gmdate( 'Y' ); ?>">
+										<input type="hidden" id="hidden_hh" name="hidden_hh" value="15">
+										<input type="hidden" id="cur_hh" name="cur_hh" value="<?php echo gmdate( 'H' ); ?>">
+										<input type="hidden" id="hidden_mn" name="hidden_mn" value="20">
+										<input type="hidden" id="cur_mn" name="cur_mn" value="<?php echo gmdate( 'i' ); ?>">
+										<p>
+											<a href="#edit_timestamp" class="save-timestamp hide-if-no-js button"><?php esc_html_e( 'OK' ); ?></a>
+											<a href="#edit_timestamp" class="cancel-timestamp hide-if-no-js button-cancel"><?php esc_html_e( 'Cancel' ); ?></a>
+										</p>
+									</fieldset>
+								</div>
 
-			<input type="hidden" id="hidden_mm" name="hidden_mm" value="09">
-			<input type="hidden" id="cur_mm" name="cur_mm" value="06">
-			<input type="hidden" id="hidden_jj" name="hidden_jj" value="09">
-			<input type="hidden" id="cur_jj" name="cur_jj" value="18">
-			<input type="hidden" id="hidden_aa" name="hidden_aa" value="1999">
-			<input type="hidden" id="cur_aa" name="cur_aa" value="2024">
-			<input type="hidden" id="hidden_hh" name="hidden_hh" value="15">
-			<input type="hidden" id="cur_hh" name="cur_hh" value="09">
-			<input type="hidden" id="hidden_mn" name="hidden_mn" value="20">
-			<input type="hidden" id="cur_mn" name="cur_mn" value="00">
-
-			<p>
-			<a href="#edit_timestamp" class="save-timestamp hide-if-no-js button">OK</a>
-			<a href="#edit_timestamp" class="cancel-timestamp hide-if-no-js button-cancel">Annuler</a>
-			</p>
-								</fieldset>
-						</div>
 							</div>
-				<div class="clear"></div>
-			</div>
+							<div class="clear"></div>
+						</div><!-- //#submitpost.submitpost -->
 
-			<div id="major-publishing-actions">
-					<div id="delete-action">
+						<div id="major-publishing-actions">
+							<div id="delete-action">
 								<a class="submitdelete deletion" href="https://www-dev.pierre-henri-lavigne.info/wp-admin/post.php?post=126&amp;action=trash&amp;_wpnonce=79854e8e0e">Mettre à la corbeille</a>
 							</div>
+							<div id="publishing-action">
+								<span class="spinner"></span>
+						<?php if ( $post->post_status === 'draft' ) : ?>
+								<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_html_e( 'Publish' ); ?>">
+								<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php esc_html_e( 'Publish' ); ?>">
+						<?php elseif ( $post->post_status === 'draft' ) : ?>
+								<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_html_e( 'Update' ); ?>">
+								<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php esc_html_e( 'Update' ); ?>">
+						<?php endif; ?>
+							</div>
+							<div class="clear"></div>
+						</div><!-- //#major-publishing-actions -->
 
-				<div id="publishing-action">
-					<span class="spinner"></span>
-										<input name="original_publish" type="hidden" id="original_publish" value="Publier">
-								<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="Publier">						</div>
-				<div class="clear"></div>
-			</div>
+					</div><!-- //.inside -->
+				</div><!-- //#submitdiv.postbox -->
 
-			</div>
-				</div>
-			</div>
-			<div id="postimagediv" class="postbox ">
-			<div class="postbox-header"><h2 class="hndle ui-sortable-handle">Image mise en avant</h2>
-			<div class="handle-actions hide-if-no-js"><button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="postimagediv-handle-order-higher-description"><span class="screen-reader-text">Monter</span><span class="order-higher-indicator" aria-hidden="true"></span></button><span class="hidden" id="postimagediv-handle-order-higher-description">Déplacer la boite Image mise en avant vers le haut</span><button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="postimagediv-handle-order-lower-description"><span class="screen-reader-text">Descendre</span><span class="order-lower-indicator" aria-hidden="true"></span></button><span class="hidden" id="postimagediv-handle-order-lower-description">Déplacer la boite Image mise en avant vers le bas</span><button type="button" class="handlediv" aria-expanded="true"><span class="screen-reader-text">Ouvrir/fermer la section Image mise en avant</span><span class="toggle-indicator" aria-hidden="true"></span></button></div></div><div class="inside">
-			<p class="hide-if-no-js"><a href="https://www-dev.pierre-henri-lavigne.info/wp-admin/media-upload.php?post_id=126&amp;type=image&amp;TB_iframe=1" id="set-post-thumbnail" class="thickbox">Définir l’image mise en avant</a></p><input type="hidden" id="_thumbnail_id" name="_thumbnail_id" value="-1"></div>
-			</div>
-			</div>
-		</div>
+				<div id="postimagediv" class="postbox">
+					<div class="postbox-header">
+						<h2 class="hndle ui-sortable-handle">Image mise en avant</h2>
+						<div class="handle-actions hide-if-no-js"><button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="submitdiv-handle-order-higher-description"><span class="screen-reader-text">Monter</span><span class="order-higher-indicator" aria-hidden="true"></span></button><span class="hidden" id="submitdiv-handle-order-higher-description">Déplacer la boite Publier vers le haut</span><button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="submitdiv-handle-order-lower-description"><span class="screen-reader-text">Descendre</span><span class="order-lower-indicator" aria-hidden="true"></span></button><span class="hidden" id="submitdiv-handle-order-lower-description">Déplacer la boite Publier vers le bas</span><button type="button" class="handlediv" aria-expanded="true"><span class="screen-reader-text">Ouvrir/fermer la section Publier</span><span class="toggle-indicator" aria-hidden="true"></span></button></div>
+					</div>
+					<div class="inside">
+						<p class="hide-if-no-js"><a href="https://www-dev.pierre-henri-lavigne.info/wp-admin/media-upload.php?post_id=126&amp;type=image&amp;TB_iframe=1" id="set-post-thumbnail" class="thickbox">Définir l’image mise en avant</a></p>
+						<input type="hidden" id="_thumbnail_id" name="_thumbnail_id" value="-1">
+					</div>
+				</div><!-- //#postimagediv.postbox -->
+
+			</div><!-- //#side-sortables -->
+
+		</div><!-- //#postbox-container-1.postbox-container -->
+
 	</div><!-- /post-body -->
 </div><!-- /poststuff -->
 

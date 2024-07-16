@@ -109,8 +109,27 @@ class Post {
 		if ( ! $post_row ) :
 			return false;
 		endif;
-		file_put_contents( $cache_file, json_encode( $post_row ) );
 		$this->wp_raw_post( $post_row );
+		$final_data = array(
+			'ID' => -1,
+			'post_author' => $this->post_author,
+			'post_date' => $this->post_date,
+			'post_date_gmt' => $this->post_date_gmt,
+			'post_title' => $this->post_title,
+			'post_content' => $this->post_content,
+			'post_status' => $this->post_status,
+			'comment_status' => $this->comment_status,
+			'ping_status' => $this->ping_status,
+			'post_name' => $this->post_name,
+			'post_type' => $this->post_type,
+			'filter' => $this->filter,
+			'post_md5' => $this->post_md5,
+			'post_categories' => $this->post_categories,
+			'post_tags' => $this->post_tags,
+			'post_template' => $this->post_template,
+			'post_excerpt' => $this->post_excerpt
+		);
+		file_put_contents( $cache_file, json_encode( $final_data ) );
 		return true;
 	}
 
@@ -124,7 +143,7 @@ class Post {
 	 * @param String $key The markdown key name
 	 * @return String The modified key name
 	 */
-	private function wp_key_filter( $key = ''  ) {
+	private function wp_key_filter( $key = '' ) {
 		if ( empty( $key ) ) :
 			return 'undefined';
 		endif;
@@ -191,15 +210,9 @@ class Post {
 		$this->filter = 'raw';
 		foreach( $data as $key => $value ) :
 			$key = $this->wp_key_filter( $key );
-			if ( ! method_exists( $this, $key ) ) :
-				$this->$key = $this->wp_value_filter( $value, $key );
-			endif;
+			$this->$key = $this->wp_value_filter( $value, $key );
 		endforeach;
-		if ( function_exists( 'current_time' ) ) :
-			$this->post_date = current_time( $this->post_date_gmt );
-		else :
-			$this->post_date = date( 'Y-m-d H:i:s', $this->post_date_gmt );					
-		endif;
+		$this->post_date = date( 'Y-m-d H:i:s', strtotime( $this->post_date_gmt ) + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) );					
 		return true;
 	}
 
