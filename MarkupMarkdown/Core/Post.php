@@ -26,6 +26,9 @@ class Post {
 	public $post_tags = array();
 	public $post_template = '';
 	public $post_excerpt = '';
+	# Static files
+	private $markdown_file = '';
+	private $json_file = '';
 
 
 	public function __construct( $file ) {
@@ -54,6 +57,7 @@ class Post {
 		if ( ! file_exists( $my_post ) ) :
 			return false;
 		endif;
+		$this->markdown_file = $my_post;
 		$cache_file = mmd()->cache_dir . '/' . mmd()->curr_blog . '_' . preg_replace( '#\.[a-z]+$#', '.json', $file );
 		if ( $this->cache_exists( $my_post, $cache_file ) ) :
 			return true;
@@ -86,6 +90,7 @@ class Post {
 			# Can't be sure at 100%
 			return false;
 		endif;
+		$this->json_file = $cache_file;
 		return isset( $this->post_md5 ) && $this->post_md5 === md5_file( $source_file ) ? true : false;
 	}
 
@@ -185,6 +190,8 @@ class Post {
 			return $val ? 'publish' : 'draft';
 		elseif ( $key === 'post_date_gmt' ) :
 			return gmdate( 'Y-m-d', strtotime( $val ) ) . ' 12:00:00';
+		elseif ( $key === 'post_categories' || $key === 'post_tags' ) :
+			return is_array( $val ) ? $val : array( $val ); 
 		else:
 			return $val;
 		endif;
@@ -326,4 +333,51 @@ class Post {
 	}
 
 
+	private function write_data( ) {
+		$mmd_data = "---";
+		$mmd_data .= "\nlayout: post";
+		$mmd_data .= "\ntitle: " . $this->post_title;
+		$mmd_data .= "\ndescription: " . $this->post_excerpt;
+		$mmd_data .= "\ndate: " . preg_replace( '#\s\d{4}:\d{2}:\d{2}#', '', $this->post_date_gmt );
+		if ( $this->post_status === 'draft' ) :
+			$mmd_data .= "\npublished: false";
+		endif;
+		$cat_count = count( $this->post_categories );
+		if ( $cat_count > 0 ) :
+			if ( $cat_count === 1 ) :
+				$mmd_data .= "\ncategories: " . $this->post_categories[ 0 ];
+			else:
+				$mmd_data .= "\ncategories: [ " . implode( ', ', $this->post_categories ) . " ]";
+			endif;
+		endif;
+		$tag_count = count( $this->post_tags );
+		if ( $tag_count > 0 ) :
+			if ( $tag_count === 1 ) :
+				$mmd_data .= "\ntags: " . $this->post_tags[ 0 ];
+			else:
+				$mmd_data .= "\ntags: [ " . implode( ', ', $this->post_tags ) . " ]";
+			endif;
+		endif;
+		$mmd_data .= "\n---\n";
+		$mmd_data .= $this->post_content;
+		file_put_contents( $this->markdown_file, $mmd_data );
+		@unlink( $this->json_file );
+	}
+
+
+	public function update() {
+		$data = array(
+			'post_status' => filter_input( INPUT_POST, 'post_status', FILTER_SANITIZE_SPECIAL_CHARS )
+		);
+		$update = false;
+		if ( $this->post_status !== $data[ 'post_status' ] && in_array( $data[ 'post_status' ], array( 'publish', 'draft' ) ) ) :
+			$this->post_status = $data[ 'post_status' ];
+			$update = true;
+		endif;
+		if ( ! $update ) :
+			return false;
+		endif;
+		$this->write_data();
+		return true;
+	}
 }

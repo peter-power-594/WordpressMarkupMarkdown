@@ -26,10 +26,15 @@ $post_ID = $post_id;
  */
 global $post_type, $post_type_object, $post;
 
-if ( $post_ID ) { # post_id = filename
+if ( $post_ID ) : # post_id = filename
 	require_once mmd()->plugin_dir . '/MarkupMarkdown/Core/Post.php';
-	$post = new WP_Post( new \MarkupMarkdown\Core\Post( $post_ID ) );
-}
+	$my_post = new \MarkupMarkdown\Core\Post( $post_ID );
+	$my_nonce = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_SPECIAL_CHARS );
+	if ( isset( $my_nonce ) && wp_verify_nonce( $my_nonce, 'update-post_' . $post_ID ) ) :
+		$my_post->update();
+	endif;
+	$post = new WP_Post( $my_post );
+endif;
 
 global $title;
 $title = '';
@@ -77,7 +82,7 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 <div class="wrap">
 <h1><?php _e( 'Edit' ); if ( $post->post_type !== 'post' ) : _e( $post->post_type ); endif; ?></h1>
 <hr class="wp-header-end">
-<form name="post" action="post.php" method="post" id="post">
+<form name="post" action="<?php echo add_query_arg( array( 'post' => $post_ID ), admin_url( 'post.php' ) ); ?>" method="post" id="post">
 <?php wp_nonce_field( 'update-post_' . $post_ID ); ?>
 <input type="hidden" id="user-id" name="user_ID" value="<?php echo get_current_user_id(); ?>" />
 <input type="hidden" id="hiddenaction" name="action" value="<?php echo esc_attr( $form_action ); ?>" />
@@ -159,11 +164,12 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 											<span class="screen-reader-text"><?php _e( 'Edit status' ); ?></span>
 										</a>
 
-									<div id="post-status-select" class="hide-if-js"><?php echo $post->post_status; ?>
-										<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="draft">
+									<div id="post-status-select" class="hide-if-js">
+										<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="<?php echo $post->post_status; ?>">
 										<label for="post_status" class="screen-reader-text"><?php esc_html_e( 'Status' ); ?></label>
 										<select name="post_status" id="post_status">
-											<option value="draft"><?php esc_html_e( 'Draft' ); ?></option>
+											<option value="publish"<?php if ( $post->post_status === 'publish' ) : ?> selected="selected"<?php endif; ?>><?php esc_html_e( 'Published' ); ?></option>
+											<option value="draft"<?php if ( $post->post_status === 'draft' ) : ?> selected="selected"<?php endif; ?>><?php esc_html_e( 'Draft' ); ?></option>
 										</select>
 										<a href="#post_status" class="save-post-status hide-if-no-js button"><?php esc_html_e( 'OK' ); ?></a>
 										<a href="#post_status" class="cancel-post-status hide-if-no-js button-cancel"><?php esc_html_e( 'Cancel' ); ?></a>
@@ -236,26 +242,29 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 									</fieldset>
 								</div>
 
-							</div>
-							<div class="clear"></div>
-						</div><!-- //#submitpost.submitpost -->
+								<div class="clear"></div>
+							</div><!-- //#misc-publishing-actions -->
 
-						<div id="major-publishing-actions">
-							<div id="delete-action">
-								<a class="submitdelete deletion" href="https://www-dev.pierre-henri-lavigne.info/wp-admin/post.php?post=126&amp;action=trash&amp;_wpnonce=79854e8e0e">Mettre à la corbeille</a>
-							</div>
-							<div id="publishing-action">
-								<span class="spinner"></span>
-						<?php if ( $post->post_status === 'draft' ) : ?>
-								<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_html_e( 'Publish' ); ?>">
-								<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php esc_html_e( 'Publish' ); ?>">
-						<?php elseif ( $post->post_status === 'draft' ) : ?>
-								<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_html_e( 'Update' ); ?>">
-								<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php esc_html_e( 'Update' ); ?>">
-						<?php endif; ?>
-							</div>
-							<div class="clear"></div>
-						</div><!-- //#major-publishing-actions -->
+
+							<div id="major-publishing-actions">
+								<div id="delete-action">
+									<a class="submitdelete deletion" href="https://www-dev.pierre-henri-lavigne.info/wp-admin/post.php?post=126&amp;action=trash&amp;_wpnonce=79854e8e0e">Mettre à la corbeille</a>
+								</div>
+								<div id="publishing-action">
+									<span class="spinner"></span>
+							<?php if ( $post->post_status === 'draft' ) : ?>
+									<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_html_e( 'Publish' ); ?>">
+									<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php esc_html_e( 'Publish' ); ?>">
+							<?php elseif ( $post->post_status === 'publish' ) : ?>
+									<input name="original_publish" type="hidden" id="original_publish" value="<?php esc_html_e( 'Update' ); ?>">
+									<input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php esc_html_e( 'Update' ); ?>">
+							<?php endif; ?>
+								</div>
+								<div class="clear"></div>
+							</div><!-- //#major-publishing-actions -->
+
+
+						</div><!-- //#submitpost.submitpost -->
 
 					</div><!-- //.inside -->
 				</div><!-- //#submitdiv.postbox -->
