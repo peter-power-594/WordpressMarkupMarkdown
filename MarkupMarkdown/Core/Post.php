@@ -134,6 +134,7 @@ class Post {
 			'post_template' => $this->post_template,
 			'post_excerpt' => $this->post_excerpt
 		);
+		error_log( print_r( $final_data, true ) );
 		file_put_contents( $cache_file, json_encode( $final_data ) );
 		return true;
 	}
@@ -217,7 +218,8 @@ class Post {
 		$this->filter = 'raw';
 		foreach( $data as $key => $value ) :
 			$key = $this->wp_key_filter( $key );
-			$this->$key = $this->wp_value_filter( $value, $key );
+			$val = $this->wp_value_filter( $value, $key );
+			$this->$key = $val;
 		endforeach;
 		$this->post_date = date( 'Y-m-d H:i:s', strtotime( $this->post_date_gmt ) + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) );					
 		return true;
@@ -242,14 +244,14 @@ class Post {
 			# Doesn't look like a Jekyll formated file 
 			return false;
 		endif;
-		$post_row = $this->extract_headers( explode( "\n", explode( "---\n", $data )[ 1 ] ) );
+		$post_row = $this->extract_headers( explode( PHP_EOL, explode( "---" . PHP_EOL, $data )[ 1 ] ) );
 		if ( ! isset( $post_row->post_type ) ) :
 			$post_row->post_type = 'post';
 		endif;
 		if ( function_exists( 'md5_file' ) ) :
 			$post_row->post_md5 = md5_file( $file );
 		endif;
-		$post_row->post_content = explode( "---\n", $data )[ 2 ];
+		$post_row->post_content = explode( "---" . PHP_EOL, $data )[ 2 ];
 		return $post_row;
 	}
 

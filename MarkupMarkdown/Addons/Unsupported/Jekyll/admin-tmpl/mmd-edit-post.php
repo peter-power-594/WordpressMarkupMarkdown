@@ -28,12 +28,11 @@ global $post_type, $post_type_object, $post;
 
 if ( $post_ID ) : # post_id = filename
 	require_once mmd()->plugin_dir . '/MarkupMarkdown/Core/Post.php';
-	$my_post = new \MarkupMarkdown\Core\Post( $post_ID );
+	$post = new \MarkupMarkdown\Core\Post( $post_ID );
 	$my_nonce = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_SPECIAL_CHARS );
 	if ( isset( $my_nonce ) && wp_verify_nonce( $my_nonce, 'update-post_' . $post_ID ) ) :
-		$my_post->update();
+		$post->update();
 	endif;
-	$post = new WP_Post( $my_post );
 endif;
 
 global $title;
@@ -41,7 +40,7 @@ $title = '';
 if ( $post ) {
 	$post_type        = $post->post_type;
 	$post_type_object = get_post_type_object( $post_type );
-	$title = __( 'Edit' ) . ' ' . $post->title;
+	$title = __( 'Edit' ) . ' ' . $post->post_title;
 }
 
 # Quick fix
