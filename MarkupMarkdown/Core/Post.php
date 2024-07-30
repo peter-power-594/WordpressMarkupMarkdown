@@ -244,14 +244,19 @@ class Post {
 			# Doesn't look like a Jekyll formated file 
 			return false;
 		endif;
-		$post_row = $this->extract_headers( explode( PHP_EOL, explode( "---" . PHP_EOL, $data )[ 1 ] ) );
+		$head_body = preg_split( "#---\r*\n#", $data );
+		if ( ! $head_body || count( $head_body ) !== 3 ) :
+			# Something looks weird
+			return false;
+		endif;
+		$post_row = $this->extract_headers( preg_split( "#\r*\n#", $head_body[ 1 ] ) );
 		if ( ! isset( $post_row->post_type ) ) :
 			$post_row->post_type = 'post';
 		endif;
 		if ( function_exists( 'md5_file' ) ) :
 			$post_row->post_md5 = md5_file( $file );
 		endif;
-		$post_row->post_content = explode( "---" . PHP_EOL, $data )[ 2 ];
+		$post_row->post_content = $head_body[ 2 ];
 		return $post_row;
 	}
 
@@ -339,8 +344,8 @@ class Post {
 		$mmd_data = "---";
 		$mmd_data .= "\nlayout: post";
 		$mmd_data .= "\ntitle: " . $this->post_title;
-		$mmd_data .= "\ndescription: " . $this->post_excerpt;
-		$mmd_data .= "\ndate: " . preg_replace( '#\s\d{4}:\d{2}:\d{2}#', '', $this->post_date_gmt );
+		$mmd_data .= "\ndescription: \"" . $this->post_excerpt . "\"";
+		$mmd_data .= "\ndate: " . preg_replace( '#\s\d{2}:\d{2}:\d{2}#', '', $this->post_date_gmt );
 		if ( $this->post_status === 'draft' ) :
 			$mmd_data .= "\npublished: false";
 		endif;
