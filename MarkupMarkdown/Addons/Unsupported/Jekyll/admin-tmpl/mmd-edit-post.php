@@ -158,16 +158,18 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 								<div class="misc-pub-section misc-pub-post-status">
 									<?php _e( 'Status'); ?>&nbsp;: <span id="post-status-display"><?php echo $post->post_status === 'publish' ? __( 'Published' ) : __( 'Draft' ); ?></span>
 
-										<a href="#post_status" class="edit-post-status hide-if-no-js" role="button">
-											<span aria-hidden="true"><?php _e( 'Edit' ); ?></span>
-											<span class="screen-reader-text"><?php _e( 'Edit status' ); ?></span>
-										</a>
+									<a href="#post_status" class="edit-post-status hide-if-no-js" role="button">
+										<span aria-hidden="true"><?php _e( 'Edit' ); ?></span>
+										<span class="screen-reader-text"><?php _e( 'Edit status' ); ?></span>
+									</a>
 
 									<div id="post-status-select" class="hide-if-js">
 										<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="<?php echo $post->post_status; ?>">
 										<label for="post_status" class="screen-reader-text"><?php esc_html_e( 'Status' ); ?></label>
 										<select name="post_status" id="post_status">
-											<option value="publish"<?php if ( $post->post_status === 'publish' ) : ?> selected="selected"<?php endif; ?>><?php esc_html_e( 'Published' ); ?></option>
+										<?php if ( $post->post_status === 'publish' ) : ?>
+											<option value="publish" selected="selected"><?php esc_html_e( 'Published' ); ?></option>
+										<?php endif; ?>
 											<option value="draft"<?php if ( $post->post_status === 'draft' ) : ?> selected="selected"<?php endif; ?>><?php esc_html_e( 'Draft' ); ?></option>
 										</select>
 										<a href="#post_status" class="save-post-status hide-if-no-js button"><?php esc_html_e( 'OK' ); ?></a>

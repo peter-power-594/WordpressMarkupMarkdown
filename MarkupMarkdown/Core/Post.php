@@ -134,8 +134,8 @@ class Post {
 			'post_template' => $this->post_template,
 			'post_excerpt' => $this->post_excerpt
 		);
-		error_log( print_r( $final_data, true ) );
 		file_put_contents( $cache_file, json_encode( $final_data ) );
+		mmd()->clear_cache( $cache_file );
 		return true;
 	}
 
@@ -188,7 +188,13 @@ class Post {
 			return $val;
 		endif;
 		if ( $key === 'post_status' ) :
-			return $val ? 'publish' : 'draft';
+			if ( is_bool( $val ) && $val ) :
+				return 'publish';
+			elseif ( is_string( $val ) && $val === 'publish' ) :
+				return 'publish';
+			else :
+				return 'draft';
+			endif;
 		elseif ( $key === 'post_date_gmt' ) :
 			return gmdate( 'Y-m-d', strtotime( $val ) ) . ' 12:00:00';
 		elseif ( $key === 'post_categories' || $key === 'post_tags' ) :
@@ -340,7 +346,7 @@ class Post {
 	}
 
 
-	private function write_data( ) {
+	private function write_data() {
 		$mmd_data = "---";
 		$mmd_data .= "\nlayout: post";
 		$mmd_data .= "\ntitle: " . $this->post_title;
@@ -374,11 +380,27 @@ class Post {
 
 	public function update() {
 		$data = array(
-			'post_status' => filter_input( INPUT_POST, 'post_status', FILTER_SANITIZE_SPECIAL_CHARS )
+			'post_status' => filter_input( INPUT_POST, 'post_status', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_title' => filter_input( INPUT_POST, 'post_title', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_content' => filter_input( INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'original_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS )
 		);
 		$update = false;
-		if ( $this->post_status !== $data[ 'post_status' ] && in_array( $data[ 'post_status' ], array( 'publish', 'draft' ) ) ) :
+		# Check and update the post status
+		if ( isset( $data[ 'post_publish' ] ) && isset( $data[ 'original_publish' ] ) && $data[ 'post_publish' ] === $data[ 'original_publish' ] && $data[ 'original_publish' ] === __( 'Publish' ) ) :
+			$update = true;
+			$this->post_status = 'publish';
+		elseif ( $this->post_status !== $data[ 'post_status' ] && in_array( $data[ 'post_status' ], array( 'publish', 'draft' ) ) ) :
 			$this->post_status = $data[ 'post_status' ];
+			$update = true;
+		endif;
+		if ( $this->post_title !== $data[ 'post_title' ] ) :
+			$this->post_title = $data[ 'post_title' ];
+			$update = true;
+		endif;
+		if ( $this->post_content !== $data[ 'post_content' ] ) :
+			$this->post_content = $data[ 'post_content' ];
 			$update = true;
 		endif;
 		if ( ! $update ) :
@@ -387,4 +409,6 @@ class Post {
 		$this->write_data();
 		return true;
 	}
+
+
 }
