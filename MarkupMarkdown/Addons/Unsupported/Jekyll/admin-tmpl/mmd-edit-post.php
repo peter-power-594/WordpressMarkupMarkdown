@@ -270,10 +270,44 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 					</div><!-- //.inside -->
 				</div><!-- //#submitdiv.postbox -->
 
+				<div id="categorydiv" class="postbox">
+					<div class="postbox-header">
+						<h2 class="hndle "><?php _e( 'Categories' ); ?></h2>
+						<div class="handle-actions hide-if-no-js">
+							<button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="postimagediv-handle-order-higher-description"><span class="screen-reader-text"><?php echo __( 'Move up' ); ?></span><span class="order-higher-indicator" aria-hidden="true"></span></button>
+							<span class="hidden" id="postimagediv-handle-order-higher-description"><?php sprintf( __( 'Move %s box up' ), __( 'Categories' ) ); ?></span>
+							<button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="postimagediv-handle-order-lower-description"><span class="screen-reader-text"><?php echo __( 'Move down' ); ?></span><span class="order-lower-indicator" aria-hidden="true"></span></button>
+							<span class="hidden" id="postimagediv-handle-order-lower-description"><?php sprintf( __( 'Move %s box down' ), __( 'Categories' ) ); ?></span>
+							<button type="button" class="handlediv" aria-expanded="true"><span class="screen-reader-text"><?php sprintf( __( 'Toggle panel: %s' ), __( 'Categories' ) ); ?></span><span class="toggle-indicator" aria-hidden="true"></span></button>
+						</div>
+					</div>
+					<div class="inside">
+						<div id="category-all">
+							<ul id="categorychecklist" data-wp-lists="list:category" class="categorychecklist form-no-clear">
+							<?php
+								$cat_idx = 1;
+								foreach( $post->post_categories as $category ) :
+							?>
+								<li class="checked"><label class="selectit"><input value="<?php echo $category; ?>" type="checkbox" name="post_category[]" id="in-category-14" checked="checked"> <?php echo $category; ?></label></li>
+							<?php
+								endforeach;
+							?>
+							</ul>
+						</div><!-- //#category-all -->
+					</div><!-- //.inside -->
+				</div><!-- //#categorydiv.postbox -->
+
+
 				<div id="postimagediv" class="postbox">
 					<div class="postbox-header">
-						<h2 class="hndle ui-sortable-handle">Image mise en avant</h2>
-						<div class="handle-actions hide-if-no-js"><button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="submitdiv-handle-order-higher-description"><span class="screen-reader-text">Monter</span><span class="order-higher-indicator" aria-hidden="true"></span></button><span class="hidden" id="submitdiv-handle-order-higher-description">Déplacer la boite Publier vers le haut</span><button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="submitdiv-handle-order-lower-description"><span class="screen-reader-text">Descendre</span><span class="order-lower-indicator" aria-hidden="true"></span></button><span class="hidden" id="submitdiv-handle-order-lower-description">Déplacer la boite Publier vers le bas</span><button type="button" class="handlediv" aria-expanded="true"><span class="screen-reader-text">Ouvrir/fermer la section Publier</span><span class="toggle-indicator" aria-hidden="true"></span></button></div>
+						<h2 class="hndle ui-sortable-handle"><?php _e( 'Featured image' ); ?></h2>
+						<div class="handle-actions hide-if-no-js">
+							<button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="postimagediv-handle-order-higher-description"><span class="screen-reader-text"><?php echo __( 'Move up' ); ?></span><span class="order-higher-indicator" aria-hidden="true"></span></button>
+							<span class="hidden" id="postimagediv-handle-order-higher-description"><?php sprintf( __( 'Move %s box up' ), __( 'Featured image' ) ); ?></span>
+							<button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="postimagediv-handle-order-lower-description"><span class="screen-reader-text"><?php echo __( 'Move down' ); ?></span><span class="order-lower-indicator" aria-hidden="true"></span></button>
+							<span class="hidden" id="postimagediv-handle-order-lower-description"><?php sprintf( __( 'Move %s box down' ), __( 'Featured image' ) ); ?></span>
+							<button type="button" class="handlediv" aria-expanded="true"><span class="screen-reader-text"><?php sprintf( __( 'Toggle panel: %s' ), __( 'Featured image' ) ); ?></span><span class="toggle-indicator" aria-hidden="true"></span></button>
+						</div>
 					</div>
 					<div class="inside">
 						<p class="hide-if-no-js"><a href="https://www-dev.pierre-henri-lavigne.info/wp-admin/media-upload.php?post_id=126&amp;type=image&amp;TB_iframe=1" id="set-post-thumbnail" class="thickbox">Définir l’image mise en avant</a></p>

@@ -384,8 +384,10 @@ class Post {
 			'post_title' => filter_input( INPUT_POST, 'post_title', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'post_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'post_content' => filter_input( INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS ),
-			'original_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS )
+			'original_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_tags' => filter_input( INPUT_POST, 'post_tags', FILTER_SANITIZE_SPECIAL_CHARS )
 		);
+		$data = array_merge( $data, filter_input_array( INPUT_POST, array( 'post_category' => array( 'filter' => FILTER_SANITIZE_SPECIAL_CHARS, 'flags' => FILTER_REQUIRE_ARRAY ) ) ) );
 		$update = false;
 		# Check and update the post status
 		if ( isset( $data[ 'post_publish' ] ) && isset( $data[ 'original_publish' ] ) && $data[ 'post_publish' ] === $data[ 'original_publish' ] && $data[ 'original_publish' ] === __( 'Publish' ) ) :
@@ -395,13 +397,37 @@ class Post {
 			$this->post_status = $data[ 'post_status' ];
 			$update = true;
 		endif;
-		if ( $this->post_title !== $data[ 'post_title' ] ) :
+		if ( isset( $data[ 'post_title' ] ) && $this->post_title !== $data[ 'post_title' ] ) :
 			$this->post_title = $data[ 'post_title' ];
 			$update = true;
 		endif;
-		if ( $this->post_content !== $data[ 'post_content' ] ) :
+		if ( isset( $data[ 'post_content' ] ) && $this->post_content !== $data[ 'post_content' ] ) :
 			$this->post_content = $data[ 'post_content' ];
 			$update = true;
+		endif;
+		if ( isset( $data[ 'post_category' ] ) ) :
+			$categories = [];
+			foreach( $data[ 'post_category' ] as $idx => $category ) :
+				$category = trim( $category );
+				if ( ! isset( $category ) || is_integer( (int)$category ) || empty( $category ) ) :
+					continue;
+				endif;
+				$categories[] = trim( $category );
+			endforeach;
+			if ( ! array_diff( $this->post_categories, $categories ) ) :
+				$this->post_categories = $categories;
+				$update = true;
+			endif;
+		endif;
+		if ( isset( $data[ 'post_tags' ] ) ) :
+			$tags = explode( ', ', $data[ 'post_tags' ] );
+			foreach( $tags as $idx => $tag ) :
+				$tags[ $idx ] = trim( $tag );
+			endforeach;
+			if ( ! array_diff( $this->post_tags, $tags ) ) :
+				$this->post_tags = $tags;
+				$update = true;
+			endif;
 		endif;
 		if ( ! $update ) :
 			return false;
