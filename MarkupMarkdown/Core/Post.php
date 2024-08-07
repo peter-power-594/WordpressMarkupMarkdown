@@ -372,7 +372,7 @@ class Post {
 			endif;
 		endif;
 		$mmd_data .= "\n---\n";
-		$mmd_data .= $this->post_content;
+		$mmd_data .= html_entity_decode( $this->post_content );
 		file_put_contents( $this->markdown_file, $mmd_data );
 		@unlink( $this->json_file );
 	}
