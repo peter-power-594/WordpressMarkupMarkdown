@@ -76,7 +76,7 @@ function CodeMirrorSpellChecker(options) {
 			}
 		}
 
-		// Load the dictionnaries data 
+		// Load the dictionnaries data
 		if(CodeMirrorSpellChecker.loading < 0) {
 			CodeMirrorSpellChecker.loading = 0;
 			var myXHR,
@@ -94,7 +94,7 @@ function CodeMirrorSpellChecker(options) {
 				},
 				getEtrData = function() {
 					if (!etrUrl[CodeMirrorSpellChecker.loading]){
-						myCallBack();
+						loadData( false );
 					}
 					else {
 						myXHR = new XMLHttpRequest();
@@ -103,50 +103,10 @@ function CodeMirrorSpellChecker(options) {
 						myXHR.send(null);
 					}
 				},
+				myExtra = {},
 				myCallBack = function() {
 					if(myXHR.readyState === 4 && myXHR.status === 200) {
-						CodeMirrorSpellChecker.num_loaded++;
-						var currLang = CodeMirrorSpellChecker.langs[CodeMirrorSpellChecker.loading];
-
-						if(CodeMirrorSpellChecker.num_loaded === 1) {
-							CodeMirrorSpellChecker.dic_data[currLang] = myXHR.responseText;
-							setTimeout(getAffData, 1000);
-						} else if(CodeMirrorSpellChecker.num_loaded === 2) {
-							CodeMirrorSpellChecker.aff_data[currLang] = myXHR.responseText;
-							setTimeout(getEtrData, 1000);
-						} else if(CodeMirrorSpellChecker.num_loaded === 3) {
-							CodeMirrorSpellChecker.typo[currLang] = new Typo(currLang,
-								CodeMirrorSpellChecker.aff_data[currLang],
-								CodeMirrorSpellChecker.dic_data[currLang], {
-									platform: "any"
-								}
-							);
-							CodeMirrorSpellChecker.aff_data[currLang] = null;
-							CodeMirrorSpellChecker.dic_data[currLang] = null;
-							/*
-							var myExtra = {};
-							if ( myXHR && myXHR.responseText ) {
-								myExtra = JSON.parse( myXHR.responseText );
-								if ( myExtra.extra && myExtra.extra.length ) {
-									for ( var e = 0, extras = myExtra.extra, word = ''; e < extras.length; e++ ) {
-										word = extras[ e ];
-										if ( ! CodeMirrorSpellChecker.typo[currLang].dictionaryTable.hasOwnProperty( word ) ) {
-											CodeMirrorSpellChecker.typo[currLang].dictionaryTable[ word ] = null;
-										}
-									}
-								}
-							}
-							*/
-							if(CodeMirrorSpellChecker.loading < CodeMirrorSpellChecker.langs.length - 1) {
-								CodeMirrorSpellChecker.loading++;
-								CodeMirrorSpellChecker.num_loaded = 0;
-								setTimeout(getDicData, 1000);
-							} else {
-								setTimeout(function() {
-									document.dispatchEvent(new Event("CodeMirrorSpellCheckerReady"));
-								}, 1000);
-							}
-						}
+						loadData( myXHR.responseText );
 					} else if(myXHR.readyState === 4 && myXHR.status !== 200) {
 						CodeMirrorSpellChecker.num_loaded++;
 						if(window.console && window.console.log) {
@@ -156,13 +116,51 @@ function CodeMirrorSpellChecker(options) {
 							document.dispatchEvent(new Event("CodeMirrorSpellCheckerReady"));
 						}, 1000);
 					}
-				};
-			getDicData(); // Initialize
+				},
+				loadData = function( myData ) {
+					CodeMirrorSpellChecker.num_loaded++;
+					var currLang = CodeMirrorSpellChecker.langs[CodeMirrorSpellChecker.loading];
+					if(CodeMirrorSpellChecker.num_loaded === 1) {
+						myExtra = {};
+						if ( myData ) {
+							myExtra = JSON.parse( myData );
+						}
+						setTimeout(getDicData, 1000);
+					} else if(CodeMirrorSpellChecker.num_loaded === 2) {
+						CodeMirrorSpellChecker.dic_data[currLang] = myXHR.responseText;
+						setTimeout(getAffData, 1000);
+					} else if(CodeMirrorSpellChecker.num_loaded === 3) {
+						CodeMirrorSpellChecker.aff_data[currLang] = myXHR.responseText;
+						if ( myExtra.extra && myExtra.extra.length ) {
+							for ( var e = 0, extras = myExtra.extra; e < extras.length; e++ ) {
+								CodeMirrorSpellChecker.dic_data[currLang] += "\n" + extras[ e ];
+							}
+						}
+						CodeMirrorSpellChecker.typo[currLang] = new Typo(currLang,
+							CodeMirrorSpellChecker.aff_data[currLang],
+							CodeMirrorSpellChecker.dic_data[currLang], {
+								platform: "any"
+							}
+						);
+						CodeMirrorSpellChecker.aff_data[currLang] = null;
+						CodeMirrorSpellChecker.dic_data[currLang] = null;
+						if(CodeMirrorSpellChecker.loading < CodeMirrorSpellChecker.langs.length - 1) {
+							CodeMirrorSpellChecker.loading++;
+							CodeMirrorSpellChecker.num_loaded = 0;
+							setTimeout(getEtrData, 1000);
+						} else {
+							setTimeout(function() {
+								document.dispatchEvent(new Event("CodeMirrorSpellCheckerReady"));
+							}, 1000);
+						}
+					}
+				}
+			getEtrData(); // Initialize
 		}
 
 
 		// Define what separates a word
-		var rx_word = "!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ";
+		var rx_word = "!\"#$%&()*+,-—./:;<=>?@[\\]^_`’“”'{|}~ ";
 
 
 		// Create the overlay and such
@@ -174,13 +172,12 @@ function CodeMirrorSpellChecker(options) {
 				var ch = stream.peek();
 				var word = "";
 
-				if(rx_word.includes(ch) || ch === '\uE000' || ch === '\uE001' ) {
+				if(rx_word.includes(ch) || ch === '\uE000' || ch === '\uE001') {
 					stream.next();
 					return null;
 				}
 
-				var validPeek = true;
-				while((ch = stream.peek() !== null) && !rx_word.includes(ch) ) {
+				while((ch = stream.peek()) != null && !rx_word.includes(ch)) {
 					word += ch;
 					stream.next();
 				}
@@ -222,7 +219,6 @@ function CodeMirrorSpellChecker(options) {
 		);
 
 		return options.codeMirrorInstance.overlayMode(mode, overlay, true);
-		
 	});
 }
 
