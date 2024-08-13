@@ -16,6 +16,7 @@ module.exports = function(grunt) {
 		},
 		jshint: {
 			all: [
+				'AA_src/markup-markdown/js/spell-checker.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-media.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-preview.js'
@@ -23,7 +24,7 @@ module.exports = function(grunt) {
 		},
 		uglify: {
 			options: {
-				ouput: {
+				output: {
 					comments: 'some'
 				}
 			},
@@ -32,6 +33,19 @@ module.exports = function(grunt) {
 					'assets/markup-markdown/js/wordpress_richedit-easymde.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
 					'assets/markup-markdown/js/wordpress_richedit-media.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-media.js',
 					'assets/markup-markdown/js/wordpress_richedit-preview.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-preview.js'
+				}
+			}
+		},
+		browserify: {
+			options: {
+				//ignore: [ 'typo-js' ],
+				browserifyOptions: {
+					standalone: 'CodeMirrorSpellChecker'
+				}
+			},
+			build: {
+				files: {
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js',
 				}
 			}
 		},
@@ -46,7 +60,7 @@ module.exports = function(grunt) {
 				files: [
 					'AA_src/**/*.js'
 				],
-				tasks: [ 'jshint', 'uglify' ]
+				tasks: [ 'jshint', 'browserify', 'uglify' ]
 			}
 		},
 		concurrent: {
@@ -60,6 +74,7 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks( 'grunt-concurrent' );
+	grunt.loadNpmTasks( 'grunt-browserify' );
 	grunt.loadNpmTasks( 'grunt-dart-sass' );
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );

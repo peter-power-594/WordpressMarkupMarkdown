@@ -248,12 +248,15 @@ class SpellChecker {
 			$lang_filename = $this->dictionaries[ $dict ][ 'file_name' ];
 			$this->check_for_older_names( $lang_filename );
 			$n++; if ( $n > 1 ) : $js .= ",\n"; endif;
-			$js .= "  " . $dict . ": {\n"
-				. "    code: \"" . $lang_code . "\",\n"
-				. "    label: \"" . $lang_label . "\",\n"
-				. "    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\",\n"
-				. "    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"\n"
-				. "  }";
+			$js .= "  " . $dict . ": {"
+				. "\n    code: \"" . $lang_code . "\""
+				. ",\n    label: \"" . $lang_label . "\""
+				. ",\n    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\""
+				. ",\n    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"";
+			if ( isset( $this->extra[ $dict ] ) ) :
+				$js .= ",\n    etr: \"" . $dict_base_uri . md5( $lang_filename ) . ".json\"";
+			endif;
+			$js .= "\n  }";
 		endforeach;
 		$js .= "\n};";
 		return $js;
