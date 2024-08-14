@@ -254,7 +254,7 @@ class SpellChecker {
 				. ",\n    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\""
 				. ",\n    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"";
 			if ( isset( $this->extra[ $dict ] ) ) :
-				$js .= ",\n    etr: \"" . $dict_base_uri . md5( $lang_filename ) . ".json\"";
+				$js .= ",\n    etr: \"" . $dict_base_uri . md5( $lang_filename ) . "_extra.dic\"";
 			endif;
 			$js .= "\n  }";
 		endforeach;
@@ -340,7 +340,7 @@ class SpellChecker {
 			# Dictionary already installed, don't do anything
 			$this->install_dictionary( $dict_name, $dict_dir );
 		endif;
-		if ( isset( $this->extra[ $dic_id ] ) && ! file_exists( $dict_dir . '/' . md5( $dict_name ) . '.json' ) ) :
+		if ( isset( $this->extra[ $dic_id ] ) && ! file_exists( $dict_dir . '/' . md5( $dict_name ) . '_extra.dic' ) ) :
 			$this->install_extra( $this->extra[ $dic_id ][ 'file_name' ], $dict_name, $dict_dir );
 		endif;
 		return true;
@@ -396,13 +396,13 @@ class SpellChecker {
 		if ( empty( $name ) || empty( $parent_name ) || empty( $dir ) ) :
 			return false;
 		endif;
-		$base = 'https://raw.githubusercontent.com/peter-power-594/codemirror-spell-checker/dev/src/dict/';
-		$resp = wp_remote_get( $base . '/' . $name . '.json' );
+		$base = 'https://raw.githubusercontent.com/peter-power-594/codemirror-spell-checker/dev/src/dict';
+		$resp = wp_remote_get( $base . '/' . $name . '.dic' );
 		if ( is_wp_error( $resp ) || ! is_array( $resp ) || ! isset( $resp[ 'body' ] ) ) :
 			error_log( 'WP Markup Markdown: Error while trying to retrieve the extra data for the dictionary ' . $name );
 			return false;
 		endif;
-		file_put_contents( $dir . '/' . md5( $parent_name ) . '.json', $resp[ 'body' ] );
+		file_put_contents( $dir . '/' . md5( $parent_name ) . '_extra.dic', $resp[ 'body' ] );
 		unset( $resp );
 		sleep( 1 );
 		return true;
@@ -509,7 +509,7 @@ class SpellChecker {
 					echo " /> " . __( 'Make default', 'markup-markdown' );
 				endif;
 				echo "\n\t\t\t\t\t\t\t\t</label>";
-				if ( ! file_exists( $curr_base_filename . '.json' ) && isset( $this->extra[ $dict_id ] ) ) :
+				if ( ! file_exists( $curr_base_filename . '_extra.dic' ) && isset( $this->extra[ $dict_id ] ) ) :
 					# Trigger here the download othe extra dictionnary
 					$this->install_extra( $this->extra[ $dict_id ][ 'file_name' ], $dictionary[ 'file_name' ], $dict_dir );
 				endif;
