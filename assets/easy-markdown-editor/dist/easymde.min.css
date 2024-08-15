@@ -1,10 +1,4 @@
 @charset "UTF-8";
-/*! easymde v2.19.103
- * Copyright Jeroen Akkerman
- * Modified by Pierre-Henri Lavigne (.cm-spell-error rules)
- * @link https://github.com/ionaru/easy-markdown-editor
- * @license MIT
- */
 /**
  * easymde
  * @link https://github.com/ionaru/easy-markdown-editor
@@ -840,6 +834,12 @@ span[data-img-src]::after {
   background-repeat: no-repeat;
 }
 
+/*! easymde v2.19.103
+ * Copyright Jeroen Akkerman
+ * Modified by Pierre-Henri Lavigne (.cm-spell-error rules)
+ * @link https://github.com/ionaru/easy-markdown-editor
+ * @license MIT
+ */
 .editor-toolbar button {
   position: relative;
 }

@@ -503,3 +503,42 @@ html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side
 		width: calc(50% - 18px) !important;
 	}
 }
+
+
+/* SPELL CHECKER
+ ------------------------------------------ */
+.mmd-spellcheck-suggestions {
+	position: fixed;
+	top: -100%;
+	top: -100vh;
+	left: -100%;
+	left: -100vw;
+	border: 1px solid #c3c4c7;
+	border-radius: 0;
+	background: rgba(255,255,255,0.9);
+	width: auto;
+	height: auto;
+	max-height: 200px;
+	overflow: auto;
+	z-index: 99999;
+	ol, li {
+		display: block;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+	li {
+		a {
+			display: block;
+			padding: 0 1rem;
+			font-size: 1rem;
+			font-weight: normal;
+			line-height: 1.5;
+			text-decoration: none;
+			&:hover {
+				background: rgba(225,225,225,0.9);
+			}
+		}
+	}
+}
