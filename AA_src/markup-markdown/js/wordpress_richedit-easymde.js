@@ -299,6 +299,31 @@
 				$( _doc.body ).addClass( 'markupmarkdown-ready' );
 			}
 		}
+		else {
+			var errorPanel = false,
+				errorLang = '',
+				checkSelectedWord = function( myInstance, myEvent ) {
+					if ( myEvent && myEvent.target && /cm-spell-error/.test( myEvent.target.className || '' ) ) {
+						errorPanel = true;
+						errorLang = ( myEvent.target.className || '' ).match( /.*?cm-(\w+)$/ )[ 1 ];
+					}
+				};
+			_self.instance.editor.codemirror.on( 'mousedown', checkSelectedWord );
+			_self.instance.editor.codemirror.on( 'keydown', checkSelectedWord );
+			_self.instance.editor.codemirror.on( 'cursorActivity', function( myInstance ) {
+				if ( ! errorPanel ) {
+					return false;
+				}
+				// Hint from https://stackoverflow.com/questions/26576054/codemirror-get-the-current-word-under-the-cursor
+				var myCursor = myInstance.getCursor(),
+					myWord = myInstance.findWordAt( myCursor );
+				if ( myWord && myWord.anchor && myWord.head ) {
+					var myText = myInstance.getRange( myWord.anchor, myWord.head );
+				}
+				errorPanel = false;
+				return true;
+			});
+		}
 		if ( isSecondary > 0 ) {
 			setTimeout(function() {
 				_self.instance.editor.codemirror.refresh();
