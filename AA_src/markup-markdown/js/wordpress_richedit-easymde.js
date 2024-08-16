@@ -369,7 +369,9 @@
 						mySuggestions = CodeMirrorSpellChecker.typo[ errorLang ].suggest( myText ),
 						mySuggestList = [ '<ol>' ];
 					for ( var s = 0; s < mySuggestions.length; s++ ) {
-						mySuggestList.push( '<li><a href="#mmd-suggestions">' + mySuggestions[ s ] + '</li>' );
+						if ( ! /\d+/.test( mySuggestions[ s ] ) ) {
+							mySuggestList.push( '<li><a href="#mmd-suggestions">' + mySuggestions[ s ] + '</li>' );
+						}
 					}
 					mySuggestList.push( '</ol>' );
 					errorPanel.el = document.getElementById( 'mmd-suggestions' );					
