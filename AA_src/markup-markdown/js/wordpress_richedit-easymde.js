@@ -301,86 +301,9 @@
 		}
 		else {
 			// Spellchecker is enabled. Tiny panel to display suggestions
-			var errorPanel = {
-					el: null, display: false, active: false, // To handle the dialog box itself
-					from: {}, to: {}, origin: '' // To handle the codemirror document
-				},
-				errorLang = '', // Target dictionnary lang, required for multi-language
-				hidePanel = function( myEvent ) {
-					if ( ! errorPanel.el ) {
-						return false;
-					}
-					errorPanel.el.style.display = 'none';
-					errorPanel.el.innerHTML = '';
-				},
-				showPanel = function( myEvent ) {
-					if ( ! errorPanel.el ) {
-						return false;
-					}
-					errorPanel.el.style.top = ( Math.ceil( myEvent.clientY || 0 ) + 16 ) + 'px';
-					errorPanel.el.style.left = ( Math.ceil( myEvent.clientX || 0 ) - 16 ) + 'px';
-					errorPanel.el.style.display = 'block';
-				},
-				buildBindPanel = function() {
-					errorPanel.el = document.createElement( 'div' );
-					errorPanel.el.id = 'mmd-suggestions';
-					errorPanel.el.className = 'mmd-spellcheck-suggestions';
-					document.body.appendChild( errorPanel.el );
-					document.getElementById( 'mmd-suggestions' ).addEventListener( 'click', function( myEvent ) {
-						event.preventDefault();
-						// As we replaced an existing word, we need to provide full arguments for CodeMirror to handle the history
-						_self.instance.editor.codemirror.replaceRange(
-							myEvent.target.firstChild.nodeValue, // String replacement text
-							errorPanel.from,  // Object { line, ch }
-							errorPanel.to,    // Object { line, ch }
-							errorPanel.origin // String original text
-						);
-						setTimeout(function() { hidePanel( myEvent ); }, 450 );
-						return false;
-					}, false);
-				},
-				checkSelectedWord = function( myInstance, myEvent ) {
-					if ( myEvent && myEvent.target && /cm-spell-error/.test( myEvent.target.className || '' ) ) {
-						if ( ! errorPanel.display ) {
-							// Fist time, need to build the container
-							buildBindPanel();
-							errorPanel.display = true;
-						}
-						showPanel( myEvent );
-						errorLang = ( myEvent.target.className || '' ).match( /.*?cm-(\w+)$/ )[ 1 ];
-						errorPanel.active = true;
-					}
-					else if ( errorPanel.active ) {
-						errorPanel.active = false;
-						// Hide and empty the suggestion list panel
-						hidePanel( myEvent );
-					}
-				};
-			_self.instance.editor.codemirror.on( 'mousedown', checkSelectedWord );
-			_self.instance.editor.codemirror.on( 'cursorActivity', function( myInstance ) {
-				if ( ! errorPanel.active ) {
-					return false;
-				}
-				// Hint from https://stackoverflow.com/questions/26576054/codemirror-get-the-current-word-under-the-cursor
-				var myCursor = myInstance.getCursor(),
-					myWord = myInstance.findWordAt( myCursor );
-				if ( myWord && myWord.anchor && myWord.head && CodeMirrorSpellChecker.typo[ errorLang ] ) {
-					var myText = myInstance.getRange( myWord.anchor, myWord.head ),
-						mySuggestions = CodeMirrorSpellChecker.typo[ errorLang ].suggest( myText ),
-						mySuggestList = [ '<ol>' ];
-					for ( var s = 0; s < mySuggestions.length; s++ ) {
-						if ( ! /\d+/.test( mySuggestions[ s ] ) ) {
-							mySuggestList.push( '<li><a href="#mmd-suggestions">' + mySuggestions[ s ] + '</li>' );
-						}
-					}
-					mySuggestList.push( '</ol>' );
-					errorPanel.el = document.getElementById( 'mmd-suggestions' );					
-					errorPanel.el.innerHTML = mySuggestList.join( '' );
-					errorPanel.from = myWord.anchor; errorPanel.to = myWord.head; errorPanel.origin = myText;
-				}
-				errorPanel.active = true;
-				return true;
-			});
+			if ( typeof MmdSpellWizard === 'function' ) {
+				new MmdSpellWizard( _self.instance.editor.codemirror );
+			}
 		}
 		if ( isSecondary > 0 ) {
 			setTimeout(function() {
