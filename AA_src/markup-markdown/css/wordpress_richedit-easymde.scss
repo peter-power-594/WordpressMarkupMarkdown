@@ -540,5 +540,8 @@ html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side
 				background: rgba(225,225,225,0.9);
 			}
 		}
+		&.last {
+			border-top: 1px solid #c3c4c7;
+		}
 	}
 }

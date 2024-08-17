@@ -136,15 +136,16 @@
 		// Hint from https://stackoverflow.com/questions/26576054/codemirror-get-the-current-word-under-the-cursor
 		var myCursor = myInstance.getCursor(),
 			myWord = myInstance.findWordAt( myCursor );
-		if ( myWord && myWord.anchor && myWord.head && CodeMirrorSpellChecker.typo[ _self.lang ] ) {
+		if ( myWord && myWord.anchor && myWord.head && CodeMirrorSpellChecker.typo( _self.lang ) ) {
 			var myText = myInstance.getRange( myWord.anchor, myWord.head ),
-				mySuggestions = CodeMirrorSpellChecker.typo[ _self.lang ].suggest( myText ),
+				mySuggestions = CodeMirrorSpellChecker.typo( _self.lang, 'suggest', myText ),
 				mySuggestList = [ '<ol>' ];
 			for ( var s = 0; s < mySuggestions.length; s++ ) {
 				if ( ! /\d+/.test( mySuggestions[ s ] ) ) { // Exclude suggestions including numbers
 					mySuggestList.push( '<li><a href="#mmd-suggestions">' + mySuggestions[ s ] + '</li>' );
 				}
 			}
+			// mySuggestList.push( '<li class="last"><a href="#mmd-suggestions" title="Add ' + myText + ' to my dictionnary">' + myText + '</a></li>' );
 			mySuggestList.push( '</ol>' );
 			_self.el = _doc.getElementById( 'mmd-suggestions' );					
 			_self.el.innerHTML = mySuggestList.join( '' );

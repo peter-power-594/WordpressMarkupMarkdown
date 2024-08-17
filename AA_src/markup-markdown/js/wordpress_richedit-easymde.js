@@ -264,10 +264,6 @@
 		else {
 			editorConfig.spellChecker = false;
 		}
-		_self.instance.editor = new EasyMDE( editorConfig );
-		_self.instance.editor.codemirror.on("change", function() {
-			$textarea.val( _self.instance.editor.value() );
-		});
 		if ( ! _win.wp.pluginMarkupMarkdown ) {
 			_win.wp.pluginMarkupMarkdown = {};
 		}
@@ -286,8 +282,15 @@
 			}
 			_self.widgetCounter = startCounter + 1;
 		}
-		_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+		var launchEditor = function() {
+			_self.instance.editor = new EasyMDE( editorConfig );
+			_self.instance.editor.codemirror.on("change", function() {
+				$textarea.val( _self.instance.editor.value() );
+			});
+			_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+		};
 		if ( ! spell_check || ( spell_check.disabled && spell_check.disabled === 1 ) || spell_check === 'none' ) {
+			launchEditor();
 			// Spellchecker disable. Event need to be triggered manually
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
 			if ( isSecondary > 0 ) {
@@ -300,6 +303,8 @@
 			}
 		}
 		else {
+			launchEditor();
+			_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
 			// Spellchecker is enabled. Tiny panel to display suggestions
 			if ( typeof MmdSpellWizard === 'function' ) {
 				new MmdSpellWizard( _self.instance.editor.codemirror );
@@ -420,8 +425,7 @@
 	};
 
 
-	$( _doc ).ready(function() {
-		$( _doc.body ).addClass( 'easymde' );
+	function MarkupMarkdownLauncher() {
 		var primaryAreaEnabled = 1;
 		if ( wp.pluginMarkupMarkdown && typeof wp.pluginMarkupMarkdown.primaryArea !== 'undefined' ) {
 			if ( ! wp.pluginMarkupMarkdown.primaryArea || isNaN( parseInt( wp.pluginMarkupMarkdown.primaryArea, 10 ) ) ) {
@@ -480,6 +484,19 @@
 		}
 		// Term description
 		myLauncher( 'textarea[name="description"]' );
+	}
+
+	$( _doc ).ready(function() {
+		$( _doc.body ).addClass( 'easymde' );
+		if ( wp && wp.pluginMarkupMarkdown && wp.pluginMarkupMarkdown.spellChecker ) {
+			_doc.addEventListener( 'CodeMirrorDictionariesReady', function() {
+				new MarkupMarkdownLauncher();
+			});
+			CodeMirrorSpellChecker( wp.pluginMarkupMarkdown.spellChecker );
+		}
+		else {
+			new MarkupMarkdownLauncher();
+		}
 	});
 
 
