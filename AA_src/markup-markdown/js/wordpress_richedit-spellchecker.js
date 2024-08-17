@@ -1,4 +1,9 @@
 /* global wp, EasyMDE */
+/**
+ * @preserve Markup Markdown Spell Check wizard
+ * @version 1.0.0 
+ * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
+ */
 
 (function( _win, _doc ) {
 
@@ -22,6 +27,12 @@
 	}
 
 
+	/**
+	 * Hide the suggestions panel
+	 *
+	 * @param {Object} MyEvent The event handler
+	 * @returns {Boolean} TRUE in case of success or FALSE if nothing to do
+	 */
 	MmdSpellWizard.prototype.hideSuggestPanel = function( myEvent ) {
 		var _self = this;
 		if ( ! _self.el ) {
@@ -33,6 +44,12 @@
 	};
 
 
+	/**
+	 * Show the suggestions panel
+	 *
+	 * @param {Object} MyEvent The event handler
+	 * @returns {Boolean} TRUE in case of success or FALSE if nothing to do
+	 */
 	MmdSpellWizard.prototype.showSuggestPanel = function( myEvent ) {
 		var _self = this;
 		if ( ! _self.el ) {
@@ -45,8 +62,17 @@
 	};
 
 
+	/**
+	 * Build the suggestions panel HTML, append it to the body and bind it properly
+	 *
+	 * @returns {Boolean} TRUE in case of success or FALSE if nothing to do
+	 */
 	MmdSpellWizard.prototype.buildSuggestPanel = function() {
 		var _self = this;
+		if ( _self.el && _self.el.id ) {
+			// Should only be called once
+			return false;
+		}
 		_self.el = _doc.createElement( 'div' );
 		_self.el.id = 'mmd-suggestions';
 		_self.el.className = 'mmd-spellcheck-suggestions';
@@ -65,9 +91,17 @@
 			}, 450 );
 			return false;
 		}, false);
+		return true;
 	};
 
 
+	/**
+	 * Check if the selected string from the codemirror instance is a mispelled word
+	 * and trigger the display of the suggestions panel
+	 *
+	 * @param {Object} MyEvent The event handler
+	 * @returns {Boolean} TRUE in case of success or FALSE if nothing to do
+	 */
 	MmdSpellWizard.prototype.checkSelectedWord = function( myEvent ) {
 		var _self = this;
 		if ( myEvent && myEvent.target && /cm-spell-error/.test( myEvent.target.className || '' ) ) {
@@ -88,6 +122,12 @@
 	};
 
 
+	/**
+	 * Update the list of suggestions using the dictionnary
+	 *
+	 * @param {Object} myInstance The current codemirror active instance
+	 * @returns {Boolean} TRUE in case of success or FALSE if nothing to do
+	 */
 	MmdSpellWizard.prototype.updateSuggestions = function( myInstance ) {
 		var _self = this;
 		if ( ! _self.active ) {
@@ -101,7 +141,7 @@
 				mySuggestions = CodeMirrorSpellChecker.typo[ _self.lang ].suggest( myText ),
 				mySuggestList = [ '<ol>' ];
 			for ( var s = 0; s < mySuggestions.length; s++ ) {
-				if ( ! /\d+/.test( mySuggestions[ s ] ) ) {
+				if ( ! /\d+/.test( mySuggestions[ s ] ) ) { // Exclude suggestions including numbers
 					mySuggestList.push( '<li><a href="#mmd-suggestions">' + mySuggestions[ s ] + '</li>' );
 				}
 			}
@@ -117,6 +157,11 @@
 	};
 
 
+	/**
+	 * Initialize our Spellchecker Wizard. For now we only listen for mouse actions
+	 *
+	 * @returns {Void}
+	 */
 	MmdSpellWizard.prototype.initialize = function() {
 		var _self = this;
 		// Bind the codemirror instance with the mousedown event
