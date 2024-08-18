@@ -34,7 +34,8 @@ module.exports = function(grunt) {
 					'assets/markup-markdown/js/wordpress_richedit-easymde.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
 					'assets/markup-markdown/js/wordpress_richedit-media.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-media.js',
 					'assets/markup-markdown/js/wordpress_richedit-preview.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-preview.js',
-					'assets/markup-markdown/js/wordpress_richedit-spellchecker.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-spellchecker.js'
+					'assets/markup-markdown/js/wordpress_richedit-spellchecker.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-spellchecker.js',
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js': 'assets/custom-codemirror-spell-checker/dist/spell-checker.js'
 				}
 			}
 		},
@@ -47,7 +48,7 @@ module.exports = function(grunt) {
 			},
 			build: {
 				files: {
-					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js',
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js'
 				}
 			}
 		},

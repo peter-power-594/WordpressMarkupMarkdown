@@ -1,3 +1,12 @@
+/* global wp, jQuery */
+
+/**
+ * @preserve Markup Markdown Media
+ * Bridge between the Wordpress Media Library and EasyMDE
+ * @version 1.0.21
+ * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
+ */
+
 (function( $ ) {
 
 

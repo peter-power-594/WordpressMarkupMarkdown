@@ -1,8 +1,10 @@
-/* global wp */
+/* global wp, jQuery */
 
 /**
+ * @preserve Markup Markdown Preview
  * Everything needed to handle the preview
- * @param $ The jQuery shortcut capsuled in anynymous function
+ * @version 1.0.22
+ * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 
 (function( $ ) {

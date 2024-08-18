@@ -1,6 +1,6 @@
 /* global wp, EasyMDE */
 /**
- * @preserve Markup Markdown Spell Check wizard
+ * @preserve Markup Markdown Spell Check Wizard
  * @version 1.0.0 
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */

@@ -1,14 +1,16 @@
-/**
- * codemirror-spell-checker v1.1.20
+/* global wp */
+
+/*
+ * @preserve codemirror-spell-checker
+ * @version 1.1.22
+ * @license MIT
  * Copyright Next Step Webs, Inc.
  * @link https://github.com/NextStepWebs/codemirror-spell-checker
- * @license MIT
  * Modified by Pierre-Henri Lavigne for the Wordpress Plugin Markup Markdown
  * @link https://github.com/peter-power-594/codemirror-spell-checker
  */
 
-// Use strict mode (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode)
-"use strict";
+"use strict"; // Use strict mode (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode)
 
 // Requires
 var Typo = require("typo-js");
