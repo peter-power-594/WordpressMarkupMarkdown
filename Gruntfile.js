@@ -23,6 +23,19 @@ module.exports = function(grunt) {
 				'AA_src/markup-markdown/js/wordpress_richedit-spellchecker.js'
 			]
 		},
+		browserify: {
+			options: {
+				//ignore: [ 'typo-js' ],
+				browserifyOptions: {
+					standalone: 'CodeMirrorSpellChecker'
+				}
+			},
+			build: {
+				files: {
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js'
+				}
+			}
+		},
 		uglify: {
 			options: {
 				output: {
@@ -39,17 +52,20 @@ module.exports = function(grunt) {
 				}
 			}
 		},
-		browserify: {
-			options: {
-				//ignore: [ 'typo-js' ],
-				browserifyOptions: {
-					standalone: 'CodeMirrorSpellChecker'
-				}
-			},
-			build: {
-				files: {
-					'assets/custom-codemirror-spell-checker/dist/spell-checker.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js'
-				}
+		concat: {
+			dist: {
+				src: [
+					'assets/easy-markdown-editor/dist/easymde.min.js',
+					'assets/highlightjs/lib/highlightjs.min.js',
+					'assets/jquery-waypoints/lib/jquery.waypoints.min.js',
+					'assets/jquery-waypoints/lib/shortcuts/sticky.min.js',
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js',
+					'assets/markup-markdown/js/wordpress_richedit-spellchecker.min.js',
+					'assets/markup-markdown/js/wordpress_richedit-preview.min.js',
+					'assets/markup-markdown/js/wordpress_richedit-media.min.js',
+					'assets/markup-markdown/js/wordpress_richedit-easymde.min.js'
+				],
+				dest: 'assets/markup-markdown/js/builder.min.js'
 			}
 		},
 		watch: {
@@ -63,7 +79,7 @@ module.exports = function(grunt) {
 				files: [
 					'AA_src/**/*.js'
 				],
-				tasks: [ 'jshint', 'browserify', 'uglify' ]
+				tasks: [ 'jshint', 'browserify', 'uglify', 'concat' ]
 			}
 		},
 		concurrent: {

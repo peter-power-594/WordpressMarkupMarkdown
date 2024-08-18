@@ -1,6 +1,6 @@
 /* global wp */
 
-/*
+/**
  * @preserve codemirror-spell-checker
  * @version 1.1.22
  * @license MIT
