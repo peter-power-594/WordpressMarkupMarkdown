@@ -67,6 +67,7 @@ CodeMirrorDictionariesLoader.prototype.geti18nSettings = function( languages ) {
 		return false;
 	} else if ( languages.aff && languages.dic ) {
 		// Single object arg like this: { aff: '/path/to/file.aff', dic: '/path/to/file.dic' }
+		// Keep it in case just for backward compatibility
 		_self.urls.aff.push( languages.aff );
 		_self.urls.dic.push( languages.dic );
 		_self.urls.etr.push( languages.etr || '' );
@@ -96,8 +97,7 @@ CodeMirrorDictionariesLoader.prototype.geti18nSettings = function( languages ) {
 		}
 		return true;
 	}
-
-}
+};
 
 
 CodeMirrorDictionariesLoader.prototype.loadData = function() {
@@ -154,7 +154,7 @@ CodeMirrorDictionariesLoader.prototype.loadData = function() {
 			}, 50);
 		}
 	}
-}
+};
 
 
 CodeMirrorDictionariesLoader.prototype.requestCallBack = function() {
@@ -187,7 +187,7 @@ CodeMirrorDictionariesLoader.prototype.retrieveData = function( groupName ) {
 		};
 		_self.myXHR.send( null );
 	}
-}
+};
 
 
 
@@ -240,6 +240,10 @@ function CodeMirrorSpellChecker( options ) {
 				while( ( ch = stream.peek() ) != null && ! rx_word.includes( ch ) ) {
 					word += ch;
 					stream.next();
+				}
+
+				if ( /^\p{Extended_Pictographic}$/u.test( word ) ) {
+					return null;
 				}
 
 				// HTML <span lang="fr">Mon texte</span> will be parsed in *CodeMirror5* 

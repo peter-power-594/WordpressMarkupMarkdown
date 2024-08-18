@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 		},
 		jshint: {
 			all: [
-				'AA_src/markup-markdown/js/spell-checker.js',
+				'AA_src/custom-codemirror-spell-chekcher/js/spell-checker.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-media.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-preview.js',
