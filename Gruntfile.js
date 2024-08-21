@@ -32,8 +32,26 @@ module.exports = function(grunt) {
 			},
 			build: {
 				files: {
-					'assets/custom-codemirror-spell-checker/dist/spell-checker.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js'
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.debug.js': 'AA_src/custom-codemirror-spell-checker/js/spell-checker.js'
 				}
+			}
+		},
+		copy: {
+			builder_easymde: {
+				src: 'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
+				dest: 'assets/markup-markdown/js/wordpress_richedit-easymde.debug.js'
+			},
+			builder_media: {
+				src: 'AA_src/markup-markdown/js/wordpress_richedit-media.js',
+				dest: 'assets/markup-markdown/js/wordpress_richedit-media.debug.js',
+			},
+			builder_preview: {
+				src: 'AA_src/markup-markdown/js/wordpress_richedit-preview.js',
+				dest: 'assets/markup-markdown/js/wordpress_richedit-preview.debug.js'
+			},
+			builder_spellchecker: {
+				src: 'AA_src/markup-markdown/js/wordpress_richedit-spellchecker.js',
+				dest: 'assets/markup-markdown/js/wordpress_richedit-spellchecker.debug.js'
 			}
 		},
 		uglify: {
@@ -44,11 +62,11 @@ module.exports = function(grunt) {
 			},
 			build: {
 				files: {
-					'assets/markup-markdown/js/wordpress_richedit-easymde.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
-					'assets/markup-markdown/js/wordpress_richedit-media.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-media.js',
-					'assets/markup-markdown/js/wordpress_richedit-preview.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-preview.js',
-					'assets/markup-markdown/js/wordpress_richedit-spellchecker.min.js': 'AA_src/markup-markdown/js/wordpress_richedit-spellchecker.js',
-					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js': 'assets/custom-codemirror-spell-checker/dist/spell-checker.js'
+					'assets/markup-markdown/js/wordpress_richedit-easymde.min.js': 'assets/markup-markdown/js/wordpress_richedit-easymde.debug.js',
+					'assets/markup-markdown/js/wordpress_richedit-media.min.js': 'assets/markup-markdown/js/wordpress_richedit-media.debug.js',
+					'assets/markup-markdown/js/wordpress_richedit-preview.min.js': 'assets/markup-markdown/js/wordpress_richedit-preview.debug.js',
+					'assets/markup-markdown/js/wordpress_richedit-spellchecker.min.js': 'assets/markup-markdown/js/wordpress_richedit-spellchecker.debug.js',
+					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js': 'assets/custom-codemirror-spell-checker/dist/spell-checker.debug.js'
 				}
 			}
 		},
@@ -79,7 +97,7 @@ module.exports = function(grunt) {
 				files: [
 					'AA_src/**/*.js'
 				],
-				tasks: [ 'jshint', 'browserify', 'uglify', 'concat' ]
+				tasks: [ 'jshint', 'browserify', 'copy', 'uglify', 'concat' ]
 			}
 		},
 		concurrent: {
@@ -98,6 +116,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-concat' );
+	grunt.loadNpmTasks( 'grunt-contrib-copy' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 
 	grunt.registerTask( 'default', [ 'concurrent:target' ] );
