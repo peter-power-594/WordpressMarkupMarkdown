@@ -196,7 +196,7 @@ class Post {
 				return 'draft';
 			endif;
 		elseif ( $key === 'post_date_gmt' ) :
-			return gmdate( 'Y-m-d', strtotime( $val ) ) . ' 12:00:00';
+			return gmdate( 'Y-m-d', strtotime( $val ) );
 		elseif ( $key === 'post_categories' || $key === 'post_tags' ) :
 			return is_array( $val ) ? $val : array( $val ); 
 		else:
@@ -351,7 +351,7 @@ class Post {
 		$mmd_data .= "\nlayout: post";
 		$mmd_data .= "\ntitle: " . $this->post_title;
 		$mmd_data .= "\ndescription: \"" . $this->post_excerpt . "\"";
-		$mmd_data .= "\ndate: " . preg_replace( '#\s\d{2}:\d{2}:\d{2}#', '', $this->post_date_gmt );
+		$mmd_data .= "\ndate: " . $this->post_date_gmt; # preg_replace( '#\s\d{2}:\d{2}:\d{2}#', '', $this->post_date_gmt );
 		if ( $this->post_status === 'draft' ) :
 			$mmd_data .= "\npublished: false";
 		endif;

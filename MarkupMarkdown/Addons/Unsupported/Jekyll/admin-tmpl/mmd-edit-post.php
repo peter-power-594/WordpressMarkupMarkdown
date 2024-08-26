@@ -178,8 +178,17 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 								</div>
 
 								<div class="misc-pub-section curtime misc-pub-curtime">
-									<?php $my_date_format = get_option( 'date_format' ); $my_post_date = strtotime( $post->post_date ); ?>
-									<span id="timestamp"><?php printf( esc_html__( 'Published on: %s' ), '<b>' . ( isset( $post->post_date ) ? date_i18n( $my_date_format, $my_post_date ) : '' ) . '</b>' ); ?></span>
+								<?php
+									$my_date_format = _x( 'M j, Y', 'publish box date format' ); # get_option( 'date_format' );
+									$my_time_format = _x( 'H:i', 'publish box time format' ); # get_option( 'time_format' );
+									$my_post_date = isset( $post->post_date ) ? strtotime( $post->post_date ) : current_time( 'mysql' );
+									$my_cal_date = sprintf(
+										__( '%1$s at %2$s' ),
+										date_i18n( $my_date_format, $my_post_date ),
+										date_i18n( $my_time_format, $my_post_date )
+									);
+								?>
+									<span id="timestamp"><?php printf( esc_html__( 'Published on: %s' ), '<b>' . $my_cal_date . '</b>' ); ?></span>
 									<a href="#edit_timestamp" class="edit-timestamp hide-if-no-js" role="button">
 										<span aria-hidden="true"><?php esc_html_e( 'Edit' ); ?></span>
 										<span class="screen-reader-text"><?php esc_html_e( 'Edit post date' ); ?></span>
@@ -189,53 +198,60 @@ $title_placeholder = apply_filters( 'enter_title_here', __( 'Add title' ), $post
 										<div class="timestamp-wrap">
 											<label>
 												<span class="screen-reader-text"><?php esc_html_e( 'Day' ); ?></span>
-												<input type="text" id="jj" name="jj" value="<?php echo gmdate( 'd', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
+												<input type="text" id="jj" name="jj" value="<?php echo date_i18n( 'd', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
 											</label>
 											<label>
 												<span class="screen-reader-text"><?php esc_html_e( 'Month' ); ?></span>
-												<?php $my_post_month = gmdate( 'm', $my_post_date ); $selected = ' selected="selected"'; ?>
+												<?php
+													$my_post_month = date_i18n( 'm', $my_post_date );
+													$selected = ' selected="selected"';
+													$cal_months = array();
+													global $wp_locale;
+													for ( $m = 1; $m < 13; $m++ ) :
+														$cal_months[ $m - 1 ] = $wp_locale->get_month_abbrev( $wp_locale->get_month( $m ) );
+													endfor;
+												?>
 												<select class="form-required" id="mm" name="mm">
-													<option value="01" <?php if ( $my_post_month === '01' ) : echo $selected; endif; ?>>01</option>
-													<option value="02" <?php if ( $my_post_month === '02' ) : echo $selected; endif; ?>>02</option>
-													<option value="03" <?php if ( $my_post_month === '03' ) : echo $selected; endif; ?>>03</option>
-													<option value="04" <?php if ( $my_post_month === '04' ) : echo $selected; endif; ?>>04</option>
-													<option value="05" <?php if ( $my_post_month === '05' ) : echo $selected; endif; ?>>05</option>
-													<option value="06" <?php if ( $my_post_month === '06' ) : echo $selected; endif; ?>>06</option>
-													<option value="07" <?php if ( $my_post_month === '07' ) : echo $selected; endif; ?>>07</option>
-													<option value="08" <?php if ( $my_post_month === '08' ) : echo $selected; endif; ?>>08</option>
-													<option value="09" <?php if ( $my_post_month === '09' ) : echo $selected; endif; ?>>09</option>
-													<option value="10" <?php if ( $my_post_month === '10' ) : echo $selected; endif; ?>>10</option>
-													<option value="11" <?php if ( $my_post_month === '11' ) : echo $selected; endif; ?>>11</option>
-													<option value="12" <?php if ( $my_post_month === '12' ) : echo $selected; endif; ?>>12</option>
+													<option value="01" data-text="<?php echo $cal_months[ 0 ]; ?>" <?php if ( $my_post_month === '01' ) : echo $selected; endif; ?>>01-<?php echo $cal_months[ 0 ]; ?></option>
+													<option value="02" data-text="<?php echo $cal_months[ 1 ]; ?>" <?php if ( $my_post_month === '02' ) : echo $selected; endif; ?>>02-<?php echo $cal_months[ 1 ]; ?></option>
+													<option value="03" data-text="<?php echo $cal_months[ 2 ]; ?>" <?php if ( $my_post_month === '03' ) : echo $selected; endif; ?>>03-<?php echo $cal_months[ 2 ]; ?></option>
+													<option value="04" data-text="<?php echo $cal_months[ 3 ]; ?>" <?php if ( $my_post_month === '04' ) : echo $selected; endif; ?>>04-<?php echo $cal_months[ 3 ]; ?></option>
+													<option value="05" data-text="<?php echo $cal_months[ 4 ]; ?>" <?php if ( $my_post_month === '05' ) : echo $selected; endif; ?>>05-<?php echo $cal_months[ 4 ]; ?></option>
+													<option value="06" data-text="<?php echo $cal_months[ 5 ]; ?>" <?php if ( $my_post_month === '06' ) : echo $selected; endif; ?>>06-<?php echo $cal_months[ 5 ]; ?></option>
+													<option value="07" data-text="<?php echo $cal_months[ 6 ]; ?>" <?php if ( $my_post_month === '07' ) : echo $selected; endif; ?>>07-<?php echo $cal_months[ 6 ]; ?></option>
+													<option value="08" data-text="<?php echo $cal_months[ 7 ]; ?>" <?php if ( $my_post_month === '08' ) : echo $selected; endif; ?>>08-<?php echo $cal_months[ 7 ]; ?></option>
+													<option value="09" data-text="<?php echo $cal_months[ 8 ]; ?>" <?php if ( $my_post_month === '09' ) : echo $selected; endif; ?>>09-<?php echo $cal_months[ 8 ]; ?></option>
+													<option value="10" data-text="<?php echo $cal_months[ 9 ]; ?>" <?php if ( $my_post_month === '10' ) : echo $selected; endif; ?>>10-<?php echo $cal_months[ 9 ]; ?></option>
+													<option value="11" data-text="<?php echo $cal_months[ 10 ]; ?>" <?php if ( $my_post_month === '11' ) : echo $selected; endif; ?>>11-<?php echo $cal_months[ 10 ]; ?></option>
+													<option value="12" data-text="<?php echo $cal_months[ 11 ]; ?>" <?php if ( $my_post_month === '12' ) : echo $selected; endif; ?>>12-<?php echo $cal_months[ 11 ]; ?></option>
 												</select>
 											</label>
 											<label>
 												<span class="screen-reader-text"><?php esc_html_e( 'Year' ); ?></span>
-												<input type="text" id="aa" name="aa" value="1999" size="4" maxlength="4" autocomplete="off" class="form-required">
+												<input type="text" id="aa" name="aa" value="<?php echo date_i18n( 'Y', $my_post_date ); ?>" size="4" maxlength="4" autocomplete="off" class="form-required">
 											</label>
-											<div class="screen-reader-text">
-													<?php esc_html_e( 'at' ); ?>
-												<label>
-													<span class="screen-reader-text"><?php esc_html_e( 'Hour' ); ?></span>
-													<input type="text" id="hh" name="hh" value="12" size="2" maxlength="2" autocomplete="off" class="form-required">
-												</label>h
-												<label>
-													<span class="screen-reader-text"><?php esc_html_e( 'Minute' ); ?></span>
-													<input type="text" id="mn" name="mn" value="00" size="2" maxlength="2" autocomplete="off" class="form-required">
-												</label>
-											</div>
+											<?php esc_html_e( 'at' ); ?>
+											<label>
+												<span class="screen-reader-text"><?php esc_html_e( 'Hour' ); ?></span>
+												<input type="text" id="hh" name="hh" value="<?php echo date_i18n( 'H', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
+											</label>
+											h
+											<label>
+												<span class="screen-reader-text"><?php esc_html_e( 'Minute' ); ?></span>
+												<input type="text" id="mn" name="mn" value="<?php echo date_i18n( 'i', $my_post_date ); ?>" size="2" maxlength="2" autocomplete="off" class="form-required">
+											</label>
 										</div>
-										<input type="hidden" id="ss" name="ss" value="50">
-										<input type="hidden" id="hidden_mm" name="hidden_mm" value="<?php echo gmdate( 's' ); ?>">
-										<input type="hidden" id="cur_mm" name="cur_mm" value="06">
-										<input type="hidden" id="hidden_jj" name="hidden_jj" value="09">
-										<input type="hidden" id="cur_jj" name="cur_jj" value="18">
+										<input type="hidden" id="ss" name="ss" value="<?php echo date_i18n( 's' ); ?>">
+										<input type="hidden" id="hidden_mm" name="hidden_mm" value="<?php echo date_i18n( 'm', $my_post_date ); ?>">
+										<input type="hidden" id="cur_mm" name="cur_mm" value="<?php echo current_time( 'm' ); ?>">
+										<input type="hidden" id="hidden_jj" name="hidden_jj" value="<?php echo date_i18n( 'd', $my_post_date ); ?>">
+										<input type="hidden" id="cur_jj" name="cur_jj" value="<?php echo current_time( 'd' ); ?>">
 										<input type="hidden" id="hidden_aa" name="hidden_aa" value="<?php echo date_i18n( 'Y', $my_post_date ); ?>">
-										<input type="hidden" id="cur_aa" name="cur_aa" value="<?php echo gmdate( 'Y' ); ?>">
-										<input type="hidden" id="hidden_hh" name="hidden_hh" value="15">
-										<input type="hidden" id="cur_hh" name="cur_hh" value="<?php echo gmdate( 'H' ); ?>">
-										<input type="hidden" id="hidden_mn" name="hidden_mn" value="20">
-										<input type="hidden" id="cur_mn" name="cur_mn" value="<?php echo gmdate( 'i' ); ?>">
+										<input type="hidden" id="cur_aa" name="cur_aa" value="<?php echo current_time( 'Y' ); ?>">
+										<input type="hidden" id="hidden_hh" name="hidden_hh" value="<?php echo date_i18n( 'H', $my_post_date ); ?>">
+										<input type="hidden" id="cur_hh" name="cur_hh" value="<?php echo current_time( 'H' ); ?>">
+										<input type="hidden" id="hidden_mn" name="hidden_mn" value="<?php echo date_i18n( 'i', $my_post_date ); ?>">
+										<input type="hidden" id="cur_mn" name="cur_mn" value="<?php echo current_time( 'i' ); ?>">
 										<p>
 											<a href="#edit_timestamp" class="save-timestamp hide-if-no-js button"><?php esc_html_e( 'OK' ); ?></a>
 											<a href="#edit_timestamp" class="cancel-timestamp hide-if-no-js button-cancel"><?php esc_html_e( 'Cancel' ); ?></a>
