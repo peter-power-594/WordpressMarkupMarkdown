@@ -385,14 +385,20 @@ class Post {
 			'post_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'post_content' => filter_input( INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'original_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS ),
-			'post_tags' => filter_input( INPUT_POST, 'post_tags', FILTER_SANITIZE_SPECIAL_CHARS )
+			'post_tags' => filter_input( INPUT_POST, 'post_tags', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_date_year' => filter_input( INPUT_POST, 'hidden_aa', FILTER_VALIDATE_INT ),
+			'post_date_month' => filter_input( INPUT_POST, 'hidden_mm', FILTER_VALIDATE_INT ),
+			'post_date_day' => filter_input( INPUT_POST, 'hidden_jj', FILTER_VALIDATE_INT ),
+			'post_date_hours' => filter_input( INPUT_POST, 'hidden_hh', FILTER_VALIDATE_INT ),
+			'post_date_minutes' => filter_input( INPUT_POST, 'hidden_mn', FILTER_VALIDATE_INT ),
+			'post_date_seconds' => filter_input( INPUT_POST, 'ss', FILTER_VALIDATE_INT )
 		);
 		$data = array_merge( $data, filter_input_array( INPUT_POST, array( 'post_category' => array( 'filter' => FILTER_SANITIZE_SPECIAL_CHARS, 'flags' => FILTER_REQUIRE_ARRAY ) ) ) );
 		$update = false;
 		# Check and update the post status
 		if ( isset( $data[ 'post_publish' ] ) && isset( $data[ 'original_publish' ] ) && $data[ 'post_publish' ] === $data[ 'original_publish' ] && $data[ 'original_publish' ] === __( 'Publish' ) ) :
-			$update = true;
 			$this->post_status = 'publish';
+			$update = true;
 		elseif ( $this->post_status !== $data[ 'post_status' ] && in_array( $data[ 'post_status' ], array( 'publish', 'draft' ) ) ) :
 			$this->post_status = $data[ 'post_status' ];
 			$update = true;
@@ -403,6 +409,19 @@ class Post {
 		endif;
 		if ( isset( $data[ 'post_content' ] ) && $this->post_content !== $data[ 'post_content' ] ) :
 			$this->post_content = $data[ 'post_content' ];
+			$update = true;
+		endif;
+		$date = $this->poste_date;
+		if ( isset( $data[ 'post_date_year' ] ) && isset( $data[ 'post_date_month' ] ) && isset( $data[ 'post_date_day' ] && isset( $data[ 'post_date_hours' ] && isset( $data[ 'post_date_minutes' ] ) && isset( $data[ 'post_date_seconds' ] ) ) :
+			$date = $data[ 'post_date_year' ] . '-' . ( $data[ 'post_date_month' ] < 10 ? '0' . $data[ 'post_date_month' ] : '' );
+			$date .= '-' . ( $data[ 'post_date_day' ] < 10 ? '0' . $data[ 'post_date_day' ] : '' );
+			$date .= ' ' . ( $data[ 'post_date_hours' ] < 10 ? '0' . $data[ 'post_date_hours' ] : '' ) . ':';
+			$date .= ' ' . ( $data[ 'post_date_minutes' ] < 10 ? '0' . $data[ 'post_date_minutes' ] : '' ) . ':';
+			$date .= ' ' . ( $data[ 'post_date_seconds' ] < 10 ? '0' . $data[ 'post_date_seconds' ] : '' );
+		endif;
+		if ( $date !== $this->post_date ) :
+			$this->post_date = $date;
+			$this->post_date_gmt = gmdate( 'Y-m-d H:i:s', strtotime( $date ) );
 			$update = true;
 		endif;
 		if ( isset( $data[ 'post_category' ] ) ) :
