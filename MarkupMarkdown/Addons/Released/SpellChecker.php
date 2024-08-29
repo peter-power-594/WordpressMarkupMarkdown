@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\Unsupported;
+namespace MarkupMarkdown\Addons\Released;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -264,8 +264,9 @@ class SpellChecker {
 
 	/**
 	 * Move spellchecker dictionnaries to new file names
-	 * Prior to version 3.2 urlencode was used. To use blueprint or other virtual machine,
-	 * switched to md5 to remove any other character than 0-9 a-z
+	 * Prior to version 3.2 urlencode was used.
+	 * In order to use blueprint or other virtual machine,
+	 * I switched to md5 to remove any other character than 0-9 a-z
 	 *
 	 * @since 3.2.1
 	 * @access public
@@ -383,7 +384,9 @@ class SpellChecker {
 
 
 	/**
-	 * Grab and save locally extra data for the spell checker to exclude word
+	 * Grab and save locally extra data for the spell checker
+	 * Mostly to exclude words from the spellchecker when rules from aff can't be handled properly like some conjunctions.
+	 * And lately give power to the users to add their own words like brand names or custom language like linuxish words ^^ 
 	 * 
 	 * @access private
 	 * @since 3.5.1

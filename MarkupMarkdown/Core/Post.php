@@ -379,6 +379,7 @@ class Post {
 
 
 	public function update() {
+		var_dump( $this );
 		$data = array(
 			'post_status' => filter_input( INPUT_POST, 'post_status', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'post_title' => filter_input( INPUT_POST, 'post_title', FILTER_SANITIZE_SPECIAL_CHARS ),
@@ -395,7 +396,7 @@ class Post {
 		);
 		$data = array_merge( $data, filter_input_array( INPUT_POST, array( 'post_category' => array( 'filter' => FILTER_SANITIZE_SPECIAL_CHARS, 'flags' => FILTER_REQUIRE_ARRAY ) ) ) );
 		$update = false;
-		# Check and update the post status
+		# Check for modifications within the post status
 		if ( isset( $data[ 'post_publish' ] ) && isset( $data[ 'original_publish' ] ) && $data[ 'post_publish' ] === $data[ 'original_publish' ] && $data[ 'original_publish' ] === __( 'Publish' ) ) :
 			$this->post_status = 'publish';
 			$update = true;
@@ -403,27 +404,31 @@ class Post {
 			$this->post_status = $data[ 'post_status' ];
 			$update = true;
 		endif;
+		# Check for modifications within the post title
 		if ( isset( $data[ 'post_title' ] ) && $this->post_title !== $data[ 'post_title' ] ) :
 			$this->post_title = $data[ 'post_title' ];
 			$update = true;
 		endif;
+		# Check for modifications within the post content
 		if ( isset( $data[ 'post_content' ] ) && $this->post_content !== $data[ 'post_content' ] ) :
 			$this->post_content = $data[ 'post_content' ];
 			$update = true;
 		endif;
+		# Check if the date was modified 
 		$date = $this->poste_date;
-		if ( isset( $data[ 'post_date_year' ] ) && isset( $data[ 'post_date_month' ] ) && isset( $data[ 'post_date_day' ] && isset( $data[ 'post_date_hours' ] && isset( $data[ 'post_date_minutes' ] ) && isset( $data[ 'post_date_seconds' ] ) ) :
+		if ( isset( $data[ 'post_date_year' ] ) && isset( $data[ 'post_date_month' ] ) && isset( $data[ 'post_date_day' ] ) && isset( $data[ 'post_date_hours' ] ) && isset( $data[ 'post_date_minutes' ] ) && isset( $data[ 'post_date_seconds' ] ) ) :
 			$date = $data[ 'post_date_year' ] . '-' . ( $data[ 'post_date_month' ] < 10 ? '0' . $data[ 'post_date_month' ] : '' );
 			$date .= '-' . ( $data[ 'post_date_day' ] < 10 ? '0' . $data[ 'post_date_day' ] : '' );
 			$date .= ' ' . ( $data[ 'post_date_hours' ] < 10 ? '0' . $data[ 'post_date_hours' ] : '' ) . ':';
 			$date .= ' ' . ( $data[ 'post_date_minutes' ] < 10 ? '0' . $data[ 'post_date_minutes' ] : '' ) . ':';
 			$date .= ' ' . ( $data[ 'post_date_seconds' ] < 10 ? '0' . $data[ 'post_date_seconds' ] : '' );
 		endif;
-		if ( $date !== $this->post_date ) :
+		if ( preg_match( '#\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}#u', $date ) && $date !== $this->post_date ) :
 			$this->post_date = $date;
 			$this->post_date_gmt = gmdate( 'Y-m-d H:i:s', strtotime( $date ) );
 			$update = true;
 		endif;
+		# Check for new categories attached to the post
 		if ( isset( $data[ 'post_category' ] ) ) :
 			$categories = [];
 			foreach( $data[ 'post_category' ] as $idx => $category ) :
@@ -438,6 +443,7 @@ class Post {
 				$update = true;
 			endif;
 		endif;
+		# Check for new tags attached to the post
 		if ( isset( $data[ 'post_tags' ] ) ) :
 			$tags = explode( ', ', $data[ 'post_tags' ] );
 			foreach( $tags as $idx => $tag ) :
