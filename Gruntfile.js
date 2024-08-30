@@ -10,7 +10,8 @@ module.exports = function(grunt) {
 			dist: {
 				files: {
 					'assets/easy-markdown-editor/dist/easymde.min.css': 'AA_src/easy-markdown-editor/css/easymde.scss',
-					'assets/markup-markdown/css/wordpress_richedit-easymde.min.css': 'AA_src/markup-markdown/css/wordpress_richedit-easymde.scss'
+					'assets/markup-markdown/css/wordpress_richedit-easymde.min.css': 'AA_src/markup-markdown/css/wordpress_richedit-easymde.scss',
+					'MarkupMarkdown/Addons/Unsupported/AdvancedCustomField/field.min.css': 'AA_src/advanced-custom-field/css/field.scss'
 				}
 			}
 		},

@@ -28,6 +28,7 @@ function CodeMirrorDictionariesLoader( languages ) {
 	if ( spellCheckerData.completed >= 0 ) {
 		return false;
 	}
+	spellCheckerData.completed = 0;
 
 	//  AFF/DIC data
 	this.data = {
@@ -48,8 +49,6 @@ function CodeMirrorDictionariesLoader( languages ) {
 		// No need to go further
 		return false;
 	}
-	
-	spellCheckerData.completed = 0;
 	
 	// From here load the dictionaries
 	this.myXHR = null;
@@ -148,7 +147,7 @@ CodeMirrorDictionariesLoader.prototype.loadData = function() {
 			_self.loading++;
 			_self.num_loaded = 0;
 			setTimeout(function() {
-				_self.retriveData( 'etr' );
+				_self.retrieveData( 'etr' );
 			}, 50);
 		} else {
 			spellCheckerData.completed = 1;
