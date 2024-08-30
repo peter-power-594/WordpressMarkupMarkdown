@@ -82,6 +82,11 @@
 		if ( ! $textarea.attr( 'id' ) && $textarea.attr( 'name' ) ) {
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
+		$textarea.attr({
+			'data-gramm': 'false',
+			'data-gramm_editor': 'false',
+			'data-enable-grammarly': 'false'
+		});
 		var _self = this,
 			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0,
 			isSecondary = 0;
