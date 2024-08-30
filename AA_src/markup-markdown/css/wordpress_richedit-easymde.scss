@@ -500,7 +500,7 @@ html[dir=rtl] .wp-admin.folded .EasyMDEContainer .CodeMirror-sided + .editor-pre
 	}
 	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-sided,
 	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
-		width: calc(50% - 18px) !important;
+		width: 50% !important;
 	}
 }
 
