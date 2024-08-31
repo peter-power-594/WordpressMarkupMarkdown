@@ -19,6 +19,15 @@ class Support {
 
 
 	/**
+	 * @property Boolean $mmd_parser To know if the parser was loaded - or not
+	 *
+	 * @since 3.6.4
+	 * @access private
+	 */
+	private $mmd_parser = 0;
+
+
+	/**
 	 * @property Array $allowed_hooks
 	 * The list of default hooks where the markdown editor will be used in the backend
 	 * Can be overriden by developers with the *mmd_backend_enabled* filter
@@ -47,6 +56,10 @@ class Support {
 			add_filter( 'mmd_frontend_enabled', array( $this, 'current_template_allowed' ) );
 			# Check first if the request is related to the REST api
 			add_action( 'rest_api_init', array( $this, 'whitelist_wp_api' ) );
+			# With recent block editors / json theme :
+			# - **get_header** hook is not fired
+			# - **wp_head** hook is fired too late to trigger content filters
+			$this->proxy_filters(); 
 			# Then check if the request is related to a front page / post.
 			# We need the latest hook wp_head to keep compatibility with plugin like ACF
 			# Priority should be greater than 10 so we go with 11
@@ -300,8 +313,13 @@ class Support {
 	 * @return String $content The modified HTML content
 	 */
 	private function content_data( $field_content, $cache_allowed ) {
+		if ( ! $this->mmd_syntax > 0 ) :
+			# @since 3.6.4
+			return $field_content;
+		endif;
 		if ( wp_is_rest_endpoint() || ( ( is_home() || is_front_page() || is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
 			if ( post_type_supports( get_post_type(), 'markup-markdown' ) || post_type_supports( get_post_type(), 'markup_markdown' ) ) :
+				$this->load_parser();
 				return apply_filters( 'post_markdown2html', $field_content, $cache_allowed );
 			else :
 				return $field_content;
@@ -381,6 +399,44 @@ class Support {
 
 
 	/**
+	 * Prepare in advanced content related filters
+	 *
+	 * @since 3.6.4
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function proxy_filters() {
+		add_filter( 'the_content', array( $this, 'post_content_mmd2html' ), 9, 1 );
+		add_filter( 'the_excerpt', array( $this, 'post_excerpt_mmd2html' ), 9, 1 );
+		add_filter( 'category_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
+		add_filter( 'term_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
+	}
+
+
+	/**
+	 * Prepare in advanced content related filters
+	 *
+	 * @since 3.6.4
+	 * @access private
+	 *
+	 * @return Boolean TRUE if the parser has just been loaded or false if the parser is already loaded
+	 */
+	private function load_parser() {
+		if ( $this->mmd_parser > 0 ) :
+			return false;
+		endif;
+		$this->mmd_parser = 1;
+		if ( ! defined( 'MMD_SUPPORT_ENABLED' ) ) :
+			define( 'MMD_SUPPORT_ENABLED', 1 );
+		endif;
+		require_once mmd()->plugin_dir . 'MarkupMarkdown/Core/Parser.php';
+		new \MarkupMarkdown\Core\Parser();
+		return true;
+	}
+
+
+	/**
 	 * Enable or disable the filters regards to the WP_MMD_RAW_DATA constant
 	 *
 	 * @since 1.7.4
@@ -395,13 +451,10 @@ class Support {
 			remove_all_filters( 'the_content' );
 			remove_all_filters( 'the_excerpt' );
 		else :
-			define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 ? true : false );
-			require_once mmd()->plugin_dir . 'MarkupMarkdown/Core/Parser.php';
-			new \MarkupMarkdown\Core\Parser();
-			add_filter( 'the_content', array( $this, 'post_content_mmd2html' ), 9, 1 );
-			add_filter( 'the_excerpt', array( $this, 'post_excerpt_mmd2html' ), 9, 1 );
-			add_filter( 'category_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
-			add_filter( 'term_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
+			if ( ! defined( 'MMD_SUPPORT_ENABLED' ) ) :
+				define( 'MMD_SUPPORT_ENABLED', $this->mmd_syntax > 0 ? true : false );
+			endif;
+			$this->load_parser();
 		endif;
 	}
 
