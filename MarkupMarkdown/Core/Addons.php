@@ -134,8 +134,8 @@ class Addons {
 
 
 	private function load_spellchecker() {
-		require_once $this->addon_dir  . 'Released/SpellChecker.php';
-		$tmp_addon = new \MarkupMarkdown\Addons\Released\SpellChecker();
+		require_once $this->addon_dir  . 'Unsupported/SpellChecker.php';
+		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\SpellChecker();
 		$this->prop[ 'setup' ][] = $tmp_addon->slug;
 		$this->prop[ 'inst' ][ $tmp_addon->slug ] = $tmp_addon;
 		unset( $tmp_addon );

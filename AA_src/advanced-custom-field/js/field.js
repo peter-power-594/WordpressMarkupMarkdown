@@ -8,12 +8,16 @@
 		var $field = $( field ),
 			$textarea = $field.find( 'textarea:eq(0)' );
 		// Warning: set the binder BEFORE calling the MarkupMarkdown class
+		// The _CodeMirrorSpellCheckerReady_ event can be triggered multiple times
 		document.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
 			var $acfInputField = $textarea.closest( '.acf-input' );
 			if ( $acfInputField.length && ! $acfInputField.hasClass( 'ready' ) ) {
-				new MarkupMarkdown( $textarea );
 				$acfInputField.addClass( 'ready' );
 			}
+		});
+		// The _CodeMirrorDictionariesReady_ is only triggered one time
+		document.addEventListener( 'CodeMirrorDictionariesReady', function() {
+			new MarkupMarkdown( $textarea );
 		});
 	}
 

@@ -1,8 +1,9 @@
 /* global wp, mmd_wpr_vars, EasyMDE */
 
-/*
- * @preserve Markup Markdown EasyMDE
- * Core classes to handle the markdown editor inside the Wordpress admin edit screen
+/**
+ * @preserve The Markup Markdown's EasyMDE Primary Module
+ * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
+ * @author Pierre-Henri Lavigne <lavigne.pierrehenri@protonmail.com>
  * @version 1.4.17
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
@@ -76,13 +77,13 @@
 
 	MarkupMarkdownWidget.prototype.core = function( textarea ) {
 		var $textarea = $( textarea || '#none' );
-		if ( ! $textarea.length ) {
+		if ( ! $textarea.length || $textarea.hasClass( 'mmd-running' ) ) {
 			return false;
 		}
 		if ( ! $textarea.attr( 'id' ) && $textarea.attr( 'name' ) ) {
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
-		$textarea.attr({
+		$textarea.addClass( 'mmd-running' ).attr({
 			'data-gramm': 'false',
 			'data-gramm_editor': 'false',
 			'data-enable-grammarly': 'false'

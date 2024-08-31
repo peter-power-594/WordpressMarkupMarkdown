@@ -1,6 +1,8 @@
 /* global wp, EasyMDE */
 /**
- * @preserve Markup Markdown Spell Check Wizard
+ * @preserve The Markup Markdown's Spell Check Wizard Module
+ * @desc Word suggestions from hungspell dictionaries
+ * @author Pierre-Henri Lavigne <lavigne.pierrehenri@protonmail.com>
  * @version 1.0.0 
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
@@ -8,13 +10,16 @@
 (function( _win, _doc ) {
 
 
+	// As the suggestion box panel is shared between multiple Code Mirror instances,
+	// we need to indentify the active Code Mirror instance
+	var activeCmInstance, suggestionBox;
+
 	function MmdSpellWizard( codeMirrorInstance ) {
 		if ( ! codeMirrorInstance ) {
 			return false;
 		}
 		this.cm = codeMirrorInstance;
 		// To handle the dialog box itself
-		this.el = null;
 		this.display = false;
 		this.active = false;
 		// To handle the codemirror document
@@ -35,11 +40,11 @@
 	 */
 	MmdSpellWizard.prototype.hideSuggestPanel = function( myEvent ) {
 		var _self = this;
-		if ( ! _self.el ) {
+		if ( ! suggestionBox ) {
 			return false;
 		}
-		_self.el.style.display = 'none';
-		_self.el.innerHTML = '';
+		suggestionBox.style.display = 'none';
+		suggestionBox.innerHTML = '';
 		return true;
 	};
 
@@ -52,12 +57,12 @@
 	 */
 	MmdSpellWizard.prototype.showSuggestPanel = function( myEvent ) {
 		var _self = this;
-		if ( ! _self.el ) {
+		if ( ! suggestionBox ) {
 			return false;
 		}
-		_self.el.style.top = ( Math.ceil( myEvent.clientY || 0 ) + 16 ) + 'px';
-		_self.el.style.left = ( Math.ceil( myEvent.clientX || 0 ) - 16 ) + 'px';
-		_self.el.style.display = 'block';
+		suggestionBox.style.top = ( Math.ceil( myEvent.clientY || 0 ) + 16 ) + 'px';
+		suggestionBox.style.left = ( Math.ceil( myEvent.clientX || 0 ) - 16 ) + 'px';
+		suggestionBox.style.display = 'block';
 		return true;
 	};
 
@@ -69,25 +74,28 @@
 	 */
 	MmdSpellWizard.prototype.buildSuggestPanel = function() {
 		var _self = this;
-		if ( _self.el && _self.el.id ) {
+		if ( suggestionBox && suggestionBox.id ) {
 			// Should only be called once
 			return false;
 		}
-		_self.el = _doc.createElement( 'div' );
-		_self.el.id = 'mmd-suggestions';
-		_self.el.className = 'mmd-spellcheck-suggestions';
-		_doc.body.appendChild( _self.el );
-		_doc.getElementById( 'mmd-suggestions' ).addEventListener( 'click', function( myEvent ) {
-			event.preventDefault();
+		suggestionBox = _doc.createElement( 'div' );
+		suggestionBox.id = 'mmd-suggestions';
+		suggestionBox.className = 'mmd-spellcheck-suggestions';
+		_doc.body.appendChild( suggestionBox );
+		_doc.getElementById( 'mmd-suggestions' ).addEventListener( 'click', function( myClickEvent ) {
+			myClickEvent.preventDefault();
+			if ( ! activeCmInstance ) {
+				return false; // Just in case
+			}
 			// As we replaced an existing word, we need to provide full arguments for CodeMirror to handle the history
-			_self.cm.replaceRange(
-				myEvent.target.firstChild.nodeValue, // String replacement text
+			activeCmInstance.replaceRange(
+				myClickEvent.target.firstChild.nodeValue, // String replacement text
 				_self.from,  // Object { line, ch }
 				_self.to,    // Object { line, ch }
 				_self.origin // String original text
 			);
 			setTimeout(function() {
-				_self.hideSuggestPanel( myEvent );
+				_self.hideSuggestPanel( myClickEvent );
 			}, 450 );
 			return false;
 		}, false);
@@ -133,6 +141,7 @@
 		if ( ! _self.active ) {
 			return false;
 		}
+		_self.active = true;
 		// Hint from https://stackoverflow.com/questions/26576054/codemirror-get-the-current-word-under-the-cursor
 		var myCursor = myInstance.getCursor(),
 			myWord = myInstance.findWordAt( myCursor );
@@ -147,13 +156,12 @@
 			}
 			// mySuggestList.push( '<li class="last"><a href="#mmd-suggestions" title="Add ' + myText + ' to my dictionnary">' + myText + '</a></li>' );
 			mySuggestList.push( '</ol>' );
-			_self.el = _doc.getElementById( 'mmd-suggestions' );					
-			_self.el.innerHTML = mySuggestList.join( '' );
+			suggestionBox = _doc.getElementById( 'mmd-suggestions' );					
+			suggestionBox.innerHTML = mySuggestList.join( '' );
 			_self.from = myWord.anchor;
 			_self.to = myWord.head;
 			_self.origin = myText;
 		}
-		_self.active = true;
 		return true;
 	};
 
@@ -167,6 +175,7 @@
 		var _self = this;
 		// Bind the codemirror instance with the mousedown event
 		_self.cm.on( 'mousedown', function( myInstance, myEvent ) {
+			activeCmInstance = _self.cm;
 			_self.checkSelectedWord( myEvent );
 		});
 		// Refresh the suggestions list if need be

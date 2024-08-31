@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\Released;
+namespace MarkupMarkdown\Addons\Unsupported;
 
 defined( 'ABSPATH' ) || exit;
 
