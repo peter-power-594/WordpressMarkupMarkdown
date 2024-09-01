@@ -14,7 +14,6 @@ Business or commercial use? Request professional support here:
 Thank you for your understanding, and stay tune for the markdown journey!  
 It's just the beginning, and if you can feel free to do a gesture to support me:
 
-<a href="https://www.buymeacoffee.com/peterpower594" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J4LP699)
 
 Thank you very much in advance, and enjoy the rideeeeee~

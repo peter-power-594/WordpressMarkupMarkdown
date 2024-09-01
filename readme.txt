@@ -7,7 +7,7 @@ Tested up to: 6.6.1
 Requires PHP: 5.6.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html#license-text
-Donate Link: https://buymeacoffee.com/peterpower594
+Donate Link: https://ko-fi.com/peterpower594
 
 Disable Wordpress's native Gutenberg or TinyMCE editor in favor of a Markdown editor.
 
