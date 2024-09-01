@@ -14,7 +14,7 @@ Business or commercial use? Request professional support here:
 Thank you for your understanding, and stay tune for the markdown journey!  
 It's just the beginning, and if you can feel free to do a gesture to support me:
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J4LP699)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/peterpower594)
 
 Thank you very much in advance, and enjoy the rideeeeee~
 
@@ -39,9 +39,9 @@ grunt.cmd
 
 ### Testing
 
-Checkout this repository as "markup-markdown" inside your local Wordpress plugins directory (wp-content/plugins)
+Checkout this repository as "markup-markdown" inside your local Wordpress plugins directory.
 
-Then you can easily test modifications in live by running:
+Then you can easily test live modifications by running:
 
 ```shell
 grunt.cmd dev
