@@ -3,7 +3,7 @@
 /**
  * @preserve The Markup Markdown's EasyMDE Primary Module
  * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
- * @author Pierre-Henri Lavigne <lavigne.pierrehenri@protonmail.com>
+ * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
  * @version 1.4.17
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
