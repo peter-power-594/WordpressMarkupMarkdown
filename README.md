@@ -17,3 +17,32 @@ It's just the beginning, and if you can feel free to do a gesture to support me:
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J4LP699)
 
 Thank you very much in advance, and enjoy the rideeeeee~
+
+
+## Developers
+
+### Install
+
+Bundle using Grunt. You need nodejs first then install the dependencies:
+
+```shell
+npm install --save-dev
+```
+
+### Build
+
+You can easily trigger a build from the source code:
+
+```shell
+grunt.cmd
+```
+
+### Testing
+
+Checkout this repository as "markup-markdown" inside your local Wordpress plugins directory (wp-content/plugins)
+
+Then you can easily test modifications in live by running:
+
+```shell
+grunt.cmd dev
+```

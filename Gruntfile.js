@@ -122,6 +122,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-contrib-copy' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
 
-	grunt.registerTask( 'default', [ 'concurrent:target' ] );
+	grunt.registerTask( 'default', [ 'dart-sass', 'browserify', 'copy', 'uglify', 'concat' ] );
+	grunt.registerTask( 'dev', [ 'concurrent:target' ] );
 
 };
