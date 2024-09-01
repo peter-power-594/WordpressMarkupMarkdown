@@ -67,7 +67,6 @@ class Addons {
 		$this->load_media_image();
 		$this->load_acf();
 		$this->load_spellchecker();
-		$this->load_jekyll();
 	}
 
 
@@ -136,15 +135,6 @@ class Addons {
 	private function load_spellchecker() {
 		require_once $this->addon_dir  . 'Unsupported/SpellChecker.php';
 		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\SpellChecker();
-		$this->prop[ 'setup' ][] = $tmp_addon->slug;
-		$this->prop[ 'inst' ][ $tmp_addon->slug ] = $tmp_addon;
-		unset( $tmp_addon );
-	}
-
-
-	private function load_jekyll() {
-		require_once $this->addon_dir  . 'Unsupported/Jekyll.php';
-		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\Jekyll();
 		$this->prop[ 'setup' ][] = $tmp_addon->slug;
 		$this->prop[ 'inst' ][ $tmp_addon->slug ] = $tmp_addon;
 		unset( $tmp_addon );

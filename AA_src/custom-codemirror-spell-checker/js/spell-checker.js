@@ -244,6 +244,7 @@ function CodeMirrorSpellChecker( options ) {
 				}
 
 				if ( /^\p{Extended_Pictographic}$/u.test( word ) ) {
+					// Since 3.6.1 emoticons are excluded
 					return null;
 				}
 
