@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Disable the emojis
  *
- * @since 3.6.0
+ * @since 3.6.1
  *
  */
 class DisableEmojis {

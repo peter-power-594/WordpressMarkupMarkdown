@@ -3,10 +3,11 @@ Tags: Editor, Markdown
 Stable Tag: 3.6.4
 Version: 3.6.4
 Requires at least: 4.9
-Tested up to: 6.5.2
+Tested up to: 6.6.1
 Requires PHP: 5.6.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html#license-text
+Donate Link: https://ko-fi.com/peterpower594
 
 Disable Wordpress's native Gutenberg or TinyMCE editor in favor of a Markdown editor.
 
@@ -17,6 +18,8 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- v3.6: Performance improvements with spellchecker and suggestions
+- v3.5: Adding support for right-to-left alphabets like Arabic, Hebrew, or Persian
 - v3.4: Adding support for categories, tags and taxonomies description field (Woocommerce and REST API compatible)
 - v3.3: Support for multiple html attributes, compatibility with acf_form added for the frontend, basic compatibility with block styles
 - v3.2: Support to enable markdown only for custom fields
@@ -36,7 +39,7 @@ This extension rocks:
 - v1.2: Autoconvert Youtube & Vimeo links to iframes
 - v1.1: Support with lightbox and masonry for the gallery layout
 
-That's pretty all you should know. It's under active development, keep in touch and feel free to drop a line on the forum, to let a rating or even support me by buying a coffee!
+That's pretty all you should know. It's under active development, keep in touch and feel free [to drop a line on the forum](https://wordpress.org/support/plugin/markup-markdown/), [to let a rating](https://wordpress.org/support/plugin/markup-markdown/reviews/) or even support me by buying a coffee !
 
 == Frequently Asked Questions ==
 
@@ -84,6 +87,56 @@ The beta interface is based on SummerNote, a jQuery WYSIWYG Engine. _The beta in
 
 The current version is based on components that are not compatible with assistive devices like screen readers. Several available alternative plugins could cover the gap while I'm working on a new interface. Thank you for your patience and your understanding.
 
+
+== Changelog ==
+
+= 3.6.4 =
+
+Bug fix:
+- Adding basic strict mode back with Parsedown
+
+Following the markdown recommendations, #headlines text (without the space after the # sign) are not rendered as headlines anymore.
+
+Improvement:
+- Keeping current hooks but adding a few tweaks earlier in the frontend so markdown can be triggered with themes built for Gutenberg.
+
+*get_header* action won't be fired on the frontend with most of the themes using the blocks editor, *wp_head* will be too late to setup filters as content related data are prepared earlier in the rendering process.
+
+= 3.6.3 =
+
+Improvement:
+- Adding possibility to load an extra dictionary file that could be used to add your own custom words in the future
+
+= 3.6.2 =
+
+Improvement:
+- The spellchecker based on Typojs is shared between multiple code mirror instances
+(Performance boost as one unique checker is used even if you are working with several custom markdown fields)
+
+= 3.6.1 =
+
+Improvements:
+- _Disable Emojis_ added as an autoplug
+- Rules added to exclude emoticons from the spellchecker
+
+= 3.6.1 =
+
+Improvement:
+- Custom code mirror spellchecker updated
+
+One unique event *CodeMirrorDictionariesReady* will be dispatched once all the dictionaries are loaded
+*CodeMirrorSpellCheckerReady* will be fired when the spellchecker is ready to be used and attached to a code mirror instance.
+
+= 3.6.0 =
+
+Improvement:
+- Primary scripts now minified as a unique bundle file
+
+By default _builder.min.js_ is loaded.  
+If _WP_DEBUG_ is enabled, separate minified module scripts will be used.  
+If _SCRIPT_DEBUG_ or _MMD_SCRIPT_DEBUG_ is turned on, the unminified version of the module will be loaded when available
+
+
 == Changelog ==
 
 = 3.5.0 =
@@ -91,13 +144,13 @@ The current version is based on components that are not compatible with assistiv
 New feature:
 - Adding buttons and support for RTL
 
-Improvement:
+Improvements:
 - Better support with multisite
 - Hooks more friendly with plugins like CPT UI (Custom Post Type) and ACF (Advanced Custom Field)
 
 = 3.4.2 =
 
-Improvement:
+Improvements:
 - Basic internationalization strings added
 - French version released as local for now
 
