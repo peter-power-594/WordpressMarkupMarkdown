@@ -253,7 +253,7 @@ class SpellChecker {
 				. ",\n    label: \"" . $lang_label . "\""
 				. ",\n    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\""
 				. ",\n    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"";
-			if ( isset( $this->extra[ $dict ] ) ) :
+			if ( isset( $this->extra[ $dict ] ) && file_exists( $this->dict_dir . '/' . md5( $lang_filename ) . '_extra.dic' ) ) :
 				$js .= ",\n    etr: \"" . $dict_base_uri . md5( $lang_filename ) . "_extra.dic\"";
 			endif;
 			$js .= "\n  }";
