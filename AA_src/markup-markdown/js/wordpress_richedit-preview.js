@@ -1,8 +1,11 @@
-/* global wp */
+/* global wp, jQuery */
 
 /**
- * Everything needed to handle the preview
- * @param $ The jQuery shortcut capsuled in anynymous function
+ * @preserve The Markup Markdown Preview Module
+ * @desc Everything needed to handle the preview. Mostly cache and media rules handlers
+ * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
+ * @version 1.0.23
+ * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 
 (function( $ ) {

@@ -1,5 +1,12 @@
 /* global wp, mmd_wpr_vars, EasyMDE */
 
+/**
+ * @preserve The Markup Markdown's EasyMDE Primary Module
+ * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
+ * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
+ * @version 1.5.0
+ * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
+ */
 (function( $, _win, _doc ) {
 
 	var mediaFrame = {},
@@ -70,12 +77,17 @@
 
 	MarkupMarkdownWidget.prototype.core = function( textarea ) {
 		var $textarea = $( textarea || '#none' );
-		if ( ! $textarea.length ) {
+		if ( ! $textarea.length || $textarea.hasClass( 'mmd-running' ) ) {
 			return false;
 		}
 		if ( ! $textarea.attr( 'id' ) && $textarea.attr( 'name' ) ) {
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
+		$textarea.addClass( 'mmd-running' ).attr({
+			'data-gramm': 'false',
+			'data-gramm_editor': 'false',
+			'data-enable-grammarly': 'false'
+		});
 		var _self = this,
 			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0,
 			isSecondary = 0;
@@ -145,8 +157,8 @@
 			}
 			var targetLangEditor = function( editor ) {
 				var cm = _self.instance.editor.codemirror,
-				doc = cm.getDoc(),
-				sel = doc.getSelection() || false;
+					doc = cm.getDoc(),
+					sel = doc.getSelection() || false;
 				if ( sel && sel.length ) {
 					_self.instance.i18nAdded = 1;
 					return doc.replaceSelection(
@@ -264,10 +276,6 @@
 		else {
 			editorConfig.spellChecker = false;
 		}
-		_self.instance.editor = new EasyMDE( editorConfig );
-		_self.instance.editor.codemirror.on("change", function() {
-			$textarea.val( _self.instance.editor.value() );
-		});
 		if ( ! _win.wp.pluginMarkupMarkdown ) {
 			_win.wp.pluginMarkupMarkdown = {};
 		}
@@ -286,9 +294,16 @@
 			}
 			_self.widgetCounter = startCounter + 1;
 		}
-		_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+		var launchEditor = function() {
+			_self.instance.editor = new EasyMDE( editorConfig );
+			_self.instance.editor.codemirror.on("change", function() {
+				$textarea.val( _self.instance.editor.value() );
+			});
+			_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+		};
 		if ( ! spell_check || ( spell_check.disabled && spell_check.disabled === 1 ) || spell_check === 'none' ) {
-			// Event need to be triggered manually
+			launchEditor();
+			// Spellchecker disable. Event need to be triggered manually
 			document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
 			if ( isSecondary > 0 ) {
 				$textarea.closest( '.acf-input, .form-field' ).addClass( 'ready' );
@@ -297,6 +312,14 @@
 				$( '#wp-content-editor-container' ).addClass( 'ready' );
 				new MarkupMarkdownOptions();
 				$( _doc.body ).addClass( 'markupmarkdown-ready' );
+			}
+		}
+		else {
+			launchEditor();
+			_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
+			// Spellchecker is enabled. Tiny panel to display suggestions
+			if ( typeof MmdSpellWizard === 'function' ) {
+				new MmdSpellWizard( _self.instance.editor.codemirror );
 			}
 		}
 		if ( isSecondary > 0 ) {
@@ -414,15 +437,7 @@
 	};
 
 
-	$( _doc ).ready(function() {
-		$( _doc.body ).addClass( 'easymde' );
-		var primaryAreaEnabled = 1;
-		if ( wp.pluginMarkupMarkdown && typeof wp.pluginMarkupMarkdown.primaryArea !== 'undefined' ) {
-			if ( ! wp.pluginMarkupMarkdown.primaryArea || isNaN( parseInt( wp.pluginMarkupMarkdown.primaryArea, 10 ) ) ) {
-				// EasyMDE has been disabled on the primary post editor area but might be enabled with custom fields
-				primaryAreaEnabled = 0;
-			}
-		}
+	function MarkupMarkdownLauncher( primaryAreaEnabled ) {
 		var myLauncher = function( sel ) {
 			sel = sel || false;
 			if ( ! sel ) {
@@ -458,7 +473,7 @@
 				.trigger( 'click.mmd_body_sticky_toolbar' );
 		});
 		// Default is backend
-		var $editorContainer = $( '#wp-content-editor-container' ).addClass( 'markupmarkdown' );
+		var $editorContainer = $( '#wp-content-editor-container' );
 		if ( $editorContainer.length ) {
 			// Initialize EasyMDE on the main content
 			myLauncher( $editorContainer.find( '.wp-editor-area' ) );
@@ -466,7 +481,7 @@
 		}
 		// Fallback with the frontend for layer case with the ACF plugin
 		// Custom fields will be trigger from the addon, only need to check for the main content
-		$editorContainer = $( '.acf-input #acf-_post_content' ).parent().addClass( 'markupmarkdown' );
+		$editorContainer = $( '.acf-input #acf-_post_content' ).parent();
 		if ( $editorContainer.length ) {
 			// Initialize EasyMDE on the main content
 			myLauncher( '#acf-_post_content' );
@@ -474,6 +489,38 @@
 		}
 		// Term description
 		myLauncher( 'textarea[name="description"]' );
+	}
+
+	// When the DOM is ready...
+	$( _doc ).ready(function() {
+		$( _doc.body ).addClass( 'easymde' );
+		var primaryAreaEnabled = 1,
+			spellCheckerEnabled = 0;
+		if ( wp && wp.pluginMarkupMarkdown ) {
+			if ( typeof wp.pluginMarkupMarkdown.primaryArea !== 'undefined' ) {
+				if ( ! wp.pluginMarkupMarkdown.primaryArea || isNaN( parseInt( wp.pluginMarkupMarkdown.primaryArea, 10 ) ) ) {
+					// EasyMDE has been disabled on the primary post editor area but might be enabled with custom fields
+					primaryAreaEnabled = 0;
+				}
+			}
+			if ( wp.pluginMarkupMarkdown.spellChecker ) {
+				_doc.addEventListener( 'CodeMirrorDictionariesReady', function() {
+					new MarkupMarkdownLauncher( primaryAreaEnabled );
+				});
+				spellCheckerEnabled = 1;
+			}
+		}
+		if ( primaryAreaEnabled ) {
+			// Trigger the loading icon
+			$( '#wp-content-editor-container' ).addClass( 'markupmarkdown' );
+			$( '.acf-input #acf-_post_content' ).parent().addClass( 'markupmarkdown' );
+		}
+		if ( spellCheckerEnabled ) {
+			CodeMirrorSpellChecker( wp.pluginMarkupMarkdown.spellChecker );
+		}
+		else {
+			new MarkupMarkdownLauncher( primaryAreaEnabled );
+		}
 	});
 
 

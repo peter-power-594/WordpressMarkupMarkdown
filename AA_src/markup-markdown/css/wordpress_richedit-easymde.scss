@@ -412,12 +412,12 @@ html[dir=rtl] .editor-toolbar {
 .admin-bar .EasyMDEContainer .CodeMirror-fullscreen + .editor-preview-side {
 	top: 82px; /* 32 + 50 */
 }
-.editor-toolbar.fullscreen,
-.EasyMDEContainer .CodeMirror-fullscreen {
+.wp-admin .editor-toolbar.fullscreen,
+.wp-admin .EasyMDEContainer .CodeMirror-fullscreen {
 	left: 160px;
 }
-html[dir=rtl] .editor-toolbar.fullscreen,
-html[dir=rtl] .EasyMDEContainer .CodeMirror-fullscreen {
+html[dir=rtl] .wp-admin .editor-toolbar.fullscreen,
+html[dir=rtl] .wp-admin .EasyMDEContainer .CodeMirror-fullscreen {
 	left: 0;
 	right: 160px;
 }
@@ -437,53 +437,53 @@ html[dir=rtl] .editor-preview-side {
 	direction: rtl;
 }
 /* Fullscreen with folded sidebar */
-.folded .editor-toolbar.fullscreen,
-.folded .EasyMDEContainer .CodeMirror-fullscreen {
+.wp-admin.folded .editor-toolbar.fullscreen,
+.wp-admin.folded .EasyMDEContainer .CodeMirror-fullscreen {
 	left: 36px;
 }
-.folded .EasyMDEContainer .CodeMirror-sided,
-.folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+.wp-admin.folded .EasyMDEContainer .CodeMirror-sided,
+.wp-admin.folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 	width: calc(50% - 18px) !important;
 }
-html[dir=rtl] .folded .editor-toolbar.fullscreen,
-html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-fullscreen {
+html[dir=rtl] .wp-admin.folded .editor-toolbar.fullscreen,
+html[dir=rtl] .wp-admin.folded .EasyMDEContainer .CodeMirror-fullscreen {
 	left: auto;
 	right: 36px;
 }
-html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+html[dir=rtl] .wp-admin.folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 	right: auto;
 	left: 0;
 }
 @media only screen and (max-width: 960px) {
-	.auto-fold .editor-toolbar.fullscreen,
-	.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+	.wp-admin.auto-fold .editor-toolbar.fullscreen,
+	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
 		left: 36px;
 	}
-	html[dir=rtl] .auto-fold .editor-toolbar.fullscreen,
-	html[dir=rtl] .auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+	html[dir=rtl] .wp-admin.auto-fold .editor-toolbar.fullscreen,
+	html[dir=rtl] .wp-admin.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
 		left: auto;
 		right: 36px;
 	}
-	.auto-fold .EasyMDEContainer .CodeMirror-sided,
-	.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-sided,
+	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 		width: calc(50% - 18px) !important;
 	}
 }
 @media screen and (max-width: 782px) {
 	.editor-toolbar.fullscreen,
-	.folded .editor-toolbar.fullscreen,
+	.wp-admin.folded .editor-toolbar.fullscreen,
 	.EasyMDEContainer .CodeMirror-fullscreen,
-	.folded .EasyMDEContainer .CodeMirror-fullscreen,
-	.auto-fold .editor-toolbar.fullscreen,
-	.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+	.wp-admin.folded .EasyMDEContainer .CodeMirror-fullscreen,
+	.wp-admin.auto-fold .editor-toolbar.fullscreen,
+	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
 		left: 0;
 	}
 	html[dir=rtl] .editor-toolbar.fullscreen,
-	html[dir=rtl] .folded .editor-toolbar.fullscreen,
+	html[dir=rtl] .wp-admin.folded .editor-toolbar.fullscreen,
 	html[dir=rtl] .EasyMDEContainer .CodeMirror-fullscreen,
-	html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-fullscreen,
-	html[dir=rtl] .auto-fold .editor-toolbar.fullscreen,
-	html[dir=rtl] .auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
+	html[dir=rtl] .wp-admin.folded .EasyMDEContainer .CodeMirror-fullscreen,
+	html[dir=rtl] .wp-admin.auto-fold .editor-toolbar.fullscreen,
+	html[dir=rtl] .wp-admin.auto-fold .EasyMDEContainer .CodeMirror-fullscreen {
 		left: auto;
 		right: 0;
 	}
@@ -498,8 +498,50 @@ html[dir=rtl] .folded .EasyMDEContainer .CodeMirror-sided + .editor-preview-side
 	.admin-bar .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 		width: 50% !important;
 	}
-	.auto-fold .EasyMDEContainer .CodeMirror-sided
-	.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
-		width: calc(50% - 18px) !important;
+	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-sided,
+	.wp-admin.auto-fold .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+		width: 50% !important;
+	}
+}
+
+
+/* SPELL CHECKER
+ ------------------------------------------ */
+.mmd-spellcheck-suggestions {
+	position: fixed;
+	top: -100%;
+	top: -100vh;
+	left: -100%;
+	left: -100vw;
+	border: 1px solid #c3c4c7;
+	border-radius: 0;
+	background: rgba(255,255,255,0.9);
+	width: auto;
+	height: auto;
+	max-height: 200px;
+	overflow: auto;
+	z-index: 99999;
+	ol, li {
+		display: block;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+	li {
+		a {
+			display: block;
+			padding: 0 1rem;
+			font-size: 1rem;
+			font-weight: normal;
+			line-height: 1.5;
+			text-decoration: none;
+			&:hover {
+				background: rgba(225,225,225,0.9);
+			}
+		}
+		&.last {
+			border-top: 1px solid #c3c4c7;
+		}
 	}
 }

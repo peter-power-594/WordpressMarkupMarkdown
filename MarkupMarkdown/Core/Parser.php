@@ -126,6 +126,7 @@ class Parser {
 		require_once( mmd()->plugin_dir . '/MarkupMarkdown/Parsedown/Parsedown.php' );  # 1.7.4
 		require_once( mmd()->plugin_dir . '/MarkupMarkdown/Parsedown/Extra.php' ); # 0.8.1
 		$this->parser = new \MarkupMarkdown\Parsedown\Extra();
+		$this->parser->setStrictMode( true );
 		return TRUE;
 	}
 

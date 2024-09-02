@@ -155,8 +155,9 @@ class Addons {
 		if ( ! $auto ) :
 			return;
 		else :
-			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
+			require_once $this->addon_dir . 'AutoPlugs/DisableEmojis.php';
 			require_once $this->addon_dir . 'AutoPlugs/Woocommerce.php';
+			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
 		endif;
 	 }
 

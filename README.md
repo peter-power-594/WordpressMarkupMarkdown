@@ -14,7 +14,35 @@ Business or commercial use? Request professional support here:
 Thank you for your understanding, and stay tune for the markdown journey!  
 It's just the beginning, and if you can feel free to do a gesture to support me:
 
-<a href="https://www.buymeacoffee.com/peterpower594" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J4LP699)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/peterpower594)
 
 Thank you very much in advance, and enjoy the rideeeeee~
+
+
+## Developers
+
+### Install
+
+Bundle using Grunt. You need nodejs first then install the dependencies:
+
+```shell
+npm install --save-dev
+```
+
+### Build
+
+You can easily trigger a build from the source code:
+
+```shell
+grunt.cmd
+```
+
+### Testing
+
+Checkout this repository as "markup-markdown" inside your local Wordpress plugins directory.
+
+Then you can easily test live modifications by running:
+
+```shell
+grunt.cmd dev
+```

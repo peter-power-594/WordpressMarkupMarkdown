@@ -78,9 +78,9 @@ class Activation {
 		return array_merge(
 			$input,
 			array(
-				'<a href="https://www.buymeacoffee.com/peterpower594" target="_blank" rel="noopener noreferrer">♥ ' . esc_html__( 'Buy me a coffee', 'markup-markdown' ) . '</a>',
+				'<a href="https://ko-fi.com/peterpower594" target="_blank" rel="noopener noreferrer">♥ ' . esc_html__( 'Buy me a coffee', 'markup-markdown' ) . '</a>',
 				'<a href="https://wordpress.org/support/plugin/markup-markdown/" target="_blank" rel="noopener noreferrer">♣ ' . esc_html__( 'Support', 'markup-markdown' ) . '</a>',
-				'<a href="https://wordpress.org/support/plugin/markup-markdown/reviews/?filter=5" target="_blank" rel="noopener noreferrer">★ ' . esc_html__( 'Rate this plugin »', 'markup-markdown' ) . '</a>'
+				'<a href="https://wordpress.org/support/plugin/markup-markdown/reviews/?filter=5" target="_blank" rel="noopener noreferrer">★ ' . esc_html__( 'Rate this plugin »', 'markup-markdown' ) . '</a>'
 			)
 		);
 	}
@@ -161,17 +161,15 @@ class Activation {
 
 
 	public function plugin_patches( $upgrader_object, $options ) {
-		if ( $options[ 'action' ] != 'update' || $options[ 'type' ] !== 'plugin' ) :
-			return true;
-		endif;
-		if ( ! isset( $options[ 'plugins' ] ) || ! is_array( $options[ 'plugins' ] ) ) :
-			return true;
-		endif;
-		foreach( $options[ 'plugins' ] as $my_plugin ) :
-			if ( $my_plugin === 'markup-markdown/markup-markdown.php' ) :
-				$this->prepare_cache();
+		if ( $options[ 'action' ] == 'update' && $options[ 'type' ] == 'plugin' ) :
+			if ( isset( $options[ 'plugins' ] ) && is_array( $options[ 'plugins' ] ) ) :
+				foreach( $options[ 'plugins' ] as $my_plugin ) :
+					if ( 'markup-markdown/markup-markdown.php' === $my_plugin ) :
+						$this->prepare_cache();
+					endif;
+				endforeach;
 			endif;
-		endforeach;
+		endif;
 	}
 
 }

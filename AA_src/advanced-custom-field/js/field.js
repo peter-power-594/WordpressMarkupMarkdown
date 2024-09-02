@@ -1,19 +1,24 @@
-(function( $, acf ) {
+/* global jQuery, acf */
+(function( _win, $, acf ) {
 
 	function mmd_initialize_field( field ) {
-		if ( ! field || ! window.MarkupMarkdown || typeof window.MarkupMarkdown !== "function" ) {
+		if ( ! field || ! _win.MarkupMarkdown || typeof _win.MarkupMarkdown !== "function" ) {
 			return false;
 		}
 		var $field = $( field ),
 			$textarea = $field.find( 'textarea:eq(0)' );
 		// Warning: set the binder BEFORE calling the MarkupMarkdown class
+		// The _CodeMirrorSpellCheckerReady_ event can be triggered multiple times
 		document.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
 			var $acfInputField = $textarea.closest( '.acf-input' );
 			if ( $acfInputField.length && ! $acfInputField.hasClass( 'ready' ) ) {
 				$acfInputField.addClass( 'ready' );
 			}
 		});
-		new MarkupMarkdown( $textarea );
+		// The _CodeMirrorDictionariesReady_ is only triggered one time
+		document.addEventListener( 'CodeMirrorDictionariesReady', function() {
+			new MarkupMarkdown( $textarea );
+		});
 	}
 
 	if( acf && typeof acf.add_action !== 'undefined' ) {
@@ -24,4 +29,4 @@
 	}
 
 
-})( window.jQuery, window.acf );
+})( window, window.jQuery, window.acf );

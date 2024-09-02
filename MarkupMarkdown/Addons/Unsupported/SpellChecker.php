@@ -13,6 +13,9 @@ class SpellChecker {
 		'active' => 0
 	);
 
+
+	protected $dict_dir = '';
+
 	/**
 	 * @property Array $dictionaries The languages list for spell checker
 	 * @see https://github.com/titoBouzout/Dictionaries
@@ -81,7 +84,17 @@ class SpellChecker {
 	);
 
 
-	private $dict_dir = '';
+	/**
+	 * @property Array $extra Additional words to exclude from the spell checking
+	 * @see https://github.com/peter-power-594/codemirror-spell-checker
+	 *
+	 * @since 3.5.1
+	 * @access protected
+	 */
+	protected $extra = array(
+		'french' => array( 'file_name' => 'fr_FR' ),
+		'english_american' => array( 'file_name' => 'en_US' ),
+	);
 
 
 	public function __construct() {
@@ -235,12 +248,15 @@ class SpellChecker {
 			$lang_filename = $this->dictionaries[ $dict ][ 'file_name' ];
 			$this->check_for_older_names( $lang_filename );
 			$n++; if ( $n > 1 ) : $js .= ",\n"; endif;
-			$js .= "  " . $dict . ": {\n"
-				. "    code: \"" . $lang_code . "\",\n"
-				. "    label: \"" . $lang_label . "\",\n"
-				. "    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\",\n"
-				. "    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"\n"
-				. "  }";
+			$js .= "  " . $dict . ": {"
+				. "\n    code: \"" . $lang_code . "\""
+				. ",\n    label: \"" . $lang_label . "\""
+				. ",\n    aff: \"" . $dict_base_uri . md5( $lang_filename ) . ".aff\""
+				. ",\n    dic: \"" . $dict_base_uri . md5( $lang_filename ) . ".dic\"";
+			if ( isset( $this->extra[ $dict ] ) ) :
+				$js .= ",\n    etr: \"" . $dict_base_uri . md5( $lang_filename ) . "_extra.dic\"";
+			endif;
+			$js .= "\n  }";
 		endforeach;
 		$js .= "\n};";
 		return $js;
@@ -248,8 +264,9 @@ class SpellChecker {
 
 	/**
 	 * Move spellchecker dictionnaries to new file names
-	 * Prior to version 3.2 urlencode was used. To use blueprint or other virtual machine,
-	 * switched to md5 to remove any other character than 0-9 a-z
+	 * Prior to version 3.2 urlencode was used.
+	 * In order to use blueprint or other virtual machine,
+	 * I switched to md5 to remove any other character than 0-9 a-z
 	 *
 	 * @since 3.2.1
 	 * @access public
@@ -258,7 +275,7 @@ class SpellChecker {
 	 */
 	public function check_for_older_names( $dict_name = '' ) {
 		if ( empty( $dict_name ) ) :
-			return FALSE;
+			return false;
 		endif;
 		$dict_dir = $this->dict_dir;
 		$re = 0;
@@ -286,7 +303,7 @@ class SpellChecker {
 				$re++;
 			endif;
 		endif;
-		return $re > 0 ? TRUE : FALSE;
+		return $re > 0 ? true : false;
 	}
 
 
@@ -303,51 +320,95 @@ class SpellChecker {
 		$nonce = filter_input( INPUT_GET, '_mmd_sc_nonce', FILTER_SANITIZE_SPECIAL_CHARS );
 		if ( ! $nonce || empty( $nonce ) ) :
 			# Empty or unavailable nonce, nothing to do from here
-			return FALSE;
-		endif;
-		if ( ! wp_verify_nonce( $nonce, "spell_checker" ) ) :
+			return false;
+		elseif ( ! wp_verify_nonce( $nonce, "spell_checker" ) ) :
 			# Invalide nonce. Might be refresh or cache issue
 			error_log( 'MMD: The spell checker _nonce is not valid' );
-			return FALSE;
+			return false;
 		endif;
 		$dict_id = filter_input( INPUT_GET, 'dict', FILTER_SANITIZE_SPECIAL_CHARS );
 		if ( ! isset( $dict_id ) || ! $dict_id || empty( $dict_id ) ) :
 			# The dictionary argument ID is missing, dont' know what to install
-			return FALSE;
-		endif;
-		if ( ! isset( $this->dictionaries[ $dict_id ] ) ) :
-			# Doesn't look like a known dictionary
-			return FALSE;
+			return false;
+		elseif ( ! isset( $this->dictionaries[ $dict_id ] ) ) :
+			# Doesn't look like a known dictionary in our database
+			return false;
 		endif;
 		$dict_name = $this->dictionaries[ $dict_id ][ 'file_name' ];
 		$dict_dir = $this->dict_dir;
 		$this->check_for_older_names( $dict_name );
-		if ( file_exists( $dict_dir . '/' . md5( $dict_name ) . '.aff' ) && file_exists( $dict_dir . '/' . md5( $dict_name ) . '.dic' ) ) :
+		if ( ! file_exists( $dict_dir . '/' . md5( $dict_name ) . '.aff' ) || ! file_exists( $dict_dir . '/' . md5( $dict_name ) . '.dic' ) ) :
 			# Dictionary already installed, don't do anything
-			return FALSE;
+			$this->install_dictionary( $dict_name, $dict_dir );
 		endif;
-		if ( ! is_dir( $dict_dir ) ) :
-			mkdir( $dict_dir );
-			touch( $dict_dir . '/index.php' );
-			file_put_contents( $dict_dir . '/index.php', "<?php\n// Silence is Gold\n?>", );
+		if ( isset( $this->extra[ $dic_id ] ) && ! file_exists( $dict_dir . '/' . md5( $dict_name ) . '_extra.dic' ) ) :
+			$this->install_extra( $this->extra[ $dic_id ][ 'file_name' ], $dict_name, $dict_dir );
 		endif;
-		$packages = [
-			'aff' => 'aff. data',
-			'dic' => 'dict. data',
-			'txt' => 'lic. data'
-		];
-		$base = "https://raw.githubusercontent.com/titoBouzout/Dictionaries/master";
-		foreach ( $packages as $dict_ext => $dict_desc ) :
-			$response = wp_remote_get( $base . '/' . $dict_name . '.' . $dict_ext  );
-			if ( is_wp_error( $response ) || ! is_array( $response ) || ! isset( $response[ 'body' ] ) ) :
-				error_log( 'WP Markup Markdown: Error while trying to retrieve the ' . $dict_desc . ' for the dictionary ' . $dict_id );
+		return true;
+	}
+
+
+	/**
+	 * Grab and save locally the compressed dictionary and rules file used for spell checking
+	 * 
+	 * @access private
+	 * @since 3.5.1
+	 * 
+	 * @param String $name The dictionary file name
+	 * @param String $dir The dictionary directory
+	 * @return Boolean TRUE in case of success of FALSE
+	 */
+	private function install_dictionary( $name = '', $dir = '' ) {
+		if ( empty( $name ) || empty( $dir ) ) :
+			return false;
+		endif;
+		if ( ! is_dir( $dir ) ) :
+			mkdir( $dir );
+			touch( $dir . '/index.php' );
+			file_put_contents( $dir . '/index.php', "<?php\n// Silence is Gold\n?>", );
+		endif;
+		$packages = array( 'aff' => 'aff. data', 'dic' => 'dict. data', 'txt' => 'lic. data' );
+		$base = 'https://raw.githubusercontent.com/titoBouzout/Dictionaries/master';
+		foreach ( $packages as $ext => $desc ) :
+			$resp = wp_remote_get( $base . '/' . $name . '.' . $ext  );
+			if ( is_wp_error( $resp ) || ! is_array( $resp ) || ! isset( $resp[ 'body' ] ) ) :
+				error_log( 'WP Markup Markdown: Error while trying to retrieve the ' . $desc . ' for the dictionary ' . $name );
 				continue;
 			endif;
-			file_put_contents( $dict_dir . '/' . md5( $dict_name ) . '.' . $dict_ext, $response[ 'body' ] );
-			unset( $response ); # Be kind?
+			file_put_contents( $dir . '/' . md5( $name ) . '.' . $ext, $resp[ 'body' ] );
+			unset( $resp ); # Be kind?
 			sleep( 1 ); # With rental server?
 		endforeach;
-		return TRUE;
+		return true;
+	}
+
+
+	/**
+	 * Grab and save locally extra data for the spell checker
+	 * Mostly to exclude words from the spellchecker when rules from aff can't be handled properly like some conjunctions.
+	 * And lately give power to the users to add their own words like brand names or custom language like linuxish words ^^ 
+	 * 
+	 * @access private
+	 * @since 3.5.1
+	 * 
+	 * @param String $name The dictionary file name
+	 * @param String $dir The dictionary directory
+	 * @return Boolean TRUE in case of success of FALSE
+	 */
+	private function install_extra( $name = '', $parent_name = '', $dir = '' ) {
+		if ( empty( $name ) || empty( $parent_name ) || empty( $dir ) ) :
+			return false;
+		endif;
+		$base = 'https://raw.githubusercontent.com/peter-power-594/codemirror-spell-checker/dev/src/dict';
+		$resp = wp_remote_get( $base . '/' . $name . '.dic' );
+		if ( is_wp_error( $resp ) || ! is_array( $resp ) || ! isset( $resp[ 'body' ] ) ) :
+			error_log( 'WP Markup Markdown: Error while trying to retrieve the extra data for the dictionary ' . $name );
+			return false;
+		endif;
+		file_put_contents( $dir . '/' . md5( $parent_name ) . '_extra.dic', $resp[ 'body' ] );
+		unset( $resp );
+		sleep( 1 );
+		return true;
 	}
 
 
@@ -451,6 +512,10 @@ class SpellChecker {
 					echo " /> " . __( 'Make default', 'markup-markdown' );
 				endif;
 				echo "\n\t\t\t\t\t\t\t\t</label>";
+				if ( ! file_exists( $curr_base_filename . '_extra.dic' ) && isset( $this->extra[ $dict_id ] ) ) :
+					# Trigger here the download othe extra dictionnary
+					$this->install_extra( $this->extra[ $dict_id ][ 'file_name' ], $dictionary[ 'file_name' ], $dict_dir );
+				endif;
 			endif;
 			echo "\n\t\t\t\t\t\t\t</td>";
 		else :

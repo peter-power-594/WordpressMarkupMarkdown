@@ -105,6 +105,15 @@ class Parsedown
         'steam:',
     );
 
+	function setStrictMode($strictMode)
+    {
+        $this->strictMode = (bool) $strictMode;
+
+        return $this;
+    }
+
+    protected $strictMode;
+
     #
     # Lines
     #
@@ -523,7 +532,12 @@ class Parsedown
                 return;
             }
 
-            $text = trim($Line['text'], '# ');
+            $text = trim($Line['text'], '#');
+
+			if ($this->strictMode and isset($text[0]) and $text[0] !== ' ')
+			{
+				return;
+			}
 
             $Block = array(
                 'element' => array(
