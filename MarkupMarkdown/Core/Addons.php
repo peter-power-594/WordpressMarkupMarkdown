@@ -59,15 +59,17 @@ class Addons {
 		# Load addons modules
 		$this->addon_dir = mmd()->plugin_dir . '/MarkupMarkdown/Addons/';
 
+		# Kind of stable addons for a daily use
 		$this->load_builder_easymde();
 		$this->load_cache();
 		$this->load_layout();
 		$this->load_media_youtube();
 		$this->load_media_vimeo();
 		$this->load_media_image();
-		$this->load_acf();
+		# Kind of usable addons but I wouldn't bet for extensive use
 		$this->load_spellchecker();
-		$this->load_jekyll();
+		$this->load_acf();
+		$this->load_acp();
 	}
 
 
@@ -142,9 +144,9 @@ class Addons {
 	}
 
 
-	private function load_jekyll() {
-		require_once $this->addon_dir  . 'Unsupported/Jekyll.php';
-		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\Jekyll();
+	private function load_acp() {
+		require_once $this->addon_dir  . 'Unsupported/AdvancedCustomPost.php';
+		$tmp_addon = new \MarkupMarkdown\Addons\Unsupported\AdvancedCustomPost();
 		$this->prop[ 'setup' ][] = $tmp_addon->slug;
 		$this->prop[ 'inst' ][ $tmp_addon->slug ] = $tmp_addon;
 		unset( $tmp_addon );
@@ -152,7 +154,7 @@ class Addons {
 
 
 	/**
-	 * Add a few plugs with existing WP Plugins to make a smooth connection
+	 * Add a few "plugs" with existing WP Plugins to make a smooth connection
 	 *
 	 * @access public
 	 * @since 3.3.0

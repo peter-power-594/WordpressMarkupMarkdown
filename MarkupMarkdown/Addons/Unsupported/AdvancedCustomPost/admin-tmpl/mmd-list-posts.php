@@ -60,7 +60,7 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 		</thead>
 
 		<tbody id="the-list"><?php
-	$my_posts = json_decode( file_get_contents( mmd()->cache_dir . '/jekyll_posts.json' ) );
+	$my_posts = json_decode( file_get_contents( mmd()->cache_dir . '/acp_posts.json' ) );
 	$post_shown = 0;
 	foreach( $my_posts->data as $my_post ) :
 		if ( ! file_exists( $posts_dir . '/' . $my_post ) ) :

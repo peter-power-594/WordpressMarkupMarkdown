@@ -4,25 +4,25 @@ namespace MarkupMarkdown\Addons\Unsupported;
 
 defined( 'ABSPATH' ) || exit;
 
-class Jekyll {
+class AdvancedCustomPost {
 
 
 	private $prop = array(
-		'slug' => 'jekyllmanager',
+		'slug' => 'acp',
 		'release' => 'experimental',
 		'active' => 0
 	);
 
 
 	public function __construct() {
-		$this->prop[ 'label' ] = __( 'Jekyll Data Manager', 'markup-markdown' );
-		$this->prop[ 'desc' ] = __( 'Manage your WP posts or pages as jekyll compatible static files', 'markup-markdown' );
+		$this->prop[ 'label' ] = __( 'Advanced Custom Posts', 'markup-markdown' );
+		$this->prop[ 'desc' ] = __( 'Manage your posts & pages as jekyll compatible static files', 'markup-markdown' );
 		if ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
 		$this->prop[ 'active' ] = 1;
-		mmd()->default_conf = array( 'MMD_JEKYLL_MANAGER' => 1 );
+		mmd()->default_conf = array( 'MMD_ACP_MANAGER' => 1 );
 		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
 		# New screen?
 	}
@@ -45,25 +45,25 @@ class Jekyll {
 
 
 	/**
-	 * List the posts from the Jekyll post directory
+	 * List the posts from the __post directory
 	 * 
 	 * @return Bolean false if something went wrong
 	 */
 	private function list_posts() {
-		$posts_dir = apply_filters( 'mmd_jekyll_posts_folder', ABSPATH . '_posts' );
+		$posts_dir = apply_filters( 'mmd_acp_posts_folder', ABSPATH . '_posts' );
 		if ( ! is_dir( $posts_dir ) ) :
 			return false;
 		endif;
-		if ( ! file_exists( mmd()->cache_dir . '/jekyll_posts.json' ) ) :
+		if ( ! file_exists( mmd()->cache_dir . '/acp_posts.json' ) ) :
 			$this->cache_posts( $posts_dir );
 		else:
 			$scan_nonce = filter_input( INPUT_GET, 'mmd_scan_dir', FILTER_SANITIZE_SPECIAL_CHARS );
 			if ( isset( $scan_nonce ) && wp_verify_nonce( $scan_nonce, 'scan-dir' ) ) :
-				@unlink( mmd()->cache_dir . '/jekyll_posts.json' );
+				@unlink( mmd()->cache_dir . '/acp_posts.json' );
 				$this->cache_posts( $posts_dir );
 			endif;
 		endif;
-		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/mmd-list-posts.php';
+		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/admin-tmpl/mmd-list-posts.php';
 		exit;
 	}
 
@@ -77,7 +77,7 @@ class Jekyll {
 		if ( ! isset( $post ) || empty( $post ) || is_numeric( $post ) ) :
 			return false;
 		endif;
-		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/Jekyll/admin-tmpl/mmd-edit-post.php';
+		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/admin-tmpl/mmd-edit-post.php';
 		exit;
 	}
 
@@ -107,7 +107,7 @@ class Jekyll {
 			endif;
 		endwhile;
 		closedir( $dh );
-		file_put_contents( mmd()->cache_dir . '/jekyll_posts.json', json_encode( array( "data" => $files ) ) );
+		file_put_contents( mmd()->cache_dir . '/acp_posts.json', json_encode( array( "data" => $files ) ) );
 		return true;
 	}
 
