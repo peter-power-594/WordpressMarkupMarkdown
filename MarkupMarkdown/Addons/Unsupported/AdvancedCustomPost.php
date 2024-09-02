@@ -63,7 +63,7 @@ class AdvancedCustomPost {
 				$this->cache_posts( $posts_dir );
 			endif;
 		endif;
-		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/admin-tmpl/mmd-list-posts.php';
+		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/templates/mmd-list-posts.php';
 		exit;
 	}
 
@@ -77,7 +77,7 @@ class AdvancedCustomPost {
 		if ( ! isset( $post ) || empty( $post ) || is_numeric( $post ) ) :
 			return false;
 		endif;
-		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/admin-tmpl/mmd-edit-post.php';
+		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/templates/mmd-edit-post.php';
 		exit;
 	}
 
