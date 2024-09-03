@@ -539,6 +539,8 @@ class Parsedown
 				return;
 			}
 
+			$text = trim($text, ' ');
+
             $Block = array(
                 'element' => array(
                     'name' => 'h' . min(6, $level),
