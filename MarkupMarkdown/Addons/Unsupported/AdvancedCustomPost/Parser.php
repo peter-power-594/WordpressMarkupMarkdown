@@ -195,7 +195,7 @@ class Parser {
 				return 'draft';
 			endif;
 		elseif ( $key === 'post_date_gmt' ) :
-			return gmdate( 'Y-m-d', strtotime( $val ) );
+			return gmdate( 'Y-m-d H:i:s', strtotime( $val ) );
 		elseif ( $key === 'post_categories' || $key === 'post_tags' ) :
 			return is_array( $val ) ? $val : array( $val ); 
 		else:
@@ -378,7 +378,6 @@ class Parser {
 
 
 	public function update() {
-		var_dump( $this );
 		$data = array(
 			'post_status' => filter_input( INPUT_POST, 'post_status', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'post_title' => filter_input( INPUT_POST, 'post_title', FILTER_SANITIZE_SPECIAL_CHARS ),
@@ -386,15 +385,16 @@ class Parser {
 			'post_content' => filter_input( INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'original_publish' => filter_input( INPUT_POST, 'publish', FILTER_SANITIZE_SPECIAL_CHARS ),
 			'post_tags' => filter_input( INPUT_POST, 'post_tags', FILTER_SANITIZE_SPECIAL_CHARS ),
-			'post_date_year' => filter_input( INPUT_POST, 'hidden_aa', FILTER_VALIDATE_INT ),
-			'post_date_month' => filter_input( INPUT_POST, 'hidden_mm', FILTER_VALIDATE_INT ),
-			'post_date_day' => filter_input( INPUT_POST, 'hidden_jj', FILTER_VALIDATE_INT ),
-			'post_date_hours' => filter_input( INPUT_POST, 'hidden_hh', FILTER_VALIDATE_INT ),
-			'post_date_minutes' => filter_input( INPUT_POST, 'hidden_mn', FILTER_VALIDATE_INT ),
-			'post_date_seconds' => filter_input( INPUT_POST, 'ss', FILTER_VALIDATE_INT )
+			'post_date_year' => filter_input( INPUT_POST, 'aa', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_date_month' => filter_input( INPUT_POST, 'mm', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_date_day' => filter_input( INPUT_POST, 'jj', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_date_hours' => filter_input( INPUT_POST, 'hh', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_date_minutes' => filter_input( INPUT_POST, 'mn', FILTER_SANITIZE_SPECIAL_CHARS ),
+			'post_date_seconds' => filter_input( INPUT_POST, 'ss', FILTER_SANITIZE_SPECIAL_CHARS )
 		);
 		$data = array_merge( $data, filter_input_array( INPUT_POST, array( 'post_category' => array( 'filter' => FILTER_SANITIZE_SPECIAL_CHARS, 'flags' => FILTER_REQUIRE_ARRAY ) ) ) );
 		$update = false;
+
 		# Check for modifications within the post status
 		if ( isset( $data[ 'post_publish' ] ) && isset( $data[ 'original_publish' ] ) && $data[ 'post_publish' ] === $data[ 'original_publish' ] && $data[ 'original_publish' ] === __( 'Publish' ) ) :
 			$this->post_status = 'publish';
@@ -414,13 +414,13 @@ class Parser {
 			$update = true;
 		endif;
 		# Check if the date was modified 
-		$date = $this->poste_date;
+		$date = $this->post_date;
 		if ( isset( $data[ 'post_date_year' ] ) && isset( $data[ 'post_date_month' ] ) && isset( $data[ 'post_date_day' ] ) && isset( $data[ 'post_date_hours' ] ) && isset( $data[ 'post_date_minutes' ] ) && isset( $data[ 'post_date_seconds' ] ) ) :
-			$date = $data[ 'post_date_year' ] . '-' . ( $data[ 'post_date_month' ] < 10 ? '0' . $data[ 'post_date_month' ] : '' );
-			$date .= '-' . ( $data[ 'post_date_day' ] < 10 ? '0' . $data[ 'post_date_day' ] : '' );
-			$date .= ' ' . ( $data[ 'post_date_hours' ] < 10 ? '0' . $data[ 'post_date_hours' ] : '' ) . ':';
-			$date .= ' ' . ( $data[ 'post_date_minutes' ] < 10 ? '0' . $data[ 'post_date_minutes' ] : '' ) . ':';
-			$date .= ' ' . ( $data[ 'post_date_seconds' ] < 10 ? '0' . $data[ 'post_date_seconds' ] : '' );
+			$date = $data[ 'post_date_year' ] . '-' . $data[ 'post_date_month' ];
+			$date .= '-' . $data[ 'post_date_day' ];
+			$date .= ' ' . $data[ 'post_date_hours' ];
+			$date .= ':' . $data[ 'post_date_minutes' ];
+			$date .= ':' . $data[ 'post_date_seconds' ];
 		endif;
 		if ( preg_match( '#\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}#u', $date ) && $date !== $this->post_date ) :
 			$this->post_date = $date;
