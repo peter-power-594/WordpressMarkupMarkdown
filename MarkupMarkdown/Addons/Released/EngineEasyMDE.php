@@ -310,6 +310,9 @@ class EngineEasyMDE {
 		$toolbarButtons = json_decode( preg_replace( "#[^a-z0-9-_\,\:\"\{\}\[\]]#", "", file_get_contents( $json ) ) );
 		$js .= "wp.pluginMarkupMarkdown.primaryArea = " . ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ? '1' : '0' ) . ";\n";
 		$js .= "wp.pluginMarkupMarkdown.toolbarButtons = [ \"" . implode( "\",\"", str_replace( '_', '-', $toolbarButtons->my_buttons ) ) . "\" ];\n";
+		if ( defined( 'MMD_USE_HEADINGS' ) && is_array( MMD_USE_HEADINGS ) && count( MMD_USE_HEADINGS ) > 0 ) :
+			$js .= "wp.pluginMarkupMarkdown.headingLevels = [ " . implode( ', ', MMD_USE_HEADING ) . " ];\n";
+		endif;
 		return $js;
 	}
 
