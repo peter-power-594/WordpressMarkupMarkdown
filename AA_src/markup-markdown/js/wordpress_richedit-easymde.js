@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown's EasyMDE Primary Module
  * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.4.17
+ * @version 1.5.0
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 (function( $, _win, _doc ) {
@@ -281,6 +281,10 @@
 		}
 		if ( ! _win.wp.pluginMarkupMarkdown.instances ) {
 			_win.wp.pluginMarkupMarkdown.instances = [];
+		}
+		if ( _win.wp.pluginMarkupMarkdown.headingLevels ) {
+			editorConfig.parsingConfig = editorConfig.parsingConfig || {};
+			editorConfig.parsingConfig.headingLevels = _win.wp.pluginMarkupMarkdown.headingLevels;
 		}
 		_self.fieldNumber = fieldNumber++;
 		var mediaCounters = $( textarea ).val().match( /\"myset.*?\s/g );
