@@ -1,9 +1,9 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.6.6
-Version: 3.6.6
+Stable Tag: 3.7.0
+Version: 3.7.0
 Requires at least: 4.9
-Tested up to: 6.6.1
+Tested up to: 6.6.2
 Requires PHP: 5.6.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html#license-text
@@ -18,6 +18,7 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
 This extension rocks:
+- v3.7: Adding support for selective heading levels
 - v3.6: Performance improvements with spellchecker and suggestions
 - v3.5: Adding support for right-to-left alphabets like Arabic, Hebrew, or Persian
 - v3.4: Adding support for categories, tags and taxonomies description field (Woocommerce and REST API compatible)
@@ -90,6 +91,13 @@ The current version is based on components that are not compatible with assistiv
 
 == Changelog ==
 
+= 3.7.0 =
+
+New feature:
+- Adding support for selective heading levels
+
+You can now prevent the use of specific headings like H1 in the WYSIWYG for better SEO and friendly theme compatibility
+
 = 3.6.6 =
 
 Bug fix:
@@ -144,10 +152,7 @@ Improvement:
 
 By default _builder.min.js_ is loaded.  
 If _WP_DEBUG_ is enabled, separate minified module scripts will be used.  
-If _SCRIPT_DEBUG_ or _MMD_SCRIPT_DEBUG_ is turned on, the unminified version of the module will be loaded when available
-
-
-== Changelog ==
+If _SCRIPT_DEBUG_ or _MMD_SCRIPT_DEBUG_ is turned on, the unminified version available of a module will be loaded when available
 
 = 3.5.0 =
 

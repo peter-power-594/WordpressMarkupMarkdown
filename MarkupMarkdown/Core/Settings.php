@@ -70,7 +70,7 @@ class Settings {
 			if ( is_integer( $val ) ) :
 				$php_code[] = "\n\tdefine( '" . $const . "', " . (int)$val . " );";
 			elseif ( is_array( $val ) ) :
-				$php_code[] = "\n\tdefine( '" . $const . "', [ \"" . implode( "\", \"", $val ) . "\"] );";
+				$php_code[] = "\n\tdefine( '" . $const . "', [ \"" . implode( "\", \"", $val ) . "\" ] );";
 			else :
 				$php_code[] = "\n\tdefine( '" . $const . "', " . htmlspecialchars( $val ) . " );";
 			endif;
