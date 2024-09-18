@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown's EasyMDE Primary Module
  * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.5.0
+ * @version 1.6.0
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 (function( $, _win, _doc ) {
