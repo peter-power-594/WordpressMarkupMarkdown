@@ -11,7 +11,7 @@
 		'masonry' => defined( 'MMD_USE_MASONRY' ) ? MMD_USE_MASONRY : 1,
 		'imagesloaded' => defined( 'MMD_USE_IMAGESLOADED' ) ? MMD_USE_IMAGESLOADED : 1,
 		'goodvibes' => defined( 'MMD_USE_BLOCKSTYLES' ) ? MMD_USE_BLOCKSTYLES : 0,
-		'headings' => defined( 'MMD_USE_HEADINGS' ) ? MMD_USE_HEADINGS : [ 1, 2, 3, 4, 5, 6 ]
+		'headings' => defined( 'MMD_USE_HEADINGS' ) && count( MMD_USE_HEADINGS ) > 1 ? MMD_USE_HEADINGS : [ 1, 2, 3, 4, 5, 6 ]
 	);
 ?>
 			<tr class="site-use-selective_headings">
@@ -19,7 +19,7 @@
 					<?php esc_html_e( 'Select headline weights', 'markup-markdown' ); ?>
 				</th>
 				<td>
-					<?php esc_html_e( 'You can toggle specific heading levels for your authors to avoid conflicts with your theme setup', 'markup-markdown' ); ?><br />
+					<?php esc_html_e( 'You can toggle specific heading levels for your authors to avoid conflicts with your theme setup. At least two weights are required.', 'markup-markdown' ); ?><br />
 					<label for="mmd_headings1">
 						<input type="checkbox" name="mmd_headings[]" id="mmd_headings1" value="1" <?php echo in_array( '1', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
 						<?php esc_html_e( 'Level 1 (H1)', 'markup-markdown' ); ?>

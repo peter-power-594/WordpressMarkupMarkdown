@@ -1,6 +1,6 @@
 # WP Markup Markdown
-[![WP compatibility](https://plugintests.com/plugins/wporg/markup-markdown/wp-badge.svg?ver=3.4.2)](https://plugintests.com/plugins/wporg/markup-markdown/latest)
-[![PHP compatibility](https://plugintests.com/plugins/wporg/markup-markdown/php-badge.svg?ver=3.4.2)](https://plugintests.com/plugins/wporg/markup-markdown/latest)  
+[![WP compatibility](https://plugintests.com/plugins/wporg/markup-markdown/wp-badge.svg?ver=3.7.0)](https://plugintests.com/plugins/wporg/markup-markdown/latest)
+[![PHP compatibility](https://plugintests.com/plugins/wporg/markup-markdown/php-badge.svg?ver=3.7.0)](https://plugintests.com/plugins/wporg/markup-markdown/latest)  
 The Rocket [Markup Markdown](https://wordpress.org/plugins/markup-markdown/) Wordpress Plugin !
 
 Issues are not enabled, only sharing the source code.

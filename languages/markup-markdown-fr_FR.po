@@ -4,35 +4,35 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Markup Markdown 3.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
-"POT-Creation-Date: 2024-05-19T12:20:50+00:00\n"
-"PO-Revision-Date: 2024-05-19 21:25+0900\n"
+"POT-Creation-Date: 2024-09-18T09:50:33+09:00\n"
+"PO-Revision-Date: 2024-09-18 09:51+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 "X-Domain: markup-markdown\n"
 
 #. Plugin Name of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
 msgid "Markup Markdown"
 msgstr "Markup Markdown"
 
 #. Description of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
 msgid ""
 "Replaces the Gutenberg Block Editor in favor of pure markdown based markups"
 msgstr "Remplace l’éditeur par défaut Gutenberg par l’éditeur Markdown EasyMDE"
 
 #. Author of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
 msgid "Pierre-Henri Lavigne"
 msgstr "Pierre-Henri Lavigne"
 
 #. Author URI of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
 msgid "https://www.markup-markdown.com"
 msgstr "https://www.markup-markdown.com"
 
@@ -44,152 +44,152 @@ msgstr "WYSIWYG EasyMDE"
 msgid "The default Markdown Editor."
 msgstr "L’éditeur Markdown par défaut."
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:241
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:131
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:258
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:139
 msgid "Pipe"
 msgstr "Barre verticale"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:242
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:132
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:133
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:259
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:140
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:141
 msgid "Bold"
 msgstr "Gras"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:243
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:134
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:135
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:260
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:142
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:143
 msgid "Italic"
 msgstr "Italique"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:244
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:136
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:137
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:261
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:144
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:145
 msgid "Strikethrough"
 msgstr "Barré"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:245
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:138
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:139
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:262
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:146
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:147
 msgid "Heading"
 msgstr "Titres"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:246
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:140
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:141
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:263
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:148
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:149
 msgid "Smaller Heading"
 msgstr "Diminuer la taille du titre"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:247
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:142
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:143
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:264
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:150
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:151
 msgid "Bigger Heading"
 msgstr "Augmenter la taille du titre"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:248
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:144
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:145
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:265
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:152
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:153
 msgid "Big Heading"
 msgstr "Titre de grande taille"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:249
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:146
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:147
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:266
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:154
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:155
 msgid "Medium Heading"
 msgstr "Titre de taille moyenne"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:250
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:148
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:149
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:267
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:156
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:157
 msgid "Small Heading"
 msgstr "Titre de petite taille"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:251
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:150
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:151
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:268
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:158
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:159
 msgid "Code"
 msgstr "Bloc de code"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:252
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:152
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:153
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:269
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:160
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:161
 msgid "Quote"
 msgstr "Bloc de citation"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:253
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:154
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:270
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:162
 msgid "Generic List"
 msgstr "Liste à puces"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:254
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:156
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:271
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:164
 msgid "Numbered List"
 msgstr "Liste à chiffres"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:255
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:158
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:272
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:166
 msgid "Clean block"
 msgstr "Nettoyer la sélection"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:256
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:160
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:273
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:168
 msgid "Create Link"
 msgstr "Créer un hyperlien"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:257
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:162
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:274
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:170
 msgid "Insert or Upload Media"
 msgstr "Insérer ou téléverser un média"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:258
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:164
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:275
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:172
 msgid "Insert Table"
 msgstr "Insérer un tableau"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:259
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:166
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:276
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:174
 msgid "Insert Horizontal Line"
 msgstr "Insérer un séparateur horizontal"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:260
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:168
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:277
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:176
 msgid "Toggle Preview"
 msgstr "Voir l’aperçu"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:261
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:170
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:278
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:178
 msgid "Toggle Side by Side"
 msgstr "Afficher le panneau latéral avec l’aperçu en temps réel"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:262
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:172
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:279
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:180
 msgid "Toggle Fullscreen"
 msgstr "Afficher l'éditeur en plein écran"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:263
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:174
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:280
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:182
 msgid "Markdown Guide"
 msgstr "Guide de syntaxe Markdown"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:264
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:176
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:177
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:281
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:184
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:185
 msgid "Undo"
 msgstr "Annuler"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:265
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:178
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:179
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:282
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:186
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:187
 msgid "Redo"
 msgstr "Refaire"
 
-#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:266
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:180
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:181
+#: MarkupMarkdown/Addons/Released/EngineEasyMDE.php:283
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:188
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:189
 msgid "Spellchecker"
 msgstr "Vérificateur d’orthographe"
 
 #: MarkupMarkdown/Addons/Released/Layout.php:25
-#: MarkupMarkdown/Addons/Released/Layout.php:108
+#: MarkupMarkdown/Addons/Released/Layout.php:120
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:4
 msgid "Layout"
 msgstr "Gabarit"
@@ -212,46 +212,62 @@ msgstr ""
 "srcset quand possible pour améliorer le chargement avec les différents "
 "appareils numériques (ordinateurs portables, tablettes, téléphones mobiles)"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:155
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:157
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:163
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:165
 msgid "List"
 msgstr "Liste"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:159
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:167
 msgid "Clean"
 msgstr "Nettoyer"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:161
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:169
 msgid "Link"
 msgstr "Lien"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:163
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:171
 msgid "Media Library"
 msgstr "Gestionnaire de médias"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:165
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:173
 msgid "Table"
 msgstr "Tableau"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:167
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:175
 msgid "Horizontal Line"
 msgstr "Séparateur horizontal"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:169
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:177
 msgid "Preview"
 msgstr "Aperçu"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:171
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:179
 msgid "Side by Side"
 msgstr "Aperçu en temps réel"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:173
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:181
 msgid "Fullscreen"
 msgstr "Plein écran"
 
-#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:175
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:183
 msgid "Guide"
 msgstr "Guide"
+
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:190
+msgid "Switch text direction to right"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:191
+msgid "Right to Left text direction"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:192
+msgid "Switch text direction to left"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:193
+msgid "Left to Right text direction"
+msgstr ""
 
 #: MarkupMarkdown/Addons/Released/Media/Vimeo.php:21
 msgid "Vimeo"
@@ -292,11 +308,48 @@ msgstr ""
 "Voici quelques paramètres que vous pouvez modifier pour personnaliser "
 "l'affichage de votre blog."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:18
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:19
+msgid "Select headline weights"
+msgstr "Sélectionner les épaisseurs de titres"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:22
+msgid ""
+"You can toggle specific heading levels for your authors to avoid conflicts "
+"with your theme setup. At least two weights are required."
+msgstr ""
+"Vous pouvez choisir quels sont les niveaux de titres à privilégier par vos "
+"auteurs/autrices pour éviter les conflits de configuration avec thème. En "
+"choisir au minimum 2."
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:25
+msgid "Level 1 (H1)"
+msgstr "Titre de niveau 1 (H1)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:29
+msgid "Level 2 (H2)"
+msgstr "Titre de niveau 2 (H2)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:33
+msgid "Level 3 (H3)"
+msgstr "Titre de niveau 3 (H3)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:37
+msgid "Level 4 (H4)"
+msgstr "Titre de niveau 4 (H4)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:41
+msgid "Level 5 (H5)"
+msgstr "Titre de niveau 5 (H5)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:45
+msgid "Level 6 (H6)"
+msgstr "Titre de niveau 6 (H6)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:51
 msgid "Use Gutenberg blocks styles"
 msgstr "Conserver les styles Gutenberg"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:23
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:56
 msgid ""
 "Keep a minimum of assets active if your theme was designed to be used with "
 "Gutenberg. Can avoid broken layout in case styles are missing."
@@ -305,11 +358,11 @@ msgstr ""
 "thème a été conçu pour Gutenberg, activer cette option pour que les styles "
 "des blocs s'appliquent aussi aux éléments générés par le code Markdown."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:29
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:62
 msgid "Use Lightbox"
 msgstr "Utiliser Lightbox"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:34
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:67
 msgid ""
 "An image inside a $1%spost$2%s or $1%spage$2%s that was linked to its "
 "original size will open in a modal (overlay on the same page) instead of a "
@@ -321,11 +374,11 @@ msgstr ""
 "d'une nouvelle fenêtre. Idéal si cette fonctionnalité n'est pas déjà incluse "
 "dans votre thème."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:40
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:73
 msgid "Use Masonry"
 msgstr "Utiliser Masonry"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:45
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:78
 msgid ""
 "Transform a bullet list of images as a 2 waterfall column layout when the "
 "$1%sphoto gallery$2%s post format is selected."
@@ -334,11 +387,11 @@ msgstr ""
 "liste à puces de vignettes en un gabarit à double colonnes avec disposition "
 "en cascade. Compatible avec le shortcode [gallery]."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:50
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:83
 msgid "Use Imagesloaded"
 msgstr "Utiliser ImageLoaded"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:55
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:88
 msgid ""
 "Trigger the update of the layout after all images are loaded. Can solve "
 "specific issues in case the layout is broken with the gallery."
@@ -347,19 +400,19 @@ msgstr ""
 "est chargé. Permet de résoudre des soucis d'affichage avec les cascades dont "
 "les images sont mal positionnées ou de mauvaises tailles."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:62
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:95
 msgid "Custom toolbar"
 msgstr "Personnalisation de votre barre d'outils"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:76
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:109
 msgid "Current Toolbar (Preview)"
 msgstr "Barre d'outils actuelle (Aperçu)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:78
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:111
 msgid "You can sort the buttons and remove some of them if need."
 msgstr "Vous pouvez déplacer les boutons suivants et en supprimer si besoin."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:106
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:139
 msgid ""
 "Buttons related to languages are represented as a single grey globe button, "
 "and will only be displayed if the related spell checkers are enabled."
@@ -368,11 +421,11 @@ msgstr ""
 "secondaires du vérificateur d'orthographe et ne sera visible que si le "
 "module correspondant est activé."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:109
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:142
 msgid "Available Buttons"
 msgstr "Boutons disponibles"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:110
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:143
 msgid "You can drag the following buttons and drop them to the toolbar above."
 msgstr ""
 "Vous pouvez glisser et déposer les boutons supplémentaires suivants sur la "
@@ -387,11 +440,11 @@ msgstr ""
 "Field (ACF) et vous pouvez écrire directement en Markdown grâce au champ "
 "personnalisé nommé \"Markup Markdown\"."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:88
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:101
 msgid "Hung Spell Checker"
 msgstr "Vérificateur d’orthographe hung"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:89
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:102
 msgid ""
 "Multilingual spell checker for your posts! Enable live spellchecking with "
 "multiple languages while writing your articles."
@@ -399,12 +452,12 @@ msgstr ""
 "Rédigez vos articles sans fautes en activant la vérification d'orthographe "
 "en plusieurs langues."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:363
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:379
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:424
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:440
 msgid "Spell Checker"
 msgstr "Vérificateur d'orthographe"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:382
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:443
 msgid ""
 "Dictionaries available from your browser (Firefox, Chrome, Edge, ...) or "
 "your operating system (Linux, Macintosh, Windows, etc ...) can't be used or "
@@ -419,7 +472,7 @@ msgstr ""
 "qu'ils puissent être utilisés par l'éditeur Markdown lorsque vous écrivez "
 "vos articles."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:385
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:446
 msgid ""
 "Data are borrowed from 3rd parties software (Sublime, OpenOffice, Mozilla, "
 "etc ...), some languages are unavailable, and a few variants missing. Data "
@@ -433,17 +486,17 @@ msgstr ""
 "orthographique, merci de contribuer aux projets existants en vous référant "
 "au fichier info correspondant à la langue."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:389
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:450
 msgid "Performances"
 msgstr "Performances"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:392
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:453
 msgid "Monolingual: Usable, performances are correct."
 msgstr ""
 "Langue unique: les performances sont corrects, expérience utilisateur "
 "optimal."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:393
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:454
 msgid ""
 "Bilingual: Depends on your machine, can be unstable so try to use it with "
 "caution."
@@ -451,7 +504,7 @@ msgstr ""
 "Plusieurs langues : Dépend de la puissance de votre machine, l'expérience "
 "utilisateur peut être dégradée."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:396
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:457
 msgid ""
 "When possible I would advise using dictionaries embedded in two languages "
 "like Russian-English."
@@ -459,7 +512,7 @@ msgstr ""
 "Quand possible je recommande l'utilisateur de dictionnaires multilingues tel "
 "que Russe-Anglais."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:397
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:458
 msgid ""
 "In case you need to activate multiple languages, please read the following "
 "disclaimers carefully:"
@@ -467,11 +520,11 @@ msgstr ""
 "Dans le cas où vous devez activer plusieurs, merci de lire les consignes "
 "suivantes :"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:401
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:462
 msgid "File size matters"
 msgstr "Taille des fichiers à prendre en compte"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:404
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:465
 msgid ""
 "I don't recommend to activate more than 2 languages. Please remember that "
 "the related files (a few megabytes) will be loaded in the memory of your "
@@ -490,11 +543,11 @@ msgstr ""
 "se restreindre à une unique langue, ou malheureusement désactiver totalement "
 "la fonctionnalité."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:408
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:469
 msgid "No automatic language detection"
 msgstr "Aucune détection automatique de la langue"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:411
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:472
 msgid ""
 "If you activate more than one dictionary, you have to pick up one as the "
 "default. Then in the editor, new buttons for the alternative languages will "
@@ -516,11 +569,11 @@ msgstr ""
 "une autre langue dans votre article, il est impératif de définir le code de "
 "la langue dans la code source!"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:415
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:476
 msgid "One specific dictionary per language"
 msgstr "Un seul dictionnaire par langue"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:418
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:479
 msgid ""
 "Sounds obvious, multilingual means multiple languages on the same medium. "
 "With the current interface you could try activating two variants of the same "
@@ -533,35 +586,37 @@ msgstr ""
 "américain et l'anglais britannique, mais cela ne fonctionnera probablement "
 "pas correctement... Ceci est donc fortement déconseiller."
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:441
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:502
 msgid "Active"
 msgstr "Actif"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:449
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:510
 msgid "Default"
 msgstr "Par défaut"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:451
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:512
 msgid "Make default"
 msgstr "Sélectionner par défaut"
 
-#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:458
+#: MarkupMarkdown/Addons/Unsupported/SpellChecker.php:523
 msgid "Install"
 msgstr "Installer"
 
-#: MarkupMarkdown/Core/Activation.php:80
+#: MarkupMarkdown/Core/Activation.php:81
 msgid "Buy me a coffee"
 msgstr "Offrez-moi un café"
 
-#: MarkupMarkdown/Core/Activation.php:81
+#: MarkupMarkdown/Core/Activation.php:82
 msgid "Support"
 msgstr "Forum d’aide en ligne"
 
-#: MarkupMarkdown/Core/Activation.php:82
-msgid "Rate this plugin »"
+#: MarkupMarkdown/Core/Activation.php:83
+#, fuzzy
+#| msgid "Rate this plugin »"
+msgid "Rate this plugin »"
 msgstr "Laissez un avis"
 
-#: MarkupMarkdown/Core/Settings.php:132
+#: MarkupMarkdown/Core/Settings.php:127
 msgid ""
 "Most of the following settings are related to addons. You can globally "
 "enable or disable addons from the %1$s screen options %2$s panel."
@@ -569,17 +624,17 @@ msgstr ""
 "La plupart des paramètres ci-dessous sont liés aux modules utilisés (addons) "
 "disponibles depuis les %1$s options de l'écran%2$s."
 
-#: MarkupMarkdown/Core/Settings.php:298
+#: MarkupMarkdown/Core/Settings.php:291
 msgid "Addons used"
 msgstr "Modules utilisés"
 
-#: MarkupMarkdown/Core/Settings.php:300
+#: MarkupMarkdown/Core/Settings.php:293
 msgid "You can manually activate or desactivate specific addons."
 msgstr ""
 "Vous pouvez activer ou désactiver globalement les modules de la liste "
 "suivante."
 
-#: MarkupMarkdown/Core/Settings.php:300
+#: MarkupMarkdown/Core/Settings.php:293
 msgid "Addons marked with <sup>*</sup> should be used with caution."
 msgstr ""
 "Les modules marqués d'une astérix <sup>*</sup> sont à utiliser avec "
