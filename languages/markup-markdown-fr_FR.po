@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Markup Markdown 3.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
 "POT-Creation-Date: 2024-09-18T09:50:33+09:00\n"
-"PO-Revision-Date: 2024-09-18 09:51+0900\n"
+"PO-Revision-Date: 2024-09-18 10:31+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -255,19 +255,19 @@ msgstr "Guide"
 
 #: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:190
 msgid "Switch text direction to right"
-msgstr ""
+msgstr "Changer la direction du texte à droite"
 
 #: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:191
 msgid "Right to Left text direction"
-msgstr ""
+msgstr "Ecriture du texte de droite à gauche"
 
 #: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:192
 msgid "Switch text direction to left"
-msgstr ""
+msgstr "Changer la direction du texte à gauche"
 
 #: MarkupMarkdown/Addons/Released/Media/ToolbarEasyMDE.php:193
 msgid "Left to Right text direction"
-msgstr ""
+msgstr "Ecriture du texte de gauche à droite"
 
 #: MarkupMarkdown/Addons/Released/Media/Vimeo.php:21
 msgid "Vimeo"
@@ -611,10 +611,8 @@ msgid "Support"
 msgstr "Forum d’aide en ligne"
 
 #: MarkupMarkdown/Core/Activation.php:83
-#, fuzzy
-#| msgid "Rate this plugin »"
 msgid "Rate this plugin »"
-msgstr "Laissez un avis"
+msgstr "Laissez un avis »"
 
 #: MarkupMarkdown/Core/Settings.php:127
 msgid ""
