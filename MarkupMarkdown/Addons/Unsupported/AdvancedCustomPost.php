@@ -24,7 +24,11 @@ class AdvancedCustomPost {
 		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_ACP_MANAGER' => 1 );
 		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
-		# New screen?
+		if ( is_admin() ) :
+			add_filter( 'mmd_verified_config', array( $this, 'update_config' ) );
+			add_filter( 'mmd_var2const', array( $this, 'create_const' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'load_acp_assets' ), 11 , 1 );
+		endif;
 	}
 
 
@@ -41,6 +45,37 @@ class AdvancedCustomPost {
 		elseif ( 'post' === $screen->id ) :
 			$this->edit_post( filter_input( INPUT_GET, 'post', FILTER_SANITIZE_SPECIAL_CHARS ) );
 		endif;
+	}
+
+
+	public function load_acp_assets( $hook ) {
+		if ( 'settings_page_markup-markdown-admin' === $hook ) :
+		/*
+			add_action( 'mmd_before_options', array( $this, 'install_spell_checker' ) );
+			add_action( 'mmd_tabmenu_options', array( $this, 'add_tabmenu' ) );
+			add_action( 'mmd_tabcontent_options', array( $this, 'add_tabcontent' ) );
+		*/
+		endif;
+	}
+
+
+	/**
+	 * Filter to parse options inside the options screen when the form was submitted
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function update_config( $my_cnf ) {
+		$my_cnf[ 'use_git' ] = filter_input( INPUT_POST, 'mmd_use_git', FILTER_VALIDTE_INT );
+		return $my_cnf;
+	}
+	public function create_const( $my_cnf ) {
+		$my_cnf[ 'use_git' ] = isset( $my_cnf[ 'use_git' ] ) && (int)$my_cnf[ 'use_git' ] ) > 0 ? 1 : 0;
+		$my_cnf[ 'MMD_USE_GIT' ] = $my_cnf[ 'use_git' ];
+		unset( $my_cnf[ 'use_git' ] );
+		return $my_cnf;
 	}
 
 
