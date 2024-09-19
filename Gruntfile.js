@@ -39,6 +39,10 @@ module.exports = function(grunt) {
 			}
 		},
 		copy: {
+			engine_easymde: {
+				src: 'AA_src/easy-markdown-editor/js/easymde.min.js',
+				dest: 'assets/easy-markdown-editor/dist/easymde.min.js'
+			},
 			builder_easymde: {
 				src: 'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
 				dest: 'assets/markup-markdown/js/wordpress_richedit-easymde.debug.js'

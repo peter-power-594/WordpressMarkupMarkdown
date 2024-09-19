@@ -68,7 +68,17 @@ class Layout {
 		$my_cnf[ 'imagesloaded' ] = filter_input( INPUT_POST, 'mmd_imagesloaded', FILTER_VALIDATE_INT );
 		$my_cnf[ 'masonry' ] = filter_input( INPUT_POST, 'mmd_masonry', FILTER_VALIDATE_INT );
 		$my_cnf[ 'toolbar' ] = preg_replace( "#[^a-z0-9_,]#", "", filter_input( INPUT_POST, 'mmd_toolbar', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
-		$my_cnf[ 'goodvibes' ] = filter_input( INPUT_POST, 'mmd_goodvibes', FILTER_VALIDATE_INT );
+		$my_cnf[ 'headings' ] = [];
+		$fm_headings = filter_input( INPUT_POST, 'mmd_headings', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+		if ( isset( $fm_headings ) && is_array( $fm_headings ) ) :
+			foreach ( $fm_headings as $heading ) :
+				$heading = (int)$heading;
+				if ( in_array( $heading, $my_cnf[ 'headings' ] ) || ! is_numeric( $heading ) || $heading < 1 || $heading > 6 ) :
+					continue;
+				endif;
+				$my_cnf[ 'headings' ][] = $heading;
+			endforeach;
+		endif;
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
@@ -80,6 +90,8 @@ class Layout {
 		unset( $my_cnf[ 'masonry' ] );
 		$my_cnf[ 'MMD_USE_BLOCKSTYLES' ] = isset( $my_cnf[ 'goodvibes' ] ) ? $my_cnf[ 'goodvibes' ] : 0;
 		unset( $my_cnf[ 'goodvibes' ] );
+		$my_cnf[ 'MMD_USE_HEADINGS' ] = isset( $my_cnf[ 'headings' ] ) && count( $my_cnf[ 'headings' ] ) > 1 ? $my_cnf[ 'headings' ] : [];
+		unset( $my_cnf[ 'headings' ] );
 		if ( isset( $my_cnf[ 'toolbar' ] ) > 0 ) :
 			file_put_contents( $this->toolbar_conf, '{"my_buttons":' . json_encode( explode( ",", $my_cnf[ 'toolbar' ] ) ) . '}' );
 			unset( $my_cnf[ 'toolbar' ] );

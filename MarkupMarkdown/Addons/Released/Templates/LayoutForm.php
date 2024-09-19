@@ -10,10 +10,43 @@
 		'lightbox' => defined( 'MMD_USE_LIGHTBOX' ) ? MMD_USE_LIGHTBOX : 1,
 		'masonry' => defined( 'MMD_USE_MASONRY' ) ? MMD_USE_MASONRY : 1,
 		'imagesloaded' => defined( 'MMD_USE_IMAGESLOADED' ) ? MMD_USE_IMAGESLOADED : 1,
-		'goodvibes' => defined( 'MMD_USE_BLOCKSTYLES' ) ? MMD_USE_BLOCKSTYLES : 0
+		'goodvibes' => defined( 'MMD_USE_BLOCKSTYLES' ) ? MMD_USE_BLOCKSTYLES : 0,
+		'headings' => defined( 'MMD_USE_HEADINGS' ) && count( MMD_USE_HEADINGS ) > 1 ? MMD_USE_HEADINGS : [ 1, 2, 3, 4, 5, 6 ]
 	);
 ?>
-			<tr class="site-use-lightbox">
+			<tr class="site-use-selective_headings">
+				<th scope="row">
+					<?php esc_html_e( 'Select headline weights', 'markup-markdown' ); ?>
+				</th>
+				<td>
+					<?php esc_html_e( 'You can toggle specific heading levels for your authors to avoid conflicts with your theme setup. At least two weights are required.', 'markup-markdown' ); ?><br />
+					<label for="mmd_headings1">
+						<input type="checkbox" name="mmd_headings[]" id="mmd_headings1" value="1" <?php echo in_array( '1', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Level 1 (H1)', 'markup-markdown' ); ?>
+					</label> &nbsp;
+					<label for="mmd_headings2">
+						<input type="checkbox" name="mmd_headings[]" id="mmd_headings2" value="2" <?php echo in_array( '2', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Level 2 (H2)', 'markup-markdown' ); ?>
+					</label> &nbsp;
+					<label for="mmd_headings3">
+						<input type="checkbox" name="mmd_headings[]" id="mmd_headings3" value="3" <?php echo in_array( '3', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Level 3 (H3)', 'markup-markdown' ); ?>
+					</label> &nbsp;
+					<label for="mmd_headings4">
+						<input type="checkbox" name="mmd_headings[]" id="mmd_headings4" value="4" <?php echo in_array( '4', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Level 4 (H4)', 'markup-markdown' ); ?>
+					</label> &nbsp;
+					<label for="mmd_headings5">
+						<input type="checkbox" name="mmd_headings[]" id="mmd_headings5" value="5" <?php echo in_array( '5', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Level 5 (H5)', 'markup-markdown' ); ?>
+					</label> &nbsp;
+					<label for="mmd_headings6">
+						<input type="checkbox" name="mmd_headings[]" id="mmd_headings6" value="6" <?php echo in_array( '6', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Level 6 (H6)', 'markup-markdown' ); ?>
+					</label>
+				</td>
+			</tr>
+			<tr class="site-use-blocks">
 				<th scope="row">
 					<?php esc_html_e( 'Use Gutenberg blocks styles', 'markup-markdown' ); ?>
 				</th>
