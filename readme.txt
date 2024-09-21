@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.7.0
-Version: 3.7.0
+Stable Tag: 3.7.1
+Version: 3.7.1
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6.0
@@ -90,6 +90,10 @@ The current version is based on components that are not compatible with assistiv
 
 
 == Changelog ==
+
+= 3.7.1 =
+
+Quick patch to add an option to preserve spaces at the beginning of line
 
 = 3.7.0 =
 

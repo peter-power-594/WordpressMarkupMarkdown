@@ -79,6 +79,7 @@ class Layout {
 				$my_cnf[ 'headings' ][] = $heading;
 			endforeach;
 		endif;
+		$my_cnf[ 'mmd_keepspaces' ] = filter_input( INPUT_POST, 'mmd_keepspaces', FILTER_VALIDATE_INT );
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
@@ -96,6 +97,7 @@ class Layout {
 			file_put_contents( $this->toolbar_conf, '{"my_buttons":' . json_encode( explode( ",", $my_cnf[ 'toolbar' ] ) ) . '}' );
 			unset( $my_cnf[ 'toolbar' ] );
 		endif;
+		$my_cnf[ 'MMD_KEEP_SPACES' ] = isset( $my_cnf[ 'mmd_keepspaces' ] ) ? $my_cnf[ 'mmd_keepspaces' ] : 0;
 		return $my_cnf;
 	}
 
