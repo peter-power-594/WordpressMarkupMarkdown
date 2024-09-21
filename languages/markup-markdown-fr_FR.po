@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Markup Markdown 3.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
-"POT-Creation-Date: 2024-09-18T09:50:33+09:00\n"
-"PO-Revision-Date: 2024-09-18 10:31+0900\n"
+"POT-Creation-Date: 2024-09-21T06:01:34+00:00\n"
+"PO-Revision-Date: 2024-09-21 15:13+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -16,23 +16,23 @@ msgstr ""
 "X-Domain: markup-markdown\n"
 
 #. Plugin Name of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: markup-markdown.php
 msgid "Markup Markdown"
 msgstr "Markup Markdown"
 
 #. Description of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: markup-markdown.php
 msgid ""
 "Replaces the Gutenberg Block Editor in favor of pure markdown based markups"
 msgstr "Remplace l’éditeur par défaut Gutenberg par l’éditeur Markdown EasyMDE"
 
 #. Author of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: markup-markdown.php
 msgid "Pierre-Henri Lavigne"
 msgstr "Pierre-Henri Lavigne"
 
 #. Author URI of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: markup-markdown.php
 msgid "https://www.markup-markdown.com"
 msgstr "https://www.markup-markdown.com"
 
@@ -189,7 +189,7 @@ msgid "Spellchecker"
 msgstr "Vérificateur d’orthographe"
 
 #: MarkupMarkdown/Addons/Released/Layout.php:25
-#: MarkupMarkdown/Addons/Released/Layout.php:120
+#: MarkupMarkdown/Addons/Released/Layout.php:122
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:4
 msgid "Layout"
 msgstr "Gabarit"
@@ -308,11 +308,11 @@ msgstr ""
 "Voici quelques paramètres que vous pouvez modifier pour personnaliser "
 "l'affichage de votre blog."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:19
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:20
 msgid "Select headline weights"
 msgstr "Sélectionner les épaisseurs de titres"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:22
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:23
 msgid ""
 "You can toggle specific heading levels for your authors to avoid conflicts "
 "with your theme setup. At least two weights are required."
@@ -321,35 +321,47 @@ msgstr ""
 "auteurs/autrices pour éviter les conflits de configuration avec thème. En "
 "choisir au minimum 2."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:25
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:26
 msgid "Level 1 (H1)"
 msgstr "Titre de niveau 1 (H1)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:29
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:30
 msgid "Level 2 (H2)"
 msgstr "Titre de niveau 2 (H2)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:33
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:34
 msgid "Level 3 (H3)"
 msgstr "Titre de niveau 3 (H3)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:37
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:38
 msgid "Level 4 (H4)"
 msgstr "Titre de niveau 4 (H4)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:41
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:42
 msgid "Level 5 (H5)"
 msgstr "Titre de niveau 5 (H5)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:45
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:46
 msgid "Level 6 (H6)"
 msgstr "Titre de niveau 6 (H6)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:51
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:52
+msgid "Preserve spaces"
+msgstr "Conserver les espaces"
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:57
+msgid ""
+"By default space characters at the beginning of each line are removed "
+"(trim), check this option to keep them."
+msgstr ""
+"Par défaut les espaces au début des lignes sont supprimés, cocher cette "
+"option pour les conserver."
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:63
 msgid "Use Gutenberg blocks styles"
 msgstr "Conserver les styles Gutenberg"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:56
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:68
 msgid ""
 "Keep a minimum of assets active if your theme was designed to be used with "
 "Gutenberg. Can avoid broken layout in case styles are missing."
@@ -358,11 +370,11 @@ msgstr ""
 "thème a été conçu pour Gutenberg, activer cette option pour que les styles "
 "des blocs s'appliquent aussi aux éléments générés par le code Markdown."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:62
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:74
 msgid "Use Lightbox"
 msgstr "Utiliser Lightbox"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:67
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:79
 msgid ""
 "An image inside a $1%spost$2%s or $1%spage$2%s that was linked to its "
 "original size will open in a modal (overlay on the same page) instead of a "
@@ -374,11 +386,11 @@ msgstr ""
 "d'une nouvelle fenêtre. Idéal si cette fonctionnalité n'est pas déjà incluse "
 "dans votre thème."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:73
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:85
 msgid "Use Masonry"
 msgstr "Utiliser Masonry"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:78
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:90
 msgid ""
 "Transform a bullet list of images as a 2 waterfall column layout when the "
 "$1%sphoto gallery$2%s post format is selected."
@@ -387,11 +399,11 @@ msgstr ""
 "liste à puces de vignettes en un gabarit à double colonnes avec disposition "
 "en cascade. Compatible avec le shortcode [gallery]."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:83
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:95
 msgid "Use Imagesloaded"
 msgstr "Utiliser ImageLoaded"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:88
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:100
 msgid ""
 "Trigger the update of the layout after all images are loaded. Can solve "
 "specific issues in case the layout is broken with the gallery."
@@ -400,19 +412,19 @@ msgstr ""
 "est chargé. Permet de résoudre des soucis d'affichage avec les cascades dont "
 "les images sont mal positionnées ou de mauvaises tailles."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:95
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:107
 msgid "Custom toolbar"
 msgstr "Personnalisation de votre barre d'outils"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:109
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:121
 msgid "Current Toolbar (Preview)"
 msgstr "Barre d'outils actuelle (Aperçu)"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:111
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:123
 msgid "You can sort the buttons and remove some of them if need."
 msgstr "Vous pouvez déplacer les boutons suivants et en supprimer si besoin."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:139
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:151
 msgid ""
 "Buttons related to languages are represented as a single grey globe button, "
 "and will only be displayed if the related spell checkers are enabled."
@@ -421,11 +433,11 @@ msgstr ""
 "secondaires du vérificateur d'orthographe et ne sera visible que si le "
 "module correspondant est activé."
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:142
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:154
 msgid "Available Buttons"
 msgstr "Boutons disponibles"
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:143
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:155
 msgid "You can drag the following buttons and drop them to the toolbar above."
 msgstr ""
 "Vous pouvez glisser et déposer les boutons supplémentaires suivants sur la "

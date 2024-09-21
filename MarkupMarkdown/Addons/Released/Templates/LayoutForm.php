@@ -11,7 +11,8 @@
 		'masonry' => defined( 'MMD_USE_MASONRY' ) ? MMD_USE_MASONRY : 1,
 		'imagesloaded' => defined( 'MMD_USE_IMAGESLOADED' ) ? MMD_USE_IMAGESLOADED : 1,
 		'goodvibes' => defined( 'MMD_USE_BLOCKSTYLES' ) ? MMD_USE_BLOCKSTYLES : 0,
-		'headings' => defined( 'MMD_USE_HEADINGS' ) && count( MMD_USE_HEADINGS ) > 1 ? MMD_USE_HEADINGS : [ 1, 2, 3, 4, 5, 6 ]
+		'headings' => defined( 'MMD_USE_HEADINGS' ) && count( MMD_USE_HEADINGS ) > 1 ? MMD_USE_HEADINGS : [ 1, 2, 3, 4, 5, 6 ],
+		'keepspaces' => defined( 'MMD_KEEP_SPACES' ) ? MMD_KEEP_SPACES : 0
 	);
 ?>
 			<tr class="site-use-selective_headings">
@@ -43,6 +44,17 @@
 					<label for="mmd_headings6">
 						<input type="checkbox" name="mmd_headings[]" id="mmd_headings6" value="6" <?php echo in_array( '6', $my_cnf[ 'headings' ] ) ? 'checked="checked"' : ''; ?> />
 						<?php esc_html_e( 'Level 6 (H6)', 'markup-markdown' ); ?>
+					</label>
+				</td>
+			</tr>
+			<tr class="site-keep-spaces">
+				<th scope="row">
+					<?php esc_html_e( 'Preserve spaces', 'markup-markdown' ); ?>
+				</th>
+				<td>
+					<label for="mmd_keepspaces">
+						<input type="checkbox" name="mmd_keepspaces" id="mmd_keepspaces" value="1" <?php echo (int)$my_cnf[ 'keepspaces' ] > 0 ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'By default space characters at the beginning of each line are removed (trim), check this option to keep them.', 'markup-markdown' ); ?>
 					</label>
 				</td>
 			</tr>
