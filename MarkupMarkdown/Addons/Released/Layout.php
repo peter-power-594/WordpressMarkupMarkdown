@@ -98,6 +98,7 @@ class Layout {
 			unset( $my_cnf[ 'toolbar' ] );
 		endif;
 		$my_cnf[ 'MMD_KEEP_SPACES' ] = isset( $my_cnf[ 'mmd_keepspaces' ] ) ? $my_cnf[ 'mmd_keepspaces' ] : 0;
+		unset( $my_cnf[ 'mmd_keepspaces' ] );
 		return $my_cnf;
 	}
 
