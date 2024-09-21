@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown Preview Module
  * @desc Everything needed to handle the preview. Mostly cache and media rules handlers
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.0.24
+ * @version 1.0.25
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 
