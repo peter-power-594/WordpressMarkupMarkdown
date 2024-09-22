@@ -50,11 +50,8 @@ class AdvancedCustomPost {
 
 	public function load_acp_assets( $hook ) {
 		if ( 'settings_page_markup-markdown-admin' === $hook ) :
-		/*
-			add_action( 'mmd_before_options', array( $this, 'install_spell_checker' ) );
 			add_action( 'mmd_tabmenu_options', array( $this, 'add_tabmenu' ) );
 			add_action( 'mmd_tabcontent_options', array( $this, 'add_tabcontent' ) );
-		*/
 		endif;
 	}
 
@@ -72,7 +69,7 @@ class AdvancedCustomPost {
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
-		$my_cnf[ 'use_git' ] = isset( $my_cnf[ 'use_git' ] ) && (int)$my_cnf[ 'use_git' ] ) > 0 ? 1 : 0;
+		$my_cnf[ 'use_git' ] = isset( $my_cnf[ 'use_git' ] ) && (int)$my_cnf[ 'use_git' ] > 0 ? 1 : 0;
 		$my_cnf[ 'MMD_USE_GIT' ] = $my_cnf[ 'use_git' ];
 		unset( $my_cnf[ 'use_git' ] );
 		return $my_cnf;
@@ -154,4 +151,36 @@ class AdvancedCustomPost {
 		return 'mmd_undefined';
 	}
 
+
+
+	/**
+	 * Show the tab item inside the options screen
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function add_tabmenu() {
+		echo "\t\t\t\t\t\t<li><a href=\"#tab-advancedcustompost\">" . __( 'Advanced Custom Post', 'markup-markdown' ) . "</a></li>\n";
+	}
+
+
+	/**
+	 * Display options inside the options screen
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function add_tabcontent() {
+		$my_tmpl = mmd()->plugin_dir . '/MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/templates/mmd-options.php';
+		if ( file_exists( $my_tmpl ) ) :
+			mmd()->clear_cache( $my_tmpl );
+			include $my_tmpl;
+		endif;
+	}
+
+	
 }
