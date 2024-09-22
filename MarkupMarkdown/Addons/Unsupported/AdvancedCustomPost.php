@@ -13,22 +13,30 @@ class AdvancedCustomPost {
 		'active' => 0
 	);
 
-	private $acp_conf = '';
+
+	private $acp_cnf_file = '';
+
+
+	private $conf = [];
+
 
 	public function __construct() {
 		$this->prop[ 'label' ] = __( 'Advanced Custom Posts', 'markup-markdown' );
-		$this->prop[ 'desc' ] = __( 'Manage your posts & pages as jekyll compatible static files', 'markup-markdown' );
+		$this->prop[ 'desc' ] = __( 'Manage your posts & pages as jekyll compatible static files.', 'markup-markdown' );
 		if ( ! defined( 'MMD_ADDONS' ) || ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) ) :
 			$this->prop[ 'active' ] = 0;
 			return FALSE; # Addon has been desactivated
 		endif;
 		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_ACP_MANAGER' => 1 );
-		$this->acp_conf = mmd()->conf_blog_prefix . 'conf_acp.json';
-		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
+		$this->acp_cnf_file = mmd()->conf_blog_prefix . 'conf_acp.json';
+		if ( file_exists( $this->acp_cnf_file ) ) :
+			$this->conf = json_decode( file_get_contents( $this->acp_cnf_file ), true );
+			add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
+		endif;
 		if ( is_admin() ) :
+			add_filter( 'mmd_acp_post_types', array( $this, 'cpt_plug_filters' ) );
 			add_filter( 'mmd_verified_config', array( $this, 'update_config' ) );
-			add_filter( 'mmd_var2const', array( $this, 'create_const' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_acp_assets' ), 11 , 1 );
 		endif;
 	}
@@ -59,21 +67,46 @@ class AdvancedCustomPost {
 
 
 	/**
+	 * Filter to include or exclude custom post types
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @param Array $ctp Custom post types objects list
+	 * @return Array Selected custom post types only
+	 */
+	public function cpt_plug_filters( $ctp = [] ) {
+		$safe_ctp = [];
+		foreach ( $ctp as $slug => $val ) :
+			if ( preg_match( '#^acf-#', $slug ) ) :
+				continue;
+			elseif ( preg_match( '#^admin#', $slug ) ) :
+				continue;
+			endif;
+			$safe_ctp[ $slug ] = $val;
+		endforeach;
+		return $safe_ctp;
+	}
+
+
+	/**
 	 * Filter to parse options inside the options screen when the form was submitted
 	 *
 	 * @since 3.8.0
 	 * @access public
 	 *
-	 * @return Void
+	 * @param Array $my_cnf Current configuration
+	 * @return Array Dummy empty data
 	 */
 	public function update_config( $my_cnf ) {
-		$my_cnf[ 'use_git' ] = filter_input( INPUT_POST, 'mmd_use_git', FILTER_VALIDTE_INT );
-		$my_cnf[ 'blog_post_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		file_put_contents( $this->acp_conf, $my_cnf );
-		return $my_cnf;
-	}
-	public function create_const( $my_cnf ) {
-		return $my_cnf;
+		$acp_cnf[ 'use_git' ] = filter_input( INPUT_POST, 'mmd_use_git', FILTER_VALIDATE_INT );
+		if ( ! isset( $acp_cnf[ 'use_git' ] ) ) :
+			$acp_cnf[ 'use_git' ] = 0;
+		endif;
+		$acp_cnf[ 'blog_post_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$acp_cnf[ 'blog_page_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_page_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		file_put_contents( $this->acp_cnf_file, json_encode( $acp_cnf ) );
+		return [];
 	}
 
 
@@ -177,6 +210,13 @@ class AdvancedCustomPost {
 	 */
 	public function add_tabcontent() {
 		$my_tmpl = mmd()->plugin_dir . '/MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/templates/mmd-options.php';
+		$my_cnf = [];
+		if ( file_exists( $this->acp_cnf_file) ) :
+			$my_cnf = $this->conf;
+			if ( ! isset( $my_cnf ) || ! is_array( $my_cnf ) ) :
+				$my_cnf = [];
+			endif;
+		endif;
 		if ( file_exists( $my_tmpl ) ) :
 			mmd()->clear_cache( $my_tmpl );
 			include $my_tmpl;
