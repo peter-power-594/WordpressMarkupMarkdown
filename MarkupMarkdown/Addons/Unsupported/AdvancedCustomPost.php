@@ -13,6 +13,7 @@ class AdvancedCustomPost {
 		'active' => 0
 	);
 
+	private $acp_conf = '';
 
 	public function __construct() {
 		$this->prop[ 'label' ] = __( 'Advanced Custom Posts', 'markup-markdown' );
@@ -23,6 +24,7 @@ class AdvancedCustomPost {
 		endif;
 		$this->prop[ 'active' ] = 1;
 		mmd()->default_conf = array( 'MMD_ACP_MANAGER' => 1 );
+		$this->acp_conf = mmd()->conf_blog_prefix . 'conf_acp.json';
 		add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
 		if ( is_admin() ) :
 			add_filter( 'mmd_verified_config', array( $this, 'update_config' ) );
@@ -66,12 +68,11 @@ class AdvancedCustomPost {
 	 */
 	public function update_config( $my_cnf ) {
 		$my_cnf[ 'use_git' ] = filter_input( INPUT_POST, 'mmd_use_git', FILTER_VALIDTE_INT );
+		$my_cnf[ 'blog_post_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		file_put_contents( $this->acp_conf, $my_cnf );
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
-		$my_cnf[ 'use_git' ] = isset( $my_cnf[ 'use_git' ] ) && (int)$my_cnf[ 'use_git' ] > 0 ? 1 : 0;
-		$my_cnf[ 'MMD_USE_GIT' ] = $my_cnf[ 'use_git' ];
-		unset( $my_cnf[ 'use_git' ] );
 		return $my_cnf;
 	}
 
