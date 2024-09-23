@@ -28,9 +28,14 @@ class Parser {
 	# Static files
 	private $markdown_file = '';
 	private $json_file = '';
+	# Plugin config
+	private $blog_conf = [];
 
 
-	public function __construct( $file ) {
+	public function __construct( $file, $conf ) {
+		if ( isset( $conf ) || is_array( $conf ) ) :
+			$this->blog_conf = $conf;
+		endif;
 		$target_path = apply_filters( 'mmd_jekyll_posts_folder', ABSPATH . '_posts' );
 		$this->check_cache( $target_path, $file );
 	}
@@ -329,8 +334,8 @@ class Parser {
 	/**
 	 * Get post status regards the pulish or future field
 	 *
-	 * @params Array $post The current post attributes
-	 * @returns String The post status
+	 * @param Array $post The current post attributes
+	 * @return String The post status
 	 */
 	private function get_post_status( $post ) {
 		if ( ! isset( $post ) || ! is_object( $post ) ) :
@@ -345,6 +350,14 @@ class Parser {
 	}
 
 
+	/**
+	 * Write data to the original markdown text file
+	 *
+	 * @access private
+	 * @since 3.8.0
+	 * 
+	 * @return Void
+	 */
 	private function write_data() {
 		$mmd_data = "---";
 		$mmd_data .= "\nlayout: post";
@@ -377,6 +390,14 @@ class Parser {
 	}
 
 
+	/**
+	 * Check for modified data from the submitted data
+	 *
+	 * @access public
+	 * @since 3.8.0
+	 * 
+	 * @return Bolean true if something was modified or fase in nothing was updated
+	 */
 	public function update() {
 		$data = array(
 			'post_status' => filter_input( INPUT_POST, 'post_status', FILTER_SANITIZE_SPECIAL_CHARS ),
@@ -457,6 +478,71 @@ class Parser {
 			return false;
 		endif;
 		$this->write_data();
+		if ( isset( $this->blog_conf[ 'use_git' ] ) && (int)$this->blog_conf[ 'use_git' ] > 0 ) :
+			$this->push2git();
+		endif;
+		return true;
+	}
+
+
+	/**
+	 * Sanitize Windows / Linux / Path
+	 *
+	 * @access private
+	 * @since 3.8.0
+	 * 
+	 * @return Bolean true if something was modified or fase in nothing was updated
+	 */
+	private function sanitize_path( $str ) {
+		if ( ! isset( $str ) || empty( $str ) ) :
+			return '';
+		endif;
+		if ( strpos( $str, '\\') !== false ) :
+			$str = str_replace( '/', '\\', $str );
+		else :
+			$str = str_replace( '//', '/', $str );
+		endif;
+		return $str;
+	}
+
+
+	/**
+	 * Commit and push data to a remote git repository
+	 *
+	 * @access private
+	 * @since 3.8.0
+	 * 
+	 * @return Bolean true in case of succes or false if an error occured
+	 */
+	private function push2git() {
+		$git_folder = isset( $this->blog_conf[ 'git_folder' ] ) ? $this->blog_conf[ 'git_folder' ] : '';
+		if ( empty( $git_folder ) || strpos( $git_folder, '#' ) !== false ) :
+			return false;
+		endif;
+		$safe_git_folder = $this->sanitize_path( $git_folder );
+		$safe_mmd_file = $this->sanitize_path( $this->markdown_file );
+		if ( strpos( $safe_mmd_file, $safe_git_folder ) !== 0 ) :
+			error_log( 'Damed something wrong' );
+			return false;
+		endif;
+		$dep_libs = [ 'Git', 'GitRepo' ]; $git_bridge = 1;
+		foreach ( $dep_libs as $lib_idx => $lib_filename ) :
+			$my_lib = mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/src/' . $lib_filename . '.php';
+			if ( ! file_exists( $my_lib ) ) :
+				$git_bridge = 0;
+				continue;
+			endif;
+			require_once $my_lib;
+		endforeach;
+		if ( ! $git_bridge ) : # Something is missing
+			return false;
+		endif;
+		$my_repo = \Kbjr\Git\Git::open( $safe_git_folder );
+		error_log( $my_repo->run( 'config user.email lavigne.pierrehenri@proton.me' ) );
+		error_log( $my_repo->run( 'config user.name "Pierre-Henri Lavigne"' ) );
+		# $my_repo->add( './' . str_replace( $safe_git_folder, '', $safe_mmd_file ) );
+		# $my_repo->commit( 'Updating ' . $this->post_title, false );
+		# $my_repo->push( 'origin', 'master' );
 		return true;
 	}
 

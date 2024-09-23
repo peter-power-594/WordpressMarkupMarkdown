@@ -20,6 +20,11 @@ class AdvancedCustomPost {
 	private $conf = [];
 
 
+	protected $screen_edit_apost = '';
+	protected $screen_edit_apage = '';
+	protected $screen_list_posts = '';
+	protected $screen_list_pages = '';
+
 	public function __construct() {
 		$this->prop[ 'label' ] = __( 'Advanced Custom Posts', 'markup-markdown' );
 		$this->prop[ 'desc' ] = __( 'Manage your posts & pages as jekyll compatible static files.', 'markup-markdown' );
@@ -32,6 +37,10 @@ class AdvancedCustomPost {
 		$this->acp_cnf_file = mmd()->conf_blog_prefix . 'conf_acp.json';
 		if ( file_exists( $this->acp_cnf_file ) ) :
 			$this->conf = json_decode( file_get_contents( $this->acp_cnf_file ), true );
+			$this->screen_edit_apost = $this->conf[ 'blog_post_type' ];
+			$this->screen_list_posts = 'edit-' . $this->screen_edit_apost;
+			$this->screen_edit_apage = $this->conf[ 'blog_page_type' ];
+			$this->screen_list_pages = 'edit-' . $this->screen_edit_apage;
 			add_action( 'current_screen', array( $this, 'wp_screen_proxy' ), 5 );
 		endif;
 		if ( is_admin() ) :
@@ -50,9 +59,9 @@ class AdvancedCustomPost {
 		if ( ! isset( $screen ) || ! is_object( $screen ) || ! isset( $screen->id ) ) :
 			return false; # Not an interesting screen
 		endif;
-		if ( 'edit-post' === $screen->id ) :
+		if ( $this->screen_list_posts === $screen->id ) :
 			$this->list_posts();
-		elseif ( 'post' === $screen->id ) :
+		elseif ( $this->screen_edit_apost === $screen->id ) :
 			$this->edit_post( filter_input( INPUT_GET, 'post', FILTER_SANITIZE_SPECIAL_CHARS ) );
 		endif;
 	}
@@ -99,9 +108,13 @@ class AdvancedCustomPost {
 	 * @return Array Dummy empty data
 	 */
 	public function update_config( $my_cnf ) {
-		$acp_cnf[ 'use_git' ] = filter_input( INPUT_POST, 'mmd_use_git', FILTER_VALIDATE_INT );
+		$acp_cnf[ 'use_git' ] = filter_input( INPUT_POST, 'mmd_acp_use_git', FILTER_VALIDATE_INT );
 		if ( ! isset( $acp_cnf[ 'use_git' ] ) ) :
 			$acp_cnf[ 'use_git' ] = 0;
+		endif;
+		$acp_cnf[ 'git_folder' ] = filter_input( INPUT_POST, 'mmd_acp_git_folder', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! isset( $acp_cnf[ 'git_folder' ] ) ) :
+			$acp_cnf[ 'git_folder' ] = '#';
 		endif;
 		$acp_cnf[ 'blog_post_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$acp_cnf[ 'blog_page_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_page_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -143,6 +156,7 @@ class AdvancedCustomPost {
 		if ( ! isset( $post ) || empty( $post ) || is_numeric( $post ) ) :
 			return false;
 		endif;
+		$my_cnf = $this->conf;
 		include mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/templates/mmd-edit-post.php';
 		exit;
 	}

@@ -28,7 +28,7 @@ global $post_type, $post_type_object, $post;
 
 if ( $post_ID ) : # post_id = filename
 	require_once mmd()->plugin_dir . '/MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/Parser.php';
-	$post = new \MarkupMarkdown\Addons\Unsupported\AdvancedCustomPost\Parser( $post_ID );
+	$post = new \MarkupMarkdown\Addons\Unsupported\AdvancedCustomPost\Parser( $post_ID, $my_cnf );
 	$my_nonce = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_SPECIAL_CHARS );
 	if ( isset( $my_nonce ) && wp_verify_nonce( $my_nonce, 'update-post_' . $post_ID ) ) :
 		$post->update();

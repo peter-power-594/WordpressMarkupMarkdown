@@ -39,6 +39,15 @@ class Git
 
 	function __construct()
 	{
+		self::checkBin();
+	}
+
+	/**
+	 * Check for existing git executable
+	 *
+	 */
+	public static function checkBin()
+	{
 		if (file_exists('/usr/bin/git')) {
 			self::$bin = '/usr/bin/git';
 		} else {
@@ -61,6 +70,9 @@ class Git
 	 */
 	public static function getBin()
 	{
+		if (!self::$bin):
+			self::checkBin();
+		endif;
 		return self::$bin;
 	}
 
