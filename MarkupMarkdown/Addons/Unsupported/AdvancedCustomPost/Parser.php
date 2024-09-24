@@ -537,12 +537,16 @@ class Parser {
 		if ( ! $git_bridge ) : # Something is missing
 			return false;
 		endif;
-		$my_repo = \Kbjr\Git\Git::open( $safe_git_folder );
-		error_log( $my_repo->run( 'config user.email lavigne.pierrehenri@proton.me' ) );
-		error_log( $my_repo->run( 'config user.name "Pierre-Henri Lavigne"' ) );
-		# $my_repo->add( './' . str_replace( $safe_git_folder, '', $safe_mmd_file ) );
-		# $my_repo->commit( 'Updating ' . $this->post_title, false );
-		# $my_repo->push( 'origin', 'master' );
+		try {
+			$my_repo = \Kbjr\Git\Git::open( $safe_git_folder );
+			error_log( $my_repo->run( 'config user.email lavigne.pierrehenri@proton.me' ) );
+			error_log( $my_repo->run( 'config user.name "Pierre-Henri Lavigne"' ) );
+			# $my_repo->add( './' . str_replace( $safe_git_folder, '', $safe_mmd_file ) );
+			# $my_repo->commit( 'Updating ' . $this->post_title, false );
+			# $my_repo->push( 'origin', 'master' );	
+		} catch (Exception $ex) {
+			error_log( $ex );
+		}
 		return true;
 	}
 

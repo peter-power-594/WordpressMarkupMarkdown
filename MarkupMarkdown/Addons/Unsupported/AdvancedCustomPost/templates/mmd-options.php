@@ -40,7 +40,12 @@
 		endif;
 		echo '<option value="' . $folder . '"' . ( $my_cnf[ 'git_folder' ] === $folder ? ' selected="selected"' : '' ) . '>' . $folder . '</option>';
 	endforeach;
-										?></select>
+										?></select><br />
+										<br />
+										<label for="mmd_acp_git_username">
+											<?php esc_html_e( 'Git User Name', 'markup-markdown' ); ?>
+										</label>
+										
 <?php
 	else:
 		esc_html_e( 'Feature unavailable. No git instance found on your server or no folder containing a git setup detected.' );
