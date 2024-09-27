@@ -116,10 +116,18 @@ class AdvancedCustomPost {
 		if ( ! isset( $acp_cnf[ 'git_folder' ] ) ) :
 			$acp_cnf[ 'git_folder' ] = '#';
 		endif;
+		$acp_cnf[ 'git_username' ] = filter_input( INPUT_POST, 'mmd_acp_git_username', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! isset( $acp_cnf[ 'git_username' ] ) || empty( $acp_cnf[ 'git_username' ] ) ) :
+			$acp_cnf[ 'git_username' ] = '';
+		endif;
+		$acp_cnf[ 'git_useremail' ] = filter_input( INPUT_POST, 'mmd_acp_git_useremail', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! isset( $acp_cnf[ 'git_useremail' ] ) || empty( $acp_cnf[ 'git_useremail' ] ) ) :
+			$acp_cnf[ 'git_useremail' ] = '';
+		endif;
 		$acp_cnf[ 'blog_post_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$acp_cnf[ 'blog_page_type' ] = filter_input( INPUT_POST, 'mmd_acp_blog_page_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		file_put_contents( $this->acp_cnf_file, json_encode( $acp_cnf ) );
-		return [];
+		return $my_cnf; // Keep the return value
 	}
 
 
