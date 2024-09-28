@@ -100,6 +100,11 @@
 										<label for="mmd_acp_git_useremail">
 											<?php esc_html_e( 'Repository User Email', 'markup-markdown' ); ?><br />
 											<input type="text" name="mmd_acp_git_useremail" id="mmd_acp_git_useremail" value="<?php echo isset( $my_cnf[ 'git_useremail' ] ) && ! empty( $my_cnf[ 'git_useremail' ] ) ? $my_cnf[ 'git_useremail' ] : ''; ?>" class="regular-text">
+										</label><br />
+										<br />
+										<label for="mmd_acp_git_repo_origin">
+											<?php esc_html_e( 'Repository Origin', 'markup-markdown' ); ?><br />
+											<input type="text" name="mmd_acp_git_repo_origin" id="mmd_acp_git_repo_origin" value="<?php echo isset( $my_cnf[ 'git_repo_origin' ] ) && ! empty( $my_cnf[ 'git_repo_origin' ] ) ? $my_cnf[ 'git_repo_origin' ] : ''; ?>" class="regular-text">
 										</label>
 										
 <?php

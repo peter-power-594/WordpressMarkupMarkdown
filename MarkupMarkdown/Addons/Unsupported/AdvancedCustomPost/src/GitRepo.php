@@ -221,7 +221,10 @@ class GitRepo {
 		}
 
 		$status = trim(proc_close($resource));
-		if ($status) throw new Exception($stderr . "\n" . $stdout); //Not all errors are printed to stderr, so include std out as well.
+		if ($status) {
+			error_log($stderr . "\n" . $stdout); //Not all errors are printed to stderr, so include std out as well.
+			return false;
+		}
 
 		return $stdout;
 	}

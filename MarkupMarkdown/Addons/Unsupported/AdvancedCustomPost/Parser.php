@@ -385,8 +385,8 @@ class Parser {
 		endif;
 		$mmd_data .= "\n---\n";
 		$mmd_data .= html_entity_decode( $this->post_content );
-		file_put_contents( $this->markdown_file, $mmd_data );
 		@unlink( $this->json_file );
+		return file_put_contents( $this->markdown_file, $mmd_data );
 	}
 
 
@@ -477,76 +477,13 @@ class Parser {
 		if ( ! $update ) :
 			return false;
 		endif;
-		$this->write_data();
-		if ( isset( $this->blog_conf[ 'use_git' ] ) && (int)$this->blog_conf[ 'use_git' ] > 0 ) :
-			$this->push2git();
-		endif;
-		return true;
-	}
-
-
-	/**
-	 * Sanitize Windows / Linux / Path
-	 *
-	 * @access private
-	 * @since 3.8.0
-	 * 
-	 * @return Bolean true if something was modified or fase in nothing was updated
-	 */
-	private function sanitize_path( $str ) {
-		if ( ! isset( $str ) || empty( $str ) ) :
-			return '';
-		endif;
-		if ( strpos( $str, '\\') !== false ) :
-			$str = str_replace( '/', '\\', $str );
-		else :
-			$str = str_replace( '//', '/', $str );
-		endif;
-		return $str;
-	}
-
-
-	/**
-	 * Commit and push data to a remote git repository
-	 *
-	 * @access private
-	 * @since 3.8.0
-	 * 
-	 * @return Bolean true in case of succes or false if an error occured
-	 */
-	private function push2git() {
-		$git_folder = isset( $this->blog_conf[ 'git_folder' ] ) ? $this->blog_conf[ 'git_folder' ] : '';
-		if ( empty( $git_folder ) || strpos( $git_folder, '#' ) !== false ) :
+		$my_save = $this->write_data();
+		if ( ! $my_save ) :
 			return false;
 		endif;
-		$safe_git_folder = $this->sanitize_path( $git_folder );
-		$safe_mmd_file = $this->sanitize_path( $this->markdown_file );
-		if ( strpos( $safe_mmd_file, $safe_git_folder ) !== 0 ) :
-			error_log( 'Damed something wrong' );
-			return false;
+		if ( $this->post_status === 'publish' && isset( $this->blog_conf[ 'use_git' ] ) && (int)$this->blog_conf[ 'use_git' ] > 0 ) :
+			do_action( 'mmd_git_push', $this->markdown_file, $data[ 'post_title' ] );
 		endif;
-		$dep_libs = [ 'Git', 'GitRepo' ]; $git_bridge = 1;
-		foreach ( $dep_libs as $lib_idx => $lib_filename ) :
-			$my_lib = mmd()->plugin_dir . 'MarkupMarkdown/Addons/Unsupported/AdvancedCustomPost/src/' . $lib_filename . '.php';
-			if ( ! file_exists( $my_lib ) ) :
-				$git_bridge = 0;
-				continue;
-			endif;
-			require_once $my_lib;
-		endforeach;
-		if ( ! $git_bridge ) : # Something is missing
-			return false;
-		endif;
-		try {
-			$my_repo = \Kbjr\Git\Git::open( $safe_git_folder );
-			error_log( $my_repo->run( 'config user.email lavigne.pierrehenri@proton.me' ) );
-			error_log( $my_repo->run( 'config user.name "Pierre-Henri Lavigne"' ) );
-			# $my_repo->add( './' . str_replace( $safe_git_folder, '', $safe_mmd_file ) );
-			# $my_repo->commit( 'Updating ' . $this->post_title, false );
-			# $my_repo->push( 'origin', 'master' );	
-		} catch (Exception $ex) {
-			error_log( $ex );
-		}
 		return true;
 	}
 
