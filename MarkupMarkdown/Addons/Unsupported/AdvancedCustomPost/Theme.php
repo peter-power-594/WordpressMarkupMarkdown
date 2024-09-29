@@ -55,13 +55,14 @@ class Theme {
 			elseif( is_dir( $val ) ) :
 				continue;
 			endif;
-			$file_parts = pathinfo( ABSPATH . '_layouts/' . $val );
+			$my_file = ABSPATH . '_layouts/' . $val;
+			$file_parts = pathinfo( $my_file );
 			if ( $file_parts[ 'extension' ] !== 'html' ) :
 				continue;
 			endif;
 			switch ( $file_parts[ 'filename' ] ) :
 				case 'post':
-					$this->make_single_template();
+					$this->make_single_template( $my_file );
 				break;
 			endswitch;
 		endforeach;
@@ -69,8 +70,18 @@ class Theme {
 	}
 
 
-	private function make_single_template() {
-
+	private function make_single_template( $post_tmpl ) {
+		$single_tmpl = $this->theme[ 'dir' ] . '/single.php';
+		if ( ! copy( $post_tmpl, $single_tmpl ) ) :
+			return false;
+		endif;
+		$tmp = file_get_contents( $single_tmpl );
+		$tmp = $this->php_fixed( $tmp );
 	}
 
+
+	private function php_fixed( $str ) {
+		$str = preg_replace( '#\{\{ page.content \}\}#', 'the_content()', $str );
+		return $str;
+	}
 }

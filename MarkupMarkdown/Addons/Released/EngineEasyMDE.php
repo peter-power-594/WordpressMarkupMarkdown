@@ -217,6 +217,7 @@ class EngineEasyMDE {
 		wp_enqueue_style( 'markup_markdown__font_awesome_regular', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/regular.min.css', [ 'markup_markdown__wordpress_richedit' ], '5.15.14' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_solid', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/solid.min.css', [ 'markup_markdown__font_awesome_regular' ], '5.15.14' );
 		wp_enqueue_style( 'markup_markdown__font_awesome_icons', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css', [ 'markup_markdown__font_awesome_solid' ], '5.15.14' );
+		do_action( 'mmd_load_engine_stylesheets' );
 	}
 
 
@@ -232,7 +233,7 @@ class EngineEasyMDE {
 		$plugin_uri = mmd()->plugin_uri;
 		# Debug / Minified version introduced since 3.6
 		if ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ( defined( 'MMD_SCRIPT_DEBUG' ) && MMD_SCRIPT_DEBUG ) ) :
-			wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.1005', true );
+			wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.debug.js', [], '2.18.1005', true );
 			wp_enqueue_script( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/lib/highlightjs.min.js', [ 'markup_markdown__jsengine_editor' ], '8.9.1', true );
 			wp_enqueue_script( 'markup_markdown__waypoints', $plugin_uri . 'assets/jquery-waypoints/lib/jquery.waypoints.min.js', [ 'markup_markdown__jsengine_editor' ], '4.0.1', true );
 			wp_enqueue_script( 'markup_markdown__sticky', $plugin_uri . 'assets/jquery-waypoints/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
@@ -283,6 +284,17 @@ class EngineEasyMDE {
 			'mmd_spell-check'     => esc_html__( 'Spellchecker', 'markup-markdown' )
 		));
 		wp_add_inline_script( 'markup_markdown__wordpress_richedit', $this->add_inline_editor_conf() );
+		do_action( 'mmd_load_engine_scripts' );
+	}
+
+
+	private function load_latex_assets() {
+		if ( defined( 'MMD_USE_LATEX' ) && ! isset( MMD_USE_LATEX[ 1 ] ) ) :
+			return false;
+		endif;
+		if ( MMD_USE_LATEX[ 1 ] === 'katex' ) :
+
+		endif;
 	}
 
 

@@ -102,25 +102,6 @@
 					</label>
 				</td>
 			</tr>
-			<tr class="site-use-latex">
-				<th scope="row">
-					<?php esc_html_e( 'Use Latex', 'markup-markdown' ); ?>
-				</th>
-				<td>
-					<label for="mmd_uselatex1">
-						<input type="radio" name="mmd_uselatex" id="mmd_uselatex1" value="katex" <?php echo isset( $my_cnf[ 'latex' ] ) && $my_cnf[ 'latex' ] === 'katex' ? 'checked="checked"' : ''; ?> />
-						<?php esc_html_e( 'Katex rendering', 'markup-markdown' ); ?>
-					</label>
-					<label for="mmd_uselatex2">
-						<input type="radio" name="mmd_uselatex" id="mmd_uselatex2" value="mathml" <?php echo isset( $my_cnf[ 'latex' ] ) && $my_cnf[ 'latex' ] === 'mathml' ? 'checked="checked"' : ''; ?> />
-						<?php esc_html_e( 'Katex rendering', 'markup-markdown' ); ?>
-					</label><br />
-					<label for="mmd_loadlatex">
-						<input type="checkbox" name="mmd_loadlatex" id="mmd_loadlatex" value="1" <?php echo isset( $my_cnf[ 'latex_assets' ] ) && (int)$my_cnf[ 'latex_assets' ] > 0 ? 'checked="checked"' : ''; ?> />
-						<?php esc_html_e( 'Load the assets on the frontend as well', 'markup-markdown' ); ?>
-					</label>
-				</td>
-			</tr>
 			<tr class="site-default-toolbar">
 				<th scope="row">
 					<?php esc_html_e( 'Custom toolbar', 'markup-markdown' ); ?>
