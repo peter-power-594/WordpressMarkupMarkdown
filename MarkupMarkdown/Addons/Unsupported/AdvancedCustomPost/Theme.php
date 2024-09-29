@@ -25,16 +25,52 @@ class Theme {
 		if ( isset( $slug ) && ! empty( $slug ) ) :
 			$this->theme[ 'slug' ] = htmlspecialchars( $slug );
 		endif;
-		$this->init_theme_directory();
-
+		if ( ! $this->init_theme_directory() ) :
+			return false;
+		endif;
+		$this->theme[ 'dir' ] = ;
+		$this->generate_templates();
 	}
 
 
 	private function init_theme_directory() {
 		$theme_dir = WP_CONTENT_DIR . 'themes/' . $this->theme[ 'slug' ];
-		if ( ! is_dir( $this->theme[ 'dir' ] ) :
-			mkdir( $this->theme[ 'dir' ] );
+		if ( ! is_dir( $this->theme[ 'dir' ] ) ) :
+			$new_dir = mkdir( $this->theme[ 'dir' ] );
+			return $new_dir !== false ? $theme_dir : false; 
 		endif;
+		return $theme_dir;
+	}
+
+
+	private function generate_templates() {
+		$layouts = ABSPATH . '_layouts';
+		if ( ! is_dir( $layouts ) ) :
+			return false;
+		endif;
+		$files = scandir( $theme_dir );
+		foreach( $files as $key => $val ) :
+			if ( in_array( $val, [ '.', '..' ] ) ) :
+				continue;
+			elseif( is_dir( $val ) ) :
+				continue;
+			endif;
+			$file_parts = pathinfo( ABSPATH . '_layouts/' . $val );
+			if ( $file_parts[ 'extension' ] !== 'html' ) :
+				continue;
+			endif;
+			switch ( $file_parts[ 'filename' ] ) :
+				case 'post':
+					$this->make_single_template();
+				break;
+			endswitch;
+		endforeach;
+		return true;
+	}
+
+
+	private function make_single_template() {
+
 	}
 
 }
