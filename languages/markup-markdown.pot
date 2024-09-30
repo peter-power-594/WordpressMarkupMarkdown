@@ -2,35 +2,35 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Markup Markdown 3.6.6\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
+"Project-Id-Version: Markup Markdown 3.7.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown-release\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-18T09:50:33+09:00\n"
+"POT-Creation-Date: 2024-09-30T10:50:56+09:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: markup-markdown\n"
 
 #. Plugin Name of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "Markup Markdown"
 msgstr ""
 
 #. Description of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "Replaces the Gutenberg Block Editor in favor of pure markdown based markups"
 msgstr ""
 
 #. Author of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "Pierre-Henri Lavigne"
 msgstr ""
 
 #. Author URI of the plugin
-#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown\markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "https://www.markup-markdown.com"
 msgstr ""
 
@@ -187,7 +187,7 @@ msgid "Spellchecker"
 msgstr ""
 
 #: MarkupMarkdown/Addons/Released/Layout.php:25
-#: MarkupMarkdown/Addons/Released/Layout.php:120
+#: MarkupMarkdown/Addons/Released/Layout.php:125
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:4
 msgid "Layout"
 msgstr ""
@@ -289,91 +289,99 @@ msgstr ""
 msgid "Here are a few settings you can change to modify the behavior of your blog posts."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:19
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:20
 msgid "Select headline weights"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:22
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:23
 msgid "You can toggle specific heading levels for your authors to avoid conflicts with your theme setup. At least two weights are required."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:25
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:26
 msgid "Level 1 (H1)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:29
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:30
 msgid "Level 2 (H2)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:33
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:34
 msgid "Level 3 (H3)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:37
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:38
 msgid "Level 4 (H4)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:41
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:42
 msgid "Level 5 (H5)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:45
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:46
 msgid "Level 6 (H6)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:51
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:52
+msgid "Preserve spaces"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:57
+msgid "By default space characters at the beginning of each line are removed (trim), check this option to keep them."
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:63
 msgid "Use Gutenberg blocks styles"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:56
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:68
 msgid "Keep a minimum of assets active if your theme was designed to be used with Gutenberg. Can avoid broken layout in case styles are missing."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:62
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:74
 msgid "Use Lightbox"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:67
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:79
 msgid "An image inside a $1%spost$2%s or $1%spage$2%s that was linked to its original size will open in a modal (overlay on the same page) instead of a new window / tab."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:73
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:85
 msgid "Use Masonry"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:78
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:90
 msgid "Transform a bullet list of images as a 2 waterfall column layout when the $1%sphoto gallery$2%s post format is selected."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:83
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:95
 msgid "Use Imagesloaded"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:88
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:100
 msgid "Trigger the update of the layout after all images are loaded. Can solve specific issues in case the layout is broken with the gallery."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:95
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:107
 msgid "Custom toolbar"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:109
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:121
 msgid "Current Toolbar (Preview)"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:111
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:123
 msgid "You can sort the buttons and remove some of them if need."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:139
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:151
 msgid "Buttons related to languages are represented as a single grey globe button, and will only be displayed if the related spell checkers are enabled."
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:142
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:154
 msgid "Available Buttons"
 msgstr ""
 
-#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:143
+#: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:155
 msgid "You can drag the following buttons and drop them to the toolbar above."
 msgstr ""
 

@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown's Media Module
  * @desc A simple efficient bridge between the Wordpress Media Library and the EasyMDE's CodeMirror Instance
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.0.23
+ * @version 1.0.24
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 

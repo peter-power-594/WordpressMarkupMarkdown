@@ -39,7 +39,11 @@ module.exports = function(grunt) {
 			}
 		},
 		copy: {
-			engine_easymde: {
+			engine_easymde_debug: {
+				src: 'AA_src/easy-markdown-editor/js/easymde.js',
+				dest: 'assets/easy-markdown-editor/dist/easymde.debug.js'
+			},
+			engine_easymde_minified: {
 				src: 'AA_src/easy-markdown-editor/js/easymde.min.js',
 				dest: 'assets/easy-markdown-editor/dist/easymde.min.js'
 			},

@@ -28,6 +28,8 @@ class Layout {
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
 		mmd()->default_conf = array( 'MMD_CUSTOM_TOOLBAR' => 0 );
+		mmd()->default_conf = array( 'MMD_KEEP_SPACES' => 0 );
+		mmd()->default_conf = array( 'MMD_USE_HEADINGS' => [] );
 		$this->toolbar_conf = mmd()->conf_blog_prefix . 'conf_easymde_toolbar.json';
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
@@ -79,6 +81,7 @@ class Layout {
 				$my_cnf[ 'headings' ][] = $heading;
 			endforeach;
 		endif;
+		$my_cnf[ 'keep_spaces' ] = filter_input( INPUT_POST, 'mmd_keepspaces', FILTER_VALIDATE_INT );
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
@@ -96,6 +99,8 @@ class Layout {
 			file_put_contents( $this->toolbar_conf, '{"my_buttons":' . json_encode( explode( ",", $my_cnf[ 'toolbar' ] ) ) . '}' );
 			unset( $my_cnf[ 'toolbar' ] );
 		endif;
+		$my_cnf[ 'MMD_KEEP_SPACES' ] = isset( $my_cnf[ 'keep_spaces' ] ) ? $my_cnf[ 'keep_spaces' ] : 0;
+		unset( $my_cnf[ 'keep_spaces' ] );
 		return $my_cnf;
 	}
 
