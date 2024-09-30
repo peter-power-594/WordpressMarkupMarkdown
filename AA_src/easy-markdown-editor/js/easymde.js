@@ -17723,7 +17723,7 @@ function _toggleHeading(cm, direction, size) {
 
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
-    var sharpLevels = cm.mode.headingLevels || (cm.options.backdrop ? (cm.options.backdrop.headingLevels || []) : []),
+    var sharpLevels = cm.options.backdrop ? (cm.options.backdrop.headingLevels || []) : (cm.options.mode ? (cm.options.mode.headingLevels || []) : []),
         minLevel = sharpLevels.length ? sharpLevels[0] : 1,
         maxLevel = sharpLevels.length ? sharpLevels[sharpLevels.length-1] : 6;
     if (size && sharpLevels.length && sharpLevels.indexOf(size) === -1) {
@@ -18917,7 +18917,7 @@ EasyMDE.prototype.render = function (el) {
                 line: obj.to.line,
                 ch: obj.to.ch,
             });
-            var myLevels = headingNeedUpdate(currHeading, cm.mode.headingLevels || cm.options.backdrop.headingLevels);
+            var myLevels = headingNeedUpdate(currHeading, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
             if (!myLevels || !myLevels.from || !myLevels.to) {
                 return false;
             }
@@ -18979,7 +18979,7 @@ EasyMDE.prototype.render = function (el) {
                     } else {
                         myText = myText.replace(/#/, '##'); // Increment one sharp sign
                     }
-                    myLevels = headingNeedUpdate(myText, cm.mode.headingLevels || cm.options.backdrop.headingLevels);
+                    myLevels = headingNeedUpdate(myText, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
                     if (!myLevels) {
                         return false;
                     }
@@ -19038,7 +19038,7 @@ EasyMDE.prototype.render = function (el) {
                             ch: obj.to.ch + 8,
                         };
                     }
-                    myLevels = headingNeedUpdate(myText, cm.options.backdrop.headingLevels, searchDir);
+                    myLevels = headingNeedUpdate(myText, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels, searchDir);
                     if (!myLevels || !myLevels.diff) {
                         return false;
                     }
@@ -19071,7 +19071,7 @@ EasyMDE.prototype.render = function (el) {
                 return row;
             }
             row = row.replace(/^(\s*)#/, '#');
-            var myLevels = headingNeedUpdate(row, cm.mode.headingLevels || cm.options.backdrop.headingLevels);
+            var myLevels = headingNeedUpdate(row, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
             if (!myLevels || !myLevels.from || !myLevels.to) {
                 return row;
             } else if (myLevels.from < myLevels.to) {
