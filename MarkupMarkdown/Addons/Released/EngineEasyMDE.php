@@ -233,7 +233,7 @@ class EngineEasyMDE {
 		$plugin_uri = mmd()->plugin_uri;
 		# Debug / Minified version introduced since 3.6
 		if ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ( defined( 'MMD_SCRIPT_DEBUG' ) && MMD_SCRIPT_DEBUG ) ) :
-			wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.debug.js', [], '2.18.1005', true );
+			wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.debug.js', [], '2.18.1006', true );
 			wp_enqueue_script( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/lib/highlightjs.min.js', [ 'markup_markdown__jsengine_editor' ], '8.9.1', true );
 			wp_enqueue_script( 'markup_markdown__waypoints', $plugin_uri . 'assets/jquery-waypoints/lib/jquery.waypoints.min.js', [ 'markup_markdown__jsengine_editor' ], '4.0.1', true );
 			wp_enqueue_script( 'markup_markdown__sticky', $plugin_uri . 'assets/jquery-waypoints/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
@@ -243,7 +243,7 @@ class EngineEasyMDE {
 			wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.debug.js', [ 'markup_markdown__wordpress_preview' ], '1.0.24', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.debug.js', [ 'markup_markdown__wordpress_media' ], '1.6.0', true );
 		elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) :
-			wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.1005', true );
+			wp_enqueue_script( 'markup_markdown__jsengine_editor', $plugin_uri . 'assets/easy-markdown-editor/dist/easymde.min.js', [], '2.18.1006', true );
 			wp_enqueue_script( 'markup_markdown__highlightjs_snippets', $plugin_uri . 'assets/highlightjs/lib/highlightjs.min.js', [ 'markup_markdown__jsengine_editor' ], '8.9.1', true );
 			wp_enqueue_script( 'markup_markdown__waypoints', $plugin_uri . 'assets/jquery-waypoints/lib/jquery.waypoints.min.js', [ 'markup_markdown__jsengine_editor' ], '4.0.1', true );
 			wp_enqueue_script( 'markup_markdown__sticky', $plugin_uri . 'assets/jquery-waypoints/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
@@ -253,7 +253,7 @@ class EngineEasyMDE {
 			wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.min.js', [ 'markup_markdown__wordpress_preview' ], '1.0.24', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.min.js', [ 'markup_markdown__wordpress_media' ], '1.6.0', true );
 		else :
-			wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/builder.min.js', [], '1.1.3', true );
+			wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/builder.min.js', [], '1.1.4', true );
 		endif;
 		wp_localize_script( 'markup_markdown__wordpress_richedit', 'mmd_wpr_vars', array(
 			'mmd_pipe'            => esc_html__( 'Pipe', 'markup-markdown' ),

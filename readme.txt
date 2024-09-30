@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.7.3
-Version: 3.7.3
+Stable Tag: 3.7.4
+Version: 3.7.4
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6.0
@@ -90,6 +90,11 @@ The current version is based on components that are not compatible with assistiv
 
 
 == Changelog ==
+
+= 3.7.4 =
+
+Bug fix:
+Fixing javascript error with selective headings when Code Mirror's overlay mode was not active. (Related to enabled options)
 
 = 3.7.3 =
 
