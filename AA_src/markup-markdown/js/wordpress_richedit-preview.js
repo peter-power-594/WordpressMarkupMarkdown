@@ -75,7 +75,8 @@
 				convertImage: 'convertHTMLImage',
 				convertAudio: 'convertAudioShortcode',
 				convertVideo: 'convertVideoShortcode',
-				convertHeading: 'convertHeadingTags'
+				convertHeading: 'convertHeadingTags',
+				convertLatexFormulas: 'renderLatexSnippets'
 			};
 		return {
 			flushQueue: function() {
@@ -704,6 +705,18 @@
 		return true;
 	};
 
+	
+	/**
+	 * LaTeX Snippets rendering
+	 *
+	 * @param {String} wpLatex The LaTeX snippet written in the markdown post
+	 * @param {Integer} formularNumber The number used for the formula ID in the HTML document
+	 *
+	 * @returns {Boolean} TRUE in case of success or FALSE
+	 */
+	renderEngine.prototype.renderLatexSnippets = function( wpLatex, formularNumber ) {
+
+	};
 
 
 	window.MmdPreview = MmdPreview;

@@ -417,6 +417,11 @@
 		text = text.replace( /\[video([^\]]*)\]\[\/video\]/g, function( wpVideo ) {
 			return mediaPreview.processTask( 'convertVideo', wpVideo, vidCounter++ );
 		});
+		// Render the LaTex formulas
+		var ltxCounter = 0;
+		text = text.replace( /\$\$([^\$]+)\$\$/g, function( wpLatex ) {
+			return mediaPreview.processTask( 'convertLatexFormulas', wpLatex, ltxCounter++ );
+		});
 		if ( ! _self.isRendering ) {
 			_self.isRendering = setTimeout(function() {
 				$( window ).trigger( 'resize.mmd_preview' );
