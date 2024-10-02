@@ -8,7 +8,8 @@
 <?php
 	$my_cnf = array(
 		'latex' => 'none',
-		'latex_front' => 0
+		'latex_front' => 0,
+		'latex_front_id' => 0
 	);
 	if ( defined( 'MMD_USE_LATEX' ) && is_array( MMD_USE_LATEX ) ) :
 		if ( isset( MMD_USE_LATEX[ 1 ] ) ) :
@@ -16,6 +17,9 @@
 		endif;
 		if ( isset( MMD_USE_LATEX[ 2 ] ) ) :
 			$my_cnf[ 'latex_front' ] = MMD_USE_LATEX[ 2 ];
+		endif;
+		if ( isset( MMD_USE_LATEX[ 3 ] ) ) :
+			$my_cnf[ 'latex_front_id' ] = MMD_USE_LATEX[ 3 ];
 		endif;
 	endif;
 ?>
@@ -46,6 +50,11 @@
 					<label for="mmd_latex_front">
 						<input type="checkbox" name="mmd_latex_front" id="mmd_latex_front" value="1" <?php echo isset( $my_cnf[ 'latex_front' ] ) && (int)$my_cnf[ 'latex_front' ] > 0 ? 'checked="checked"' : ''; ?> />
 						<?php esc_html_e( 'Load the LaTeX engine related assets on the frontend as well. (Only added to the edit screen by default)', 'markup-markdown' ); ?>
+					</label><br />
+					<br />
+					<label for="mmd_latex_front_id">
+						<?php esc_html_e( 'Specify the ID of an HTML node to parse when a page is loaded. (Parse the whole body by default)', 'markup-markdown' ); ?><br />
+						<input type="text" name="mmd_latex_front_id" id="mmd_latex_front_id" value="<?php echo isset( $my_cnf[ 'latex_front_id' ] ) && ! empty( $my_cnf[ 'latex_front_id' ] ) ? $my_cnf[ 'latex_front_id' ] : ''; ?>" class="regular-text">
 					</label>
 				</td>
 			</tr>

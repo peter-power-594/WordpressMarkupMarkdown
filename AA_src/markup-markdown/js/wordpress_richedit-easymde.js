@@ -419,8 +419,9 @@
 		});
 		// Render the LaTex formulas
 		var ltxCounter = 0;
-		text = text.replace( /\$\$([^\$]+)\$\$/g, function( wpLatex ) {
-			return mediaPreview.processTask( 'convertLatexFormulas', wpLatex, ltxCounter++ );
+		text = text.replace( /\${1,2}[^\$]+\${1,2}/g, function( wpLatex ) {
+			ltxCounter++;
+			return '<span id="' + getRandomNodeID() + '" class="tmp_media tmp_latex" data-pointer="tmp_latex-' + ltxCounter + '">' + mediaPreview.add2Queue( 'convertLatexFormulas', wpLatex, ltxCounter ) + '</span>';
 		});
 		if ( ! _self.isRendering ) {
 			_self.isRendering = setTimeout(function() {

@@ -317,6 +317,8 @@ class Support {
 			# @since 3.6.4
 			return $field_content;
 		endif;
+		remove_filter( 'the_content', 'wpautop' );
+		remove_filter( 'the_excerpt', 'wpautop' );
 		if ( wp_is_rest_endpoint() || ( ( is_home() || is_front_page() || is_singular() || is_archive() ) && in_the_loop() && is_main_query() ) ) :
 			if ( post_type_supports( get_post_type(), 'markup-markdown' ) || post_type_supports( get_post_type(), 'markup_markdown' ) ) :
 				$this->load_parser();

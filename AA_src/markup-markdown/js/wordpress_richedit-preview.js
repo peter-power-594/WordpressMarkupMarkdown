@@ -1,4 +1,4 @@
-/* global wp, jQuery */
+/* global wp, jQuery, katex */
 
 /**
  * @preserve The Markup Markdown Preview Module
@@ -592,7 +592,7 @@
 				});
 		}
 		else {
-			renderPlaylist( renderPlaylist, 250 );
+			setTimeout( renderPlaylist, 250 );
 		}
 		return true;
 	};
@@ -700,7 +700,7 @@
 				});
 		}
 		else {
-			renderPlaylist( renderPlaylist, 250 );
+			setTimeout( renderPlaylist, 250 );
 		}
 		return true;
 	};
@@ -715,7 +715,32 @@
 	 * @returns {Boolean} TRUE in case of success or FALSE
 	 */
 	renderEngine.prototype.renderLatexSnippets = function( wpLatex, formularNumber ) {
-
+		var myRenderApp = this,
+			snippetHash = myRenderApp.hashString( wpLatex );
+		if ( tmp_cache && tmp_cache[ snippetHash ] ) {
+			return tmp_cache[ snippetHash ].join( '' );
+		}
+		var latexSnippet = wpLatex.match( /\${1,2}([^\$]+)\${1,2}/ );
+		if ( ! latexSnippet || ! latexSnippet[ 1 ] ) {
+			return false;
+		}
+		var latexCode = latexSnippet[ 1 ].replace( /<br\s*\/*>/g, '\n' ).replace( /(^\n|\n$)/, '' );
+		var renderSnippet = function() {
+			var snippetNode = $( 'span[data-pointer="tmp_latex-' + formularNumber + '"]' )[ 0 ] || false;
+			if ( ! snippetNode ) {
+				return false;
+			}
+			if ( window.katex ) {
+				katex.render(latexCode, snippetNode, {
+					throwOnError: false
+				});
+			}
+			if ( ! tmp_cache[ snippetHash ] ) {
+				tmp_cache[ snippetHash ] = [ snippetNode.innerHTML ];
+			}
+		};
+		setTimeout( renderSnippet, 250 );
+		return true;
 	};
 
 
