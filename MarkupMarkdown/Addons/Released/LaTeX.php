@@ -50,6 +50,7 @@ class Latex {
 		return 'mmd_undefined';
 	}
 
+
 	/**
 	 * Filter to parse Latex options from the options screen when the form was submitted
 	 *
@@ -125,24 +126,52 @@ class Latex {
 	}
 
 
+	/**
+	 * Method to load the stylesheets related to the selected LaTeX Engine
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
 	public function load_latex_stylesheets() {
 		if ( ! isset( $this->prop[ 'engine' ] ) || empty( $this->prop[ 'engine' ] ) || $this->prop[ 'engine' ] === 'none' ) :
 			# Do nothing
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
 			wp_enqueue_style( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.css', [ 'markup_markdown__wordpress_richedit' ], '0.16.11' );
+		elseif ( $this->prop[ 'engine' ] === 'mathml' ) :
+
 		endif;
 	}
 
 
+	/**
+	 * Method to load the scripts related to the selected LaTeX Engine on the edit screen
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
 	public function load_admin_latex_scripts() {
 		if ( ! isset( $this->prop[ 'engine' ] ) || empty( $this->prop[ 'engine' ] ) || $this->prop[ 'engine' ] === 'none' ) :
 			# Do nothing
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
 			wp_enqueue_script( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.js', [ 'markup_markdown__wordpress_richedit' ], '0.16.11', true );
+		elseif ( $this->prop[ 'engine' ] === 'mathjax' ) :
+		https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js
 		endif;
 	}
 
 
+	/**
+	 * Method to load the scripts related to the selected LaTeX Engine on the frontend screen
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
 	public function load_front_latex_scripts() {
 		if ( ! isset( $this->prop[ 'engine' ] ) || empty( $this->prop[ 'engine' ] ) || $this->prop[ 'engine' ] === 'none' ) :
 			# Do nothing
@@ -154,6 +183,14 @@ class Latex {
 	}
 
 
+	/**
+	 * Katex specific inline config for the frontend
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
 	public function add_inline_katex_conf() {
 		$js = 'document.addEventListener("DOMContentLoaded",function(){renderMathInElement(';
 		if ( isset( MMD_USE_LATEX[ 3 ] ) ) :
