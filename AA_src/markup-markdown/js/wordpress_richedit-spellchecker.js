@@ -145,9 +145,9 @@
 		// Hint from https://stackoverflow.com/questions/26576054/codemirror-get-the-current-word-under-the-cursor
 		var myCursor = myInstance.getCursor(),
 			myWord = myInstance.findWordAt( myCursor );
-		if ( myWord && myWord.anchor && myWord.head && CodeMirrorSpellChecker.typo( _self.lang ) ) {
+		if ( myWord && myWord.anchor && myWord.head && CustomCodeMirrorSpellChecker.typo( _self.lang ) ) {
 			var myText = myInstance.getRange( myWord.anchor, myWord.head ),
-				mySuggestions = CodeMirrorSpellChecker.typo( _self.lang, 'suggest', myText ),
+				mySuggestions = CustomCodeMirrorSpellChecker.typo( _self.lang, 'suggest', myText ),
 				mySuggestList = [ '<ol>' ];
 			for ( var s = 0; s < mySuggestions.length; s++ ) {
 				if ( ! /\d+/.test( mySuggestions[ s ] ) ) { // Exclude suggestions including numbers

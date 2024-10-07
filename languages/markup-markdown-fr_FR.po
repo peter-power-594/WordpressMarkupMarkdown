@@ -2,10 +2,11 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Markup Markdown 3.4.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
-"POT-Creation-Date: 2024-09-21T06:01:34+00:00\n"
-"PO-Revision-Date: 2024-09-21 15:13+0900\n"
+"Project-Id-Version: Markup Markdown 3.7.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown-"
+"release\n"
+"POT-Creation-Date: 2024-09-30T10:50:56+09:00\n"
+"PO-Revision-Date: 2024-09-30 10:53+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -16,23 +17,23 @@ msgstr ""
 "X-Domain: markup-markdown\n"
 
 #. Plugin Name of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "Markup Markdown"
 msgstr "Markup Markdown"
 
 #. Description of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid ""
 "Replaces the Gutenberg Block Editor in favor of pure markdown based markups"
 msgstr "Remplace l’éditeur par défaut Gutenberg par l’éditeur Markdown EasyMDE"
 
 #. Author of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "Pierre-Henri Lavigne"
 msgstr "Pierre-Henri Lavigne"
 
 #. Author URI of the plugin
-#: markup-markdown.php
+#: D:\MEGA\OSSPeterBlogGitHub\wp-content\plugins\markup-markdown-release\markup-markdown.php
 msgid "https://www.markup-markdown.com"
 msgstr "https://www.markup-markdown.com"
 
@@ -189,7 +190,7 @@ msgid "Spellchecker"
 msgstr "Vérificateur d’orthographe"
 
 #: MarkupMarkdown/Addons/Released/Layout.php:25
-#: MarkupMarkdown/Addons/Released/Layout.php:122
+#: MarkupMarkdown/Addons/Released/Layout.php:125
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:4
 msgid "Layout"
 msgstr "Gabarit"

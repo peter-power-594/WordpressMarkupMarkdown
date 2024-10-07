@@ -82,8 +82,10 @@ CodeMirrorDictionariesLoader.prototype.geti18nSettings = function( languages ) {
 		}
 		return true;
 	} else {
+		var isEmpty = true;
 		for ( var lang in languages ) {
 			if ( languages.hasOwnProperty( lang ) ) {
+				isEmpty = false;
 				_self.shortLang = languages[lang].code.replace( /_.*/, "" );
 				if ( languages[lang].aff && languages[lang].dic) {
 					_self.urls.aff.push( languages[lang].aff );
@@ -96,7 +98,7 @@ CodeMirrorDictionariesLoader.prototype.geti18nSettings = function( languages ) {
 				}
 			}
 		}
-		return true;
+		return isEmpty ? false : true;
 	}
 };
 
@@ -151,7 +153,7 @@ CodeMirrorDictionariesLoader.prototype.loadData = function() {
 		} else {
 			spellCheckerData.completed = 1;
 			setTimeout(function() {
-				document.dispatchEvent(new Event("CodeMirrorDictionariesReady"));
+				document.dispatchEvent( new Event( 'CodeMirrorDictionariesReady' ) );
 			}, 50);
 		}
 	}
@@ -168,7 +170,7 @@ CodeMirrorDictionariesLoader.prototype.requestCallBack = function() {
 			window.console.log("CodeMirrorDictionariesLoader: Error while retrieving dictionaries data");
 		}
 		setTimeout(function() {
-			document.dispatchEvent(new Event("CodeMirrorDictionariesReady"));
+			document.dispatchEvent( new Event( 'CodeMirrorDictionariesReady' ) );
 		}, 50);
 	}
 }
@@ -193,7 +195,7 @@ CodeMirrorDictionariesLoader.prototype.retrieveData = function( groupName ) {
 
 
 // Create function
-function CodeMirrorSpellChecker( options ) {
+function CustomCodeMirrorSpellChecker( options ) {
 	// Initialize
 	options = options || {};
 
@@ -267,8 +269,8 @@ function CodeMirrorSpellChecker( options ) {
 					i18n = 2;
 				} else if ( i18n === 2 ) {
 					i18n = 3;
-					// We've got a match. At this point the _word_ value is the lang'sattribute data !
-					if ( spellCheckerData.langs[ word ] ) {
+					// We've got a match. At this point the _word_ value is the lang's attribute data !
+					if ( spellCheckerData.langs.indexOf( word ) !== -1 ) {
 						// Not 100% safe so a check on an existing dict is still required
 						spellCheckerData.lang = word;
 					}
@@ -292,7 +294,7 @@ function CodeMirrorSpellChecker( options ) {
 }
 
 
-CodeMirrorSpellChecker.typo = function( myLang, myMethod, myArg ) {
+CustomCodeMirrorSpellChecker.typo = function( myLang, myMethod, myArg ) {
 	if ( ! myLang || ! spellCheckerData.typo[ myLang ] ) {
 		return false;
 	}
@@ -310,4 +312,4 @@ CodeMirrorSpellChecker.typo = function( myLang, myMethod, myArg ) {
 };
 
 // Export
-module.exports = CodeMirrorSpellChecker;
+module.exports = CustomCodeMirrorSpellChecker;
