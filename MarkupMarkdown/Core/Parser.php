@@ -146,7 +146,7 @@ class Parser {
 		endif;
 		$safe = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", isset( $content ) ? $content : '' );
 		if ( defined( 'MMD_KEEP_SPACES' ) && MMD_KEEP_SPACES > 0 ) : # Since 3.7.1
-			$safe_spaces = preg_replace( '#^\s#m', "{-SPACE-}", $safe );
+			$safe_spaces = preg_replace( '#\n\s#m', "\n{-SPACE-}", $safe );
 			$markdown = $this->parser->text( $safe_spaces );
 			return preg_replace( '#\{-SPACE-\}#', " ", $markdown );
 		else :

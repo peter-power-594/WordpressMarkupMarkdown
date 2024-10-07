@@ -89,4 +89,11 @@
 	.cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word):not(.cm-attribute) {
 		background: rgba(255,0,0,.15);
 	}
+	.cm-sharp-escaped {
+		display: inline-flex;
+		justify-content: end;
+		width: 0.55em;
+		overflow: hidden;
+		white-space: nowrap;
+	}
 }
