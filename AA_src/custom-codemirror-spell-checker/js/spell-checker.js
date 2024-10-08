@@ -2,7 +2,7 @@
 
 /**
  * @preserve codemirror-spell-checker
- * @version 1.1.22
+ * @version 1.1.24
  * @license MIT
  * Copyright Next Step Webs, Inc.
  * @link https://github.com/NextStepWebs/codemirror-spell-checker
@@ -298,11 +298,12 @@ CustomCodeMirrorSpellChecker.typo = function( myLang, myMethod, myArg ) {
 	if ( ! myLang || ! spellCheckerData.typo[ myLang ] ) {
 		return false;
 	}
-	else if ( ! myMethod ) {
+	else if ( ! myMethod || ! myArg || ! myArg.length ) {
 		return true;
 	}
 	else {
-		if ( typeof spellCheckerData.typo[ myLang ][ myMethod ] === 'function' ) {
+		myArg = myArg.replace( /^\s*|\s*$/, '' );
+		if ( myArg.length && typeof spellCheckerData.typo[ myLang ][ myMethod ] === 'function') {
 			return spellCheckerData.typo[ myLang ][ myMethod ]( myArg );
 		}
 		else {
