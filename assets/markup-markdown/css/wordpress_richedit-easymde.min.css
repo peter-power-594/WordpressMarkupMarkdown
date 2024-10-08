@@ -126,14 +126,24 @@ html[dir=rtl] .editor-toolbar button.preview:last-child, html[dir=rtl] .editor-t
 .editor-preview ul {
   list-style: disc;
   margin: 0 0 1.5rem 1rem;
+  padding: 0;
 }
 .editor-preview ol {
   list-style: decimal;
   margin: 0 0 1.5rem 1rem;
+  padding: 0;
 }
 .editor-preview ul li,
 .editor-preview ol li {
   margin: 0 0 0.5rem 0;
+}
+.editor-preview ul ul,
+.editor-preview ul ol,
+.editor-preview ol ol,
+.editor-preview ol ul {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  padding-top: 0.5rem;
 }
 .editor-preview blockquote {
   margin: 0 0 1.5rem 0;

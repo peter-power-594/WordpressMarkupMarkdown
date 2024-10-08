@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown's EasyMDE Primary Module
  * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.6.0
+ * @version 1.6.2
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 (function( $, _win, _doc ) {
@@ -255,7 +255,7 @@
 			renderingConfig: {
 				codeSyntaxHighlighting: true
 			},
-			previewRender: function( text, preview ) {
+			previewRenderedMarkdown: function( text, preview ) {
 				mediaPreview.flushQueue();
 				text = _self.previewRender( text, preview );
 				setTimeout(function() {
@@ -270,7 +270,7 @@
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files
 			editorConfig.spellChecker = function( spellCheckConfig ) {
 				spellCheckConfig.language = spell_check;
-				CodeMirrorSpellChecker( spellCheckConfig );
+				CustomCodeMirrorSpellChecker( spellCheckConfig );
 			};
 		}
 		else {
@@ -287,6 +287,7 @@
 			editorConfig.parsingConfig.headingLevels = _win.wp.pluginMarkupMarkdown.headingLevels;
 		}
 		_self.fieldNumber = fieldNumber++;
+		// Increment HTML Media IDS
 		var mediaCounters = $( textarea ).val().match( /\"myset.*?\s/g );
 		if ( mediaCounters && mediaCounters.length ) {
 			var startCounter = 0;
@@ -299,6 +300,12 @@
 			_self.widgetCounter = startCounter + 1;
 		}
 		var launchEditor = function() {
+			// Escape sharp signs used as order list items
+			var escapeSharpSign = false;
+			if ( editorConfig.parsingConfig && editorConfig.parsingConfig.headingLevels && editorConfig.parsingConfig.headingLevels.indexOf(1) === -1 ) {
+				escapeSharpSign = true;
+				$textarea.val( $textarea.val().replace( /(\s*|\t*)([\\\\]+[#]{1})([^#]{1})/g, '$1\#$3' ).replace( /(\s*|\t*)([#]{1})([^#]{1})/g, '$1\\#$3' ) );
+			}
 			_self.instance.editor = new EasyMDE( editorConfig );
 			_self.instance.editor.codemirror.on("change", function() {
 				$textarea.val( _self.instance.editor.value() );
@@ -320,7 +327,6 @@
 		}
 		else {
 			launchEditor();
-			_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
 			// Spellchecker is enabled. Tiny panel to display suggestions
 			if ( typeof MmdSpellWizard === 'function' ) {
 				new MmdSpellWizard( _self.instance.editor.codemirror );
@@ -370,13 +376,12 @@
 	/**
 	 * EasyMDE custom preview callbacks to support WP specific features
 	 * @since 2.1
-	 * @param {String} text The source code used for the rendering
+	 * @param {String} text The HTML source code rendered from the markdown
 	 * @param {Object} preview The html node preview
 	 * @returns {string} The default text preview
 	 */
 	MarkupMarkdownWidget.prototype.previewRender = function( text, preview ) {
 		var _self = this;
-		text = _self.instance.editor.markdown( text );
 		// Render the headings
 		text = text.replace( /<h\d[^\>]*>.*?\{[^\}]+\}<\/h\d>/g, function( wpHeadline ) {
 			return mediaPreview.processTask( 'convertHeading', wpHeadline );
@@ -508,10 +513,16 @@
 				}
 			}
 			if ( wp.pluginMarkupMarkdown.spellChecker ) {
-				_doc.addEventListener( 'CodeMirrorDictionariesReady', function() {
-					new MarkupMarkdownLauncher( primaryAreaEnabled );
-				});
-				spellCheckerEnabled = 1;
+				var spellChecker = wp.pluginMarkupMarkdown.spellChecker,
+					isEmptySpellChecker = true;
+				for ( var spellProp in spellChecker ) {
+					if ( spellChecker.hasOwnProperty( spellProp ) ) {
+						isEmptySpellChecker = false;
+					}
+				}
+				if ( ! isEmptySpellChecker ) {
+					spellCheckerEnabled = 1;
+				}
 			}
 		}
 		if ( primaryAreaEnabled ) {
@@ -520,7 +531,10 @@
 			$( '.acf-input #acf-_post_content' ).parent().addClass( 'markupmarkdown' );
 		}
 		if ( spellCheckerEnabled ) {
-			CodeMirrorSpellChecker( wp.pluginMarkupMarkdown.spellChecker );
+			_doc.addEventListener( 'CodeMirrorDictionariesReady', function() {
+				new MarkupMarkdownLauncher( primaryAreaEnabled );
+			});
+			CustomCodeMirrorSpellChecker( wp.pluginMarkupMarkdown.spellChecker );
 		}
 		else {
 			new MarkupMarkdownLauncher( primaryAreaEnabled );

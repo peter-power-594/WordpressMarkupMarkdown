@@ -139,14 +139,24 @@ html[dir=rtl] .editor-toolbar {
 	ul {
 		list-style: disc;
 		margin: 0 0 1.5rem 1rem;
+		padding: 0;
 	}
 	ol {
 		list-style: decimal;
 		margin: 0 0 1.5rem 1rem;
+		padding: 0;
 	}
 	ul li,
 	ol li {
 		margin: 0 0 0.5rem 0;
+	}
+	ul ul,
+	ul ol,
+	ol ol,
+	ol ul {
+		margin-bottom: 0;
+		padding-bottom: 0;
+		padding-top: 0.5rem;
 	}
 	blockquote {
 		margin: 0 0 1.5rem 0;

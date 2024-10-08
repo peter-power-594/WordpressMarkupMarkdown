@@ -59,14 +59,16 @@ class Addons {
 		# Load addons modules
 		$this->addon_dir = mmd()->plugin_dir . '/MarkupMarkdown/Addons/';
 
+		# Kind of stable addons for a daily use
 		$this->load_builder_easymde();
 		$this->load_cache();
 		$this->load_layout();
 		$this->load_media_youtube();
 		$this->load_media_vimeo();
 		$this->load_media_image();
-		$this->load_acf();
+		# Kind of usable addons but I wouldn't bet for extensive use
 		$this->load_spellchecker();
+		$this->load_acf();
 	}
 
 
@@ -142,7 +144,7 @@ class Addons {
 
 
 	/**
-	 * Add a few plugs with existing WP Plugins to make a smooth connection
+	 * Add a few "plugs" with existing WP Plugins to make a smooth connection
 	 *
 	 * @access public
 	 * @since 3.3.0
@@ -156,6 +158,7 @@ class Addons {
 			return;
 		else :
 			require_once $this->addon_dir . 'AutoPlugs/DisableEmojis.php';
+			require_once $this->addon_dir . 'AutoPlugs/O2.php';
 			require_once $this->addon_dir . 'AutoPlugs/Woocommerce.php';
 			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
 		endif;
