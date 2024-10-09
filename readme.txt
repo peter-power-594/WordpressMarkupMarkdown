@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.8.0
-Version: 3.8.0
+Stable Tag: 3.8.1
+Version: 3.8.1
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6.0
@@ -92,14 +92,19 @@ The current version is based on components that are not compatible with assistiv
 
 == Changelog ==
 
-= 3.7.8 =
+=3.8.1=
+
+Bug fix:
+- Solved an issue with EasyMDE overlay modes when the spell checker styles were not applied
+
+= 3.8.0 =
 
 Improvement:
 If H1 heading is disabled from the options panel, then inside the WYSIYWIG you can use the sharp sign # for ordered list
 
 Bug fix:
 - Editor wasn't loaded properly if the spell checker was enabled but no dictionary was selected
-- A few javascript errors fixed with the spell checker and the suggestions engine when space or special chars were involved
+- A few javascript errors fixed with the spell checker's suggestions when space or special chars were involved
 
 = 3.7.4 =
 
