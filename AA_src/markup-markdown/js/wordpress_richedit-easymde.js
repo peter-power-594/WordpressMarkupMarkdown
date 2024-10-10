@@ -304,7 +304,7 @@
 			var escapeSharpSign = false;
 			if ( editorConfig.parsingConfig && editorConfig.parsingConfig.headingLevels && editorConfig.parsingConfig.headingLevels.indexOf(1) === -1 ) {
 				escapeSharpSign = true;
-				$textarea.val( $textarea.val().replace( /(\s*|\t*)([\\\\]+[#]{1})([^#]{1})/g, '$1\#$3' ).replace( /(\s*|\t*)([#]{1})([^#]{1})/g, '$1\\#$3' ) );
+				$textarea.val( $textarea.val().replace( /^(\s*|\t*)([\\\\]+[#]{1})([^#]{1})/g, '$1\#$3' ).replace( /^(\s*|\t*)([#]{1})([^#]{1})/g, '$1\\#$3' ) );
 			}
 			_self.instance.editor = new EasyMDE( editorConfig );
 			_self.instance.editor.codemirror.on("change", function() {
