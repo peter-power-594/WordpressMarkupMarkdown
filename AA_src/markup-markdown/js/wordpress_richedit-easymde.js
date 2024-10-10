@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown's EasyMDE Primary Module
  * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.6.1
+ * @version 1.6.2
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 (function( $, _win, _doc ) {
@@ -270,7 +270,7 @@
 			// Reference: https://github.com/Ionaru/easy-markdown-editor/pull/333/files
 			editorConfig.spellChecker = function( spellCheckConfig ) {
 				spellCheckConfig.language = spell_check;
-				CodeMirrorSpellChecker( spellCheckConfig );
+				CustomCodeMirrorSpellChecker( spellCheckConfig );
 			};
 		}
 		else {
@@ -302,7 +302,7 @@
 		var launchEditor = function() {
 			// Escape sharp signs used as order list items
 			var escapeSharpSign = false;
-			if (editorConfig.parsingConfig && editorConfig.parsingConfig.headingLevels && editorConfig.parsingConfig.headingLevels.indexOf(1) === -1 ) {
+			if ( editorConfig.parsingConfig && editorConfig.parsingConfig.headingLevels && editorConfig.parsingConfig.headingLevels.indexOf(1) === -1 ) {
 				escapeSharpSign = true;
 				$textarea.val( $textarea.val().replace( /(\s*|\t*)([\\\\]+[#]{1})([^#]{1})/g, '$1\#$3' ).replace( /(\s*|\t*)([#]{1})([^#]{1})/g, '$1\\#$3' ) );
 			}
@@ -327,7 +327,6 @@
 		}
 		else {
 			launchEditor();
-			_win.wp.pluginMarkupMarkdown.instances.push( _self.instance.editor );
 			// Spellchecker is enabled. Tiny panel to display suggestions
 			if ( typeof MmdSpellWizard === 'function' ) {
 				new MmdSpellWizard( _self.instance.editor.codemirror );
@@ -520,10 +519,16 @@
 				}
 			}
 			if ( wp.pluginMarkupMarkdown.spellChecker ) {
-				_doc.addEventListener( 'CodeMirrorDictionariesReady', function() {
-					new MarkupMarkdownLauncher( primaryAreaEnabled );
-				});
-				spellCheckerEnabled = 1;
+				var spellChecker = wp.pluginMarkupMarkdown.spellChecker,
+					isEmptySpellChecker = true;
+				for ( var spellProp in spellChecker ) {
+					if ( spellChecker.hasOwnProperty( spellProp ) ) {
+						isEmptySpellChecker = false;
+					}
+				}
+				if ( ! isEmptySpellChecker ) {
+					spellCheckerEnabled = 1;
+				}
 			}
 		}
 		if ( primaryAreaEnabled ) {
@@ -532,7 +537,10 @@
 			$( '.acf-input #acf-_post_content' ).parent().addClass( 'markupmarkdown' );
 		}
 		if ( spellCheckerEnabled ) {
-			CodeMirrorSpellChecker( wp.pluginMarkupMarkdown.spellChecker );
+			_doc.addEventListener( 'CodeMirrorDictionariesReady', function() {
+				new MarkupMarkdownLauncher( primaryAreaEnabled );
+			});
+			CustomCodeMirrorSpellChecker( wp.pluginMarkupMarkdown.spellChecker );
 		}
 		else {
 			new MarkupMarkdownLauncher( primaryAreaEnabled );

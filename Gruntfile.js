@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 			options: {
 				//ignore: [ 'typo-js' ],
 				browserifyOptions: {
-					standalone: 'CodeMirrorSpellChecker'
+					standalone: 'CustomCodeMirrorSpellChecker'
 				}
 			},
 			build: {
