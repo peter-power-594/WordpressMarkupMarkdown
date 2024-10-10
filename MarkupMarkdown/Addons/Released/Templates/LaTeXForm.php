@@ -37,8 +37,8 @@
 						<?php esc_html_e( 'Katex rendering', 'markup-markdown' ); ?>
 					</label>&nbsp;&nbsp;
 					<label for="mmd_uselatex2">
-						<input type="radio" name="mmd_uselatex" id="mmd_uselatex2" value="mathml" <?php echo isset( $my_cnf[ 'latex' ] ) && $my_cnf[ 'latex' ] === 'mathjax' ? 'checked="checked"' : ''; ?> />
-						<?php esc_html_e( 'Mathml rendering', 'markup-markdown' ); ?>
+						<input type="radio" name="mmd_uselatex" id="mmd_uselatex2" value="mathjax" <?php echo isset( $my_cnf[ 'latex' ] ) && $my_cnf[ 'latex' ] === 'mathjax' ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Mathjax rendering', 'markup-markdown' ); ?>
 					</label>
 				</td>
 			</tr>

@@ -61,7 +61,7 @@ class Latex {
 	 */
 	public function update_config( $my_cnf ) {
 		$my_cnf[ 'latex_engine' ] = filter_input( INPUT_POST, 'mmd_uselatex', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$my_cnf[ 'latex_active' ] = isset( $my_cnf[ 'latex_engine' ] ) && in_array( $my_cnf[ 'latex_engine' ], [ 'katex', 'mathml' ] ) ? 1 : 0;
+		$my_cnf[ 'latex_active' ] = isset( $my_cnf[ 'latex_engine' ] ) && in_array( $my_cnf[ 'latex_engine' ], [ 'katex', 'mathjax' ] ) ? 1 : 0;
 		$my_cnf[ 'latex_front' ] = filter_input( INPUT_POST, 'mmd_latex_front', FILTER_VALIDATE_INT );
 		$my_cnf[ 'latex_front_id' ] = filter_input( INPUT_POST, 'mmd_latex_front_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		return $my_cnf;
@@ -159,7 +159,7 @@ class Latex {
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
 			wp_enqueue_script( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.js', [ 'markup_markdown__wordpress_richedit' ], '0.16.11', true );
 		elseif ( $this->prop[ 'engine' ] === 'mathjax' ) :
-		https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js
+		# https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js
 		endif;
 	}
 

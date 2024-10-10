@@ -735,6 +735,9 @@
 					throwOnError: false
 				});
 			}
+			else if ( window.MathJax ) {
+				snippetNode.appendChild( MathJax.HTML.Element( span, {}, latexCode ) );
+			}
 			if ( ! tmp_cache[ snippetHash ] ) {
 				tmp_cache[ snippetHash ] = [ snippetNode.innerHTML ];
 			}
