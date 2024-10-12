@@ -730,13 +730,17 @@
 			if ( ! snippetNode ) {
 				return false;
 			}
+			var isBlock = false;
 			if ( window.katex ) {
 				katex.render(latexCode, snippetNode, {
 					throwOnError: false
 				});
 			}
 			else if ( window.MathJax ) {
-				snippetNode.appendChild( MathJax.HTML.Element( span, {}, latexCode ) );
+				isBlock = /^\$\$/.test( wpLatex ) ? true : false;
+				snippetNode.style.display = isBlock ? 'block' : 'inline-block';
+				snippetNode.appendChild( MathJax.tex2chtml( latexCode ), { em: 16, ex: 8, display: isBlock } );
+				// snippetNode.appendChild( MathJax.HTML.Element( span, {}, latexCode ) );
 			}
 			if ( ! tmp_cache[ snippetHash ] ) {
 				tmp_cache[ snippetHash ] = [ snippetNode.innerHTML ];

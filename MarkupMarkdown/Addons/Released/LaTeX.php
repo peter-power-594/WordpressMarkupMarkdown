@@ -140,7 +140,7 @@ class Latex {
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
 			wp_enqueue_style( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.css', [ 'markup_markdown__wordpress_richedit' ], '0.16.11' );
 		elseif ( $this->prop[ 'engine' ] === 'mathml' ) :
-
+			# Do nothing
 		endif;
 	}
 
@@ -159,7 +159,7 @@ class Latex {
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
 			wp_enqueue_script( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.js', [ 'markup_markdown__wordpress_richedit' ], '0.16.11', true );
 		elseif ( $this->prop[ 'engine' ] === 'mathjax' ) :
-		# https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js
+			wp_enqueue_script( 'markup_markdown__latex_mathjax', mmd()->plugin_uri . 'assets/mathjax/es5/tex-chtml.js', [ 'markup_markdown__wordpress_richedit' ], '3.2.2', true );
 		endif;
 	}
 
