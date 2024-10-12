@@ -4,7 +4,7 @@
  * @preserve The Markup Markdown's EasyMDE Primary Module
  * @desc Core classes to handle the markdown editor inside the Wordpress admin edit screen
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.6.2
+ * @version 1.6.3
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 (function( $, _win, _doc ) {
@@ -304,7 +304,10 @@
 			var escapeSharpSign = false;
 			if ( editorConfig.parsingConfig && editorConfig.parsingConfig.headingLevels && editorConfig.parsingConfig.headingLevels.indexOf(1) === -1 ) {
 				escapeSharpSign = true;
-				$textarea.val( $textarea.val().replace( /^(\s*|\t*)([\\\\]+[#]{1})([^#]{1})/g, '$1\#$3' ).replace( /^(\s*|\t*)([#]{1})([^#]{1})/g, '$1\\#$3' ) );
+				var originalContent = $textarea.val();
+				originalContent = originalContent.replace( /([\s\t]*)([\\]+)([\#]{1})\s/g, '$1$3 ' );
+				originalContent = originalContent.replace( /^[\#]{1}\s/g, '\\# ' ).replace( /([\s\t]+)([\#]{1})\s/g, '$1\\# ');
+				$textarea.val(  originalContent );
 			}
 			_self.instance.editor = new EasyMDE( editorConfig );
 			_self.instance.editor.codemirror.on("change", function() {
