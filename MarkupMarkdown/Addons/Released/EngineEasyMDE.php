@@ -186,9 +186,12 @@ class EngineEasyMDE {
 	 * @access public
 	 * @since 3.3.0
 	 *
-	 * @return Void
+	 * @return Boolean TRUE if the WP Native media upload libraries are queued or FALSE if disabled
 	 */
 	public function load_engine_media() {
+		if ( defined( 'WP_MMD_MEDIA_UPLOADER' ) && ! WP_MMD_MEDIA_UPLOADER ) :
+			return false;
+		endif;
 		$args = array();
 		$post_id = function_exists( 'get_the_ID' ) ? get_the_ID() : 0;
 		if ( (int)$post_id > 0 ) :
@@ -197,6 +200,7 @@ class EngineEasyMDE {
 		wp_enqueue_media( $args );
 		wp_playlist_scripts( 'audio' );
 		wp_playlist_scripts( 'video' );
+		return true;
 	}
 
 
@@ -312,6 +316,9 @@ class EngineEasyMDE {
 		$toolbarButtons = json_decode( preg_replace( "#[^a-z0-9-_\,\:\"\{\}\[\]]#", "", file_get_contents( $json ) ) );
 		$js .= "wp.pluginMarkupMarkdown.primaryArea = " . ( defined( 'MMD_SUPPORT_ENABLED' ) && MMD_SUPPORT_ENABLED ? '1' : '0' ) . ";\n";
 		$js .= "wp.pluginMarkupMarkdown.toolbarButtons = [ \"" . implode( "\",\"", str_replace( '_', '-', $toolbarButtons->my_buttons ) ) . "\" ];\n";
+		if ( defined( 'WP_MMD_MEDIA_UPLOADER' ) && ! WP_MMD_MEDIA_UPLOADER ) :
+			$js .= "wp.pluginMarkupMarkdown.mediaUploader = 0;\n";
+		endif;
 		if ( defined( 'MMD_USE_HEADINGS' ) && is_array( MMD_USE_HEADINGS ) && count( MMD_USE_HEADINGS ) > 1 && count( MMD_USE_HEADINGS ) < 6 ) :
 			$js .= "wp.pluginMarkupMarkdown.headingLevels = [ " . implode( ', ', MMD_USE_HEADINGS ) . " ];\n";
 		endif;

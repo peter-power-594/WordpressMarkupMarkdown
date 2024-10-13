@@ -29,10 +29,11 @@
 	/**
 	 * Initialize Wordpress Media Frame to upload or add a unique media item
 	 *
-	 * @returns {Void}
+	 * @returns {Integer} 1 if the WP native library was activated or 0 if not available
 	 */
 	MarkupMarkdownWidget.prototype.mediaUploader = function() {
-		var _self = this;
+		var _self = this,
+			homeURL = '';
 		if ( ! homeURL.length ) {
 			if ( _win.wp && _win.wp.pluginMarkupMarkdown && _win.wp.pluginMarkupMarkdown.homeURL ) {
 				homeURL = _win.wp.pluginMarkupMarkdown.homeURL;
@@ -42,9 +43,6 @@
 				homeURL = /home_url/.test( args ) ? args.replace( /.*?home_url=/, '' ).replace( /&.*?$/, '' ) : '/';
 			}
 			homeURL = homeURL.replace( /^(.*?)(\.[a-z]+\/).*?$/, '$1$2' );
-			_self.home_url = homeURL;
-		}
-		if ( ! _self.home_url && homeURL ) {
 			_self.home_url = homeURL;
 		}
 		if ( mediaFrame && mediaFrame.title ) {
@@ -57,6 +55,11 @@
 				multisel: function() {}
 			}
 		});
+		if ( _win.wp && _win.wp.pluginMarkupMarkdown && typeof _win.wp.pluginMarkupMarkdown.mediaUploader === 'number' ) {
+			if ( ! _win.wp.pluginMarkupMarkdown.mediaUploader ) {
+				return false;
+			}
+		}
 		mediaFrame = new MmdMedia({
 			base_url: _self.home_url,
 			callbacks:{
@@ -72,6 +75,7 @@
 				}
 			}
 		});
+		return true;
 	};
 
 
@@ -83,6 +87,7 @@
 		if ( ! $textarea.attr( 'id' ) && $textarea.attr( 'name' ) ) {
 			$textarea.attr( 'id', $textarea.attr( 'name' ).replace( /[^a-zA-Z0-9]/g, '' ) );
 		}
+		// Disable Grammarly on the native textare
 		$textarea.addClass( 'mmd-running' ).attr({
 			'data-gramm': 'false',
 			'data-gramm_editor': 'false',
@@ -90,7 +95,9 @@
 		});
 		var _self = this,
 			isAdmin = $( 'body' ).hasClass( 'wp-admin' ) ? 1 : 0,
-			isSecondary = 0;
+			isSecondary = 0,
+			mediaUploader = 1;
+		// isSecondary: 1 = textarea is related to a custom field, 0 = the textarea is to the primary content
 		if ( $textarea.parent().hasClass( 'acf-input' ) ) {
 			// ACF Custom Field
 			isSecondary = 1;
@@ -104,7 +111,7 @@
 			isSecondary = 1;
 		}
 		// Let the user upload contents
-		_self.mediaUploader();
+		mediaUploader = _self.mediaUploader();
 		// Build the toolbar
 		var toolbar = [], defActions = {
 			'mmd_bold': { action: EasyMDE.toggleBold, className: 'fa fa-bold' },
@@ -138,6 +145,9 @@
 				activeWidget.widgetCounter = 1;
 			}
 			if( ! mediaFrame || ! mediaFrame.title ) {
+				if ( mediaFrame && typeof mediaFrame.initialize !== 'function' ) {
+					return false;
+				}
 				mediaFrame.initialize();
 			}
 			mediaFrame.open();
@@ -207,12 +217,17 @@
 				}
 			}
 			else if ( /wps[-_]*image/.test( slug ) ) {
-				toolbar.push({
-					name: "wpsimage",
-					action: EasyMDE.wpsImage,
-					className: "fa fa-images",
-					title: mmd_wpr_vars && mmd_wpr_vars.wpsimage ? mmd_wpr_vars.wpsimage : "Image"
-				});
+				if ( mediaUploader > 0 ) {
+					toolbar.push({
+						name: "wpsimage",
+						action: EasyMDE.wpsImage,
+						className: "fa fa-images",
+						title: mmd_wpr_vars && mmd_wpr_vars.wpsimage ? mmd_wpr_vars.wpsimage : "Image"
+					});
+				}
+				else {
+					toolbar.push( 'image' );
+				}
 			}
 			else {
 				targetAction = slug.replace( '_', '-' ).replace( 'mmd-', 'mmd_' );
