@@ -99,6 +99,10 @@
 			// Category / Tag Description field
 			isSecondary = 1;
 		}
+		else if ( /^(acf|bbp)[-_]{1}/.test( $textarea.attr( 'id' ) || '' ) ) {
+			// Category / Tag Description field
+			isSecondary = 1;
+		}
 		// Let the user upload contents
 		_self.mediaUploader();
 		// Build the toolbar
@@ -229,7 +233,7 @@
 		}
 		if ( isSecondary || ! isAdmin ) {
 			var minimalToolbar = [];
-			if ( /desc/.test( $textarea.attr( 'name' ) || '' ) ) {
+			if ( /desc|acf|bbp/.test( $textarea.attr( 'name' ) || '' ) ) {
 				// Description field, super tiny version
 				for ( var c = 0; c < toolbar.length; c++ ) {
 					if ( /\||bold|italic|pipe|list|link|image|preview|guide/.test( toolbar[ c ].name || toolbar[ c ] || '' ) ) {
@@ -464,6 +468,9 @@
 			$( sel ).each(function() {
 				new MarkupMarkdownWidget( this );
 			});
+			if ( ! $( sel ).length ) {
+				document.dispatchEvent( new Event( 'CodeMirrorSpellCheckerReady' ) );
+			}
 		};
 		if ( ! primaryAreaEnabled ) {
 			// Only custom fields or other fields managed by addons are used with Markdown
