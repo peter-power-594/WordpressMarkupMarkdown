@@ -59,7 +59,8 @@ class Support {
 			# With recent block editors / json theme :
 			# - **get_header** hook is not fired
 			# - **wp_head** hook is fired too late to trigger content filters
-			$this->proxy_filters(); 
+			$this->prepare_proxy_filters(); 
+			add_action( 'mmd_addons_loaded', array( $this, 'add_extra_proxy_filters' ) );
 			# Then check if the request is related to a front page / post.
 			# We need the latest hook wp_head to keep compatibility with plugin like ACF
 			# Priority should be greater than 10 so we go with 11
@@ -364,6 +365,22 @@ class Support {
 
 
 	/**
+	 * Quick bridge to force disable static cache content with content used by other plugins
+	 * 
+	 * @since 3.9.0
+	 * @access public
+	 *
+	 * @param String $extra_content The HTML excerpt field
+	 *
+	 * @return String the filtered content
+	 */
+	public function extra_field_mmd2html( $extra_content ) {
+		$this->load_parser();
+		return apply_filters( 'post_markdown2html', $extra_content, false );
+	}
+
+
+	/**
 	 * Quick bridge to force disable static cache content with secondary field
 	 *
 	 * @since 3.4.0
@@ -409,11 +426,27 @@ class Support {
 	 *
 	 * @return Void
 	 */
-	public function proxy_filters() {
+	public function prepare_proxy_filters() {
 		add_filter( 'the_content', array( $this, 'post_content_mmd2html' ), 9, 1 );
 		add_filter( 'the_excerpt', array( $this, 'post_excerpt_mmd2html' ), 9, 1 );
 		add_filter( 'category_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
 		add_filter( 'term_description', array( $this, 'description_field_mmd2html' ), 9, 1 );
+		add_filter( 'mmd_proxy_filters', array( $this, 'push_proxy_filters' ), 9, 1);
+	}
+
+
+	public function push_proxy_filters( $arr ) {
+		return is_array( $arr ) ? $arr : array();
+	}
+
+
+	public function add_extra_proxy_filters() {
+		$extra_filters = apply_filters( 'mmd_proxy_filters', array(), 10, 1 );
+		if ( isset( $extra_filters ) && is_array( $extra_filters ) ) :
+			foreach( $extra_filters as $custom_filter ) :
+				add_filter( $custom_filter, array( $this, 'extra_field_mmd2html' ), 10, 1 );
+			endforeach;
+		endif;
 	}
 
 

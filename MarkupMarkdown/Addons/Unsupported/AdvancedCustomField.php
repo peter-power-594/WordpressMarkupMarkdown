@@ -18,7 +18,7 @@ class AdvancedCustomField {
 
 
 	public function __construct() {
-		$this->prop[ 'label' ] = '<abbr title="Advanced Custom Fields">ACF</abbr>';
+		$this->prop[ 'label' ] = 'Advanced Custom Fields';
 		$this->prop[ 'desc' ] = __( 'This addon enable a new content type so you can write directly markdown with the "Markup Markdown" custom field from ACF.', 'markup-markdown' );
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;

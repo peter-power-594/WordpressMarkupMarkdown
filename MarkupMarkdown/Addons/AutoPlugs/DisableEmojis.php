@@ -15,7 +15,7 @@ class DisableEmojis {
 
 
     public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR ) . '/disable-emojis/disable-emojis.php' ) :
+		if ( file_exists( WP_PLUGIN_DIR . '/disable-emojis/disable-emojis.php' ) ) :
 			# The plugin exists, only need the community patch
 			add_action( 'admin_init', array( $this, 'disable_back_emojis' ) );
 		else :

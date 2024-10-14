@@ -237,8 +237,8 @@ class SpellChecker {
 	 */
 	public function add_inline_editor_conf() {
 		$my_dict = $this->check_dict_preferences( defined( 'MMD_SPELL_CHECK' ) ? MMD_SPELL_CHECK : [] );
-		$js = "wp.pluginMarkupMarkdown.spellChecker = {\n";
-		$n = 0; $dict_base_uri = str_replace( '/plugins/markup-markdown/', '/mmd-dict/', mmd()->plugin_uri );
+		$js = ''; $n = 0;
+		$dict_base_uri = str_replace( '/plugins/markup-markdown/', '/mmd-dict/', mmd()->plugin_uri );
 		foreach ( $my_dict as $dict ) :
 			if ( ! isset( $this->dictionaries[ $dict ] ) ) :
 				continue;
@@ -247,7 +247,12 @@ class SpellChecker {
 			$lang_label = $this->dictionaries[ $dict ][ 'label' ];
 			$lang_filename = $this->dictionaries[ $dict ][ 'file_name' ];
 			$this->check_for_older_names( $lang_filename );
-			$n++; if ( $n > 1 ) : $js .= ",\n"; endif;
+			$n++;
+			if ( $n > 1 ) :
+				$js .= ",\n";
+			else :
+				$js .= "wp.pluginMarkupMarkdown.spellChecker = {\n";
+			endif;
 			$js .= "  " . $dict . ": {"
 				. "\n    code: \"" . $lang_code . "\""
 				. ",\n    label: \"" . $lang_label . "\""
@@ -258,8 +263,12 @@ class SpellChecker {
 			endif;
 			$js .= "\n  }";
 		endforeach;
-		$js .= "\n};";
-		return $js;
+		if ( ! empty( $js ) ) :
+			$js .= "\n};";
+			return $js;
+		else :
+			return '';
+		endif;
 	}
 
 	/**

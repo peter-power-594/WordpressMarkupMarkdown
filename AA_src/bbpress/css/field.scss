@@ -1,0 +1,15 @@
+#qt_bbp_topic_content_toolbar,
+#qt_bbp_reply_content_toolbar {
+	display: none;
+}
+.bbp-the-content-wrapper {
+	.EasyMDEContainer {
+		.editor-toolbar {
+			border: 0;
+			border-radius: 0;
+		}
+		.CodeMirror {
+			border: 0;
+		}
+	}
+}
