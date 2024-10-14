@@ -11,7 +11,7 @@ class WPGeshi {
 
 
     public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR ) . '/wp-geshi-highlight/wp-geshi-highlight.php' ) :
+		if ( file_exists( WP_PLUGIN_DIR . '/wp-geshi-highlight/wp-geshi-highlight.php' ) ) :
 			add_action( 'after_setup_theme', array( $this, 'mmd_wp_geshi_plug' ) );
 		endif;
     }

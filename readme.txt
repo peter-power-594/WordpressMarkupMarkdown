@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.8.2
-Version: 3.8.2
+Stable Tag: 3.9.0
+Version: 3.9.0
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6.0
@@ -17,7 +17,9 @@ This plugin replaces the Gutenberg block editor (or the classic TinyMCE) on the 
 
 The content is saved with the markdown syntax in the database and is rendered on the frontend via wordpress native filters thanks to the [Parsedown](https://parsedown.org) PHP library.
 
+
 This extension rocks:
+- v3.9: Adding compatibility with the bbPress plugin via an autoplug 
 - v3.8: Adding support for using # signs as ordered list
 - v3.7: Adding support for selective heading levels
 - v3.6: Performance improvements with spellchecker and suggestions
@@ -91,6 +93,13 @@ The current version is based on components that are not compatible with assistiv
 
 
 == Changelog ==
+
+= 3.9.0 =
+
+Improvement:
+- _bbPress_ added as an autoplug
+
+Various tiny bug fixes
 
 = 3.8.2 =
 

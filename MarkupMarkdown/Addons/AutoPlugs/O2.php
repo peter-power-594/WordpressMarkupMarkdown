@@ -9,7 +9,10 @@ class O2 {
 
 
     public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR ) . '/o2/o2.php' ) :
+		if ( file_exists( WP_PLUGIN_DIR . '/o2/o2.php' ) ) :
+			if ( class_exists( 'o2' ) ) :
+				define( 'MMD_O2_PLUG', true );
+			endif;
 			add_filter( 'o2_post_fragment', array( $this, 'o2_post_fragment_filter' ), 11, 2 );
 			add_filter( 'the_content', array( $this, 'o2_parse_list_filter' ), 1 );
 		endif;
@@ -50,14 +53,14 @@ class O2 {
 	public function o2_parse_list_filter( $content ) {
 		if ( defined( 'MMD_USE_HEADINGS' ) && ! in_array( '1', MMD_USE_HEADINGS ) ) :
 			preg_match_all( '#(\t*)[\\\\]{1}[\#]{1}#', $content, $sharp_items ); # Trigger ordered list written with the sharp sign
-			if (isset( $sharp_items ) && count( $sharp_items ) > 0 ) :
+			if ( isset( $sharp_items ) && count( $sharp_items ) > 0 ) :
 				foreach( $sharp_items as $item ) :
 					$tmp = str_replace( array( "\t", "\#" ), array( ' ', '#' ),  $item );
 					$content = str_replace( $item, $tmp, $content );
 				endforeach;
 			endif;
 			preg_match_all( '#(\t*)[xo*-+]{1}#', $content, $bullet_items ); # Trigger unordered list written
-			if (isset( $bullet_items ) && count( $bullet_items ) > 0 ) :
+			if ( isset( $bullet_items ) && count( $bullet_items ) > 0 ) :
 				foreach( $bullet_items as $item ) :
 					$tmp = str_replace( "\t", ' ', $item );
 					$content = str_replace( $item, $tmp, $content );

@@ -2,6 +2,8 @@
 .DS_Store
 /node_modules
 /package-lock.json
+/assets/bbpress/css/field.min.css
+/assets/bbpress/js/field.min.js
 /assets/custom-codemirror-spell-checker/dist/spell-checker.debug.js
 /assets/custom-codemirror-spell-checker/dist/spell-checker.min.js
 /assets/easy-markdown-editor/dist/easymde.min.css

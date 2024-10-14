@@ -90,17 +90,17 @@
 						<?php printf( esc_html__( 'Transform a bullet list of images as a 2 waterfall column layout when the $1%sphoto gallery$2%s post format is selected.', 'markup-markdown' ), '<em>', '</em>' ); ?>
 					</label>
 				</td>
-				<tr class="site-use-imagesloaded">
-					<th scope="row">
-						<?php esc_html_e( 'Use Imagesloaded', 'markup-markdown' ); ?>
-					</th>
-					<td>
-						<label for="mmd_imagesloaded">
-							<input type="checkbox" name="mmd_imagesloaded" id="mmd_imagesloaded" value="1" <?php echo (int)$my_cnf[ 'imagesloaded' ] > 0 ? 'checked="checked"' : ''; ?> />
-							<?php esc_html_e( 'Trigger the update of the layout after all images are loaded. Can solve specific issues in case the layout is broken with the gallery.', 'markup-markdown' ); ?>
-						</label>
-					</td>
-				</tr>
+			</tr>
+			<tr class="site-use-imagesloaded">
+				<th scope="row">
+					<?php esc_html_e( 'Use Imagesloaded', 'markup-markdown' ); ?>
+				</th>
+				<td>
+					<label for="mmd_imagesloaded">
+						<input type="checkbox" name="mmd_imagesloaded" id="mmd_imagesloaded" value="1" <?php echo (int)$my_cnf[ 'imagesloaded' ] > 0 ? 'checked="checked"' : ''; ?> />
+						<?php esc_html_e( 'Trigger the update of the layout after all images are loaded. Can solve specific issues in case the layout is broken with the gallery.', 'markup-markdown' ); ?>
+					</label>
+				</td>
 			</tr>
 			<tr class="site-default-toolbar">
 				<th scope="row">

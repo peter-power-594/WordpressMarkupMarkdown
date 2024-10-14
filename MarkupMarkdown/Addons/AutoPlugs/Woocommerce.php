@@ -9,7 +9,7 @@ class Woocommerce {
 
 
     public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR ) . '/woocommerce/woocommerce.php' ) :
+		if ( file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' ) ) :
 			add_action( 'after_setup_theme', array( $this, 'mmd_woocommerce_plug' ) );
 		endif;
     }
