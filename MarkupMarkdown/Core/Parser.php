@@ -131,6 +131,24 @@ class Parser {
 	}
 
 
+
+
+	/**
+	 * Patched to render ordered / unordered list with custom triggers
+	 * Feature previously created with the O2 AutoPlug in 3.8
+	 *
+	 * @since 3.9.0
+	 * @access public
+	 *
+	 * @param String  $content The html source code
+	 *
+	 * @return String The modified content
+	 */
+	public function custom_list_filter( $content ) {
+		return preg_replace( '#^([\s]*)[\#]{1}\s#m', '$1* ', $content ); # Trigger ordered list written with the sharp sign
+	}
+
+
 	/**
 	 * Global method to ouput the html from any markdown content
 	 *
@@ -145,6 +163,9 @@ class Parser {
 			$this->custom_parser();
 		endif;
 		$safe = preg_replace( '#((<\/\w+>)(<\w+>))#', "$2\n$3", isset( $content ) ? $content : '' );
+		if ( defined( 'MMD_USE_HEADINGS' ) && ! in_array( '1', MMD_USE_HEADINGS ) && ! defined( 'WP_MMD_O2_PLUG' ) ) :
+			$safe = $this->custom_list_filter( $content );
+		endif;
 		if ( defined( 'MMD_KEEP_SPACES' ) && MMD_KEEP_SPACES > 0 ) : # Since 3.7.1
 			$safe_spaces = preg_replace( '#\n\s#m', "\n{-SPACE-}", $safe );
 			$markdown = $this->parser->text( $safe_spaces );
