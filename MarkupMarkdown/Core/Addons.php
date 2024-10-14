@@ -179,8 +179,9 @@ class Addons {
 		else :
 			require_once $this->addon_dir . 'AutoPlugs/BBPress.php';
 			require_once $this->addon_dir . 'AutoPlugs/DisableEmojis.php';
-			require_once $this->addon_dir . 'AutoPlugs/O2.php';
 			require_once $this->addon_dir . 'AutoPlugs/Woocommerce.php';
+			require_once $this->addon_dir . 'AutoPlugs/O2.php';
+			require_once $this->addon_dir . 'AutoPlugs/BBPress.php';
 			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
 		endif;
 	 }
