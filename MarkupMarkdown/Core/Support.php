@@ -367,7 +367,7 @@ class Support {
 	/**
 	 * Quick bridge to force disable static cache content with content used by other plugins
 	 * 
-	 * @since 3.3.0
+	 * @since 3.9.0
 	 * @access public
 	 *
 	 * @param String $extra_content The HTML excerpt field

@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 3.9.0
  *
  */
-class BBpress {
+class BBPress {
 
 
 	/**
@@ -21,15 +21,12 @@ class BBpress {
 
 
 	public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR ) . '/bbpress/bbpress.php' ) :
-			if ( ! is_admin() ) :
-				# add_filter( 'mmd_frontend_enabled', '__return_true' );
-				if ( ! defined( 'WP_MMD_MEDIA_UPLOADER' ) ) :
-					define( 'WP_MMD_MEDIA_UPLOADER', FALSE );
-				endif;
-				add_action( 'bbp_enqueue_scripts', array( $this, 'load_edit_mmdform' ) );
-				add_filter( 'mmd_proxy_filters', array( $this, 'get_bbpress_filters' ), 10, 1 );
+		if ( file_exists( WP_PLUGIN_DIR . '/bbpress/bbpress.php' ) && ! is_admin() ) :
+			if ( ! defined( 'WP_MMD_MEDIA_UPLOADER' ) ) :
+				define( 'WP_MMD_MEDIA_UPLOADER', FALSE );
 			endif;
+			add_action( 'bbp_enqueue_scripts', array( $this, 'load_edit_mmdform' ) );
+			add_filter( 'mmd_proxy_filters', array( $this, 'get_bbpress_filters' ), 10, 1 );
 		endif;
 	}
 
@@ -47,6 +44,8 @@ class BBpress {
 
 
 	/**
+	 * Check we are on a bbpress related template and trigger the launch of the markdown editor
+	 * 
 	 * @since 3.9.0
 	 * @access public 
 	 * 
@@ -80,4 +79,4 @@ class BBpress {
 }
 
 
-new \MarkupMarkdown\Addons\AutoPlugs\BBpress();
+new \MarkupMarkdown\Addons\AutoPlugs\BBPress();

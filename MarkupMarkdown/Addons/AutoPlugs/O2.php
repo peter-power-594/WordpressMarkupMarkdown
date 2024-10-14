@@ -9,7 +9,7 @@ class O2 {
 
 
     public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR ) . '/o2/o2.php' ) :
+		if ( file_exists( WP_PLUGIN_DIR . '/o2/o2.php' ) ) :
 			if ( class_exists( 'o2' ) ) :
 				define( 'MMD_O2_PLUG', true );
 			endif;

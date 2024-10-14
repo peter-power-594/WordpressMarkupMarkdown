@@ -14,7 +14,7 @@ class Theme {
 
 	public function __construct( $dir ) {
 		if ( ! isset( $dir ) || empty( $dir ) || ! is_dir( $dir ) ) :
-			return 'Not a valid folder...'
+			return 'Not a valid folder...';
 		endif;
 		if ( is_dir( $dir . '/_layouts' ) ) :
 		endif;
@@ -28,7 +28,7 @@ class Theme {
 		if ( ! $this->init_theme_directory() ) :
 			return false;
 		endif;
-		$this->theme[ 'dir' ] = ;
+		$this->theme[ 'dir' ] = '';
 		$this->generate_templates();
 	}
 
