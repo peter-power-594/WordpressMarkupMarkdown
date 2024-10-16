@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.9.0
-Version: 3.9.0
+Stable Tag: 3.9.1
+Version: 3.9.1
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6.0
@@ -93,6 +93,11 @@ The current version is based on components that are not compatible with assistiv
 
 
 == Changelog ==
+
+= 3.9.1 =
+
+Bug fix:
+- Solved heading levels upper than 2 rendered as bullet list when heading level 1 was disabled 
 
 = 3.9.0 =
 

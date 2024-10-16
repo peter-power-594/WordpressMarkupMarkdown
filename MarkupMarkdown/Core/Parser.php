@@ -145,7 +145,7 @@ class Parser {
 	 * @return String The modified content
 	 */
 	public function custom_list_filter( $content ) {
-		return preg_replace( '#^([\s]*)[\#]{1}\s#m', '$1* ', $content ); # Trigger ordered list written with the sharp sign
+		return preg_replace( '#^([\s]*)[\\\\]*[\#]{1}\s#m', '${1}1. ', $content ); # Trigger ordered list written with the sharp sign
 	}
 
 
