@@ -16,6 +16,9 @@ class Latex {
 	);
 
 
+	private $plugin_uri = '';
+
+
 	public function __construct() {
 		$this->prop[ 'label' ] = __( 'LaTeX', 'markup-markdown' );
 		$this->prop[ 'desc' ] = __( 'Easily type and render math formulas inside your post.', 'markup-markdown' );
@@ -31,12 +34,13 @@ class Latex {
 		if ( defined( 'MMD_USE_LATEX' ) && isset( MMD_USE_LATEX[ 0 ] ) && (int)MMD_USE_LATEX[ 0 ] === 1 ) :
 			if ( isset( MMD_USE_LATEX[ 1 ] ) ) :
 				$this->prop[ 'engine' ] = MMD_USE_LATEX[ 1 ];
+				$this->plugin_uri = mmd()->plugin_uri;
 				if ( is_admin() ) :
 					add_action( 'mmd_load_engine_stylesheets', array( $this, 'load_latex_stylesheets' ) );
 					add_action( 'mmd_load_engine_scripts', array( $this, 'load_admin_latex_scripts' ) );
 				elseif ( isset( MMD_USE_LATEX[ 2 ] ) && (int)MMD_USE_LATEX[ 2 ] > 0 ) :
-					add_action( 'mmd_load_engine_stylesheets', array( $this, 'load_latex_stylesheets' ) );
-					add_action( 'mmd_load_engine_scripts', array( $this, 'load_front_latex_scripts' ) );
+					add_action( 'wp_head', array( $this, 'load_latex_stylesheets' ) );
+					add_action( 'wp_footer', array( $this, 'load_front_latex_scripts' ) );
 				endif;
 			endif;
 		endif;
@@ -120,7 +124,6 @@ class Latex {
 		$my_tmpl = mmd()->plugin_dir . '/MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php';
 		if ( file_exists( $my_tmpl ) ) :
 			mmd()->clear_cache( $my_tmpl );
-			$toolbar_conf = $this->toolbar_conf;
 			include $my_tmpl;
 		endif;
 	}
@@ -138,7 +141,7 @@ class Latex {
 		if ( ! isset( $this->prop[ 'engine' ] ) || empty( $this->prop[ 'engine' ] ) || $this->prop[ 'engine' ] === 'none' ) :
 			# Do nothing
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
-			wp_enqueue_style( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.css', [ 'markup_markdown__wordpress_richedit' ], '0.16.11' );
+			wp_enqueue_style( 'markup_markdown__latex_katex', $this->plugin_uri . 'assets/katex/katex.min.css', [ 'markup_markdown__wordpress_richedit' ], '0.16.11' );
 		elseif ( $this->prop[ 'engine' ] === 'mathml' ) :
 			# Do nothing
 		endif;
@@ -157,9 +160,9 @@ class Latex {
 		if ( ! isset( $this->prop[ 'engine' ] ) || empty( $this->prop[ 'engine' ] ) || $this->prop[ 'engine' ] === 'none' ) :
 			# Do nothing
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
-			wp_enqueue_script( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.js', [ 'markup_markdown__wordpress_richedit' ], '0.16.11', true );
+			wp_enqueue_script( 'markup_markdown__latex_katex',$this->plugin_uri . 'assets/katex/katex.min.js', [ 'markup_markdown__wordpress_richedit' ], '0.16.11', true );
 		elseif ( $this->prop[ 'engine' ] === 'mathjax' ) :
-			wp_enqueue_script( 'markup_markdown__latex_mathjax', mmd()->plugin_uri . 'assets/mathjax/es5/tex-chtml.js', [ 'markup_markdown__wordpress_richedit' ], '3.2.2', true );
+			wp_enqueue_script( 'markup_markdown__latex_mathjax', $this->plugin_uri . 'assets/mathjax/es5/tex-svg.js', [ 'markup_markdown__wordpress_richedit' ], '3.2.2', true );
 		endif;
 	}
 
@@ -176,9 +179,13 @@ class Latex {
 		if ( ! isset( $this->prop[ 'engine' ] ) || empty( $this->prop[ 'engine' ] ) || $this->prop[ 'engine' ] === 'none' ) :
 			# Do nothing
 		elseif ( $this->prop[ 'engine' ] === 'katex' ) :
-			wp_enqueue_script( 'markup_markdown__latex_katex', mmd()->plugin_uri . 'assets/katex/katex.min.js', [ 'markup_markdown__wordpress_richedit' ], '0.16.11', true );
-			wp_enqueue_script( 'markup_markdown__latex_katex_render', mmd()->plugin_uri . 'assets/katex/contrib/auto-render.min.js', [ 'markup_markdown__latex_katex' ], '0.16.11', true );
+			wp_enqueue_script( 'markup_markdown__latex_katex', $this->plugin_uri . 'assets/katex/katex.min.js', array(), '0.16.11', true );
+			wp_enqueue_script( 'markup_markdown__latex_katex_render', $this->plugin_uri . 'assets/katex/contrib/auto-render.min.js', [ 'markup_markdown__latex_katex' ], '0.16.11', true );
 			wp_add_inline_script( 'markup_markdown__latex_katex_render', $this->add_inline_katex_conf() );
+		elseif ( $this->prop[ 'engine' ] === 'mathjax' ) :
+			wp_register_script( 'markup_markdown__latex_mathjax_render', '', array(), '', true );
+			wp_enqueue_script( 'markup_markdown__latex_mathjax_render'  );
+			wp_add_inline_script( 'markup_markdown__latex_mathjax_render', $this->add_inline_mathjax_conf() );
 		endif;
 	}
 
@@ -200,6 +207,23 @@ class Latex {
 		endif;
 		$js .= ',{delimiters:[{left:\'$$\',right:\'$$\',display:true},{left:\'\$\',right:\'\$\',display:false}],throwOnError:false});';
 		$js .= '});';
+		return $js;
+	}
+
+
+
+
+	/**
+	 * Mathjax specific inline config for the frontend
+	 *
+	 * @since 3.8.0
+	 * @access public
+	 *
+	 * @return Void
+	 */
+	public function add_inline_mathjax_conf() {
+		$js = 'window.MathJax={tex:{inlineMath:[[\'$\',\'$\']]},svg:{fontCache:\'global\'},options:{skipHtmlTags:[\'code\',\'pre\']}};';
+		$js .= '(function(_d){var s=_d.createElement(\'script\');s.src="' . $this->plugin_uri . 'assets/mathjax/es5/tex-svg.js";s.async=true;_d.head.appendChild(s);})(window.document);';
 		return $js;
 	}
 

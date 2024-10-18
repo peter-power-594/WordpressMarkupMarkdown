@@ -145,6 +145,8 @@
 		$( '.tmp_media' ).each(function() {
 			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' );
 		});
+		css.push( '.tmp_span_block{display:block}' );
+		css.push( '.tmp_span_inline{display:inline-block;vertical-align:baseline}' );
 		_self.previewSheet.innerText = css.join( '' );
 	};
 
@@ -716,7 +718,11 @@
 	 */
 	renderEngine.prototype.renderLatexSnippets = function( wpLatex, formularNumber ) {
 		var myRenderApp = this,
-			snippetHash = myRenderApp.hashString( wpLatex );
+			snippetHash = myRenderApp.hashString( wpLatex ),
+			getSnippetNode = function() {
+				var myNode = $( 'span[data-pointer="tmp_latex-' + formularNumber + '"]' )[ 0 ] || false;
+				return myNode;
+			};
 		if ( tmp_cache && tmp_cache[ snippetHash ] ) {
 			return tmp_cache[ snippetHash ].join( '' );
 		}
@@ -724,9 +730,9 @@
 		if ( ! latexSnippet || ! latexSnippet[ 1 ] ) {
 			return false;
 		}
-		var latexCode = latexSnippet[ 1 ].replace( /<br\s*\/*>/g, '\n' ).replace( /(^\n|\n$)/, '' );
+		var latexCode = latexSnippet[ 1 ].replace( /<br\s*\/*>/g, '\n' ).replace( /(^\n|\n$)/, '' ),
+			snippetNode = getSnippetNode();
 		var renderSnippet = function() {
-			var snippetNode = $( 'span[data-pointer="tmp_latex-' + formularNumber + '"]' )[ 0 ] || false;
 			if ( ! snippetNode ) {
 				return false;
 			}
@@ -737,16 +743,22 @@
 				});
 			}
 			else if ( window.MathJax ) {
-				isBlock = /^\$\$/.test( wpLatex ) ? true : false;
-				snippetNode.style.display = isBlock ? 'block' : 'inline-block';
-				snippetNode.appendChild( MathJax.tex2chtml( latexCode ), { em: 16, ex: 8, display: isBlock } );
+				if ( MathJax.tex2chtml && typeof MathJax.tex2chtml === 'function' ) {
+					snippetNode.appendChild( MathJax.tex2chtml( latexCode ), { em: 16, ex: 8, display: isBlock } );
+				}
+				else if ( MathJax.tex2svg && typeof MathJax.tex2svg === 'function' ) {
+					snippetNode.appendChild( MathJax.tex2svg( latexCode ), { em: 16, ex: 8, display: isBlock } );
+				}
 				// snippetNode.appendChild( MathJax.HTML.Element( span, {}, latexCode ) );
 			}
 			if ( ! tmp_cache[ snippetHash ] ) {
 				tmp_cache[ snippetHash ] = [ snippetNode.innerHTML ];
 			}
 		};
-		setTimeout( renderSnippet, 250 );
+		if ( snippetNode && ! /tmp_ui_ready/.test( snippetNode.className ) ) {
+			snippetNode.className += ' tmp_ui_ready';
+			setTimeout( renderSnippet, 250 );			
+		}
 		return true;
 	};
 
