@@ -53,10 +53,10 @@ class BBPress {
 	 */
 	public function load_edit_mmdform() {
 		if ( ! function_exists( 'bbp_use_wp_editor' ) || ! function_exists( 'is_bbpress' ) ) :
-			return FALSE;
+			return false;
 		endif;
 		if ( ! bbp_use_wp_editor() || ! is_bbpress() ) :
-			return FALSE;
+			return false;
 		endif;
 		add_filter( 'mmd_frontend_enabled', '__return_true' );
 		$this->plugin_uri = mmd()->plugin_uri;

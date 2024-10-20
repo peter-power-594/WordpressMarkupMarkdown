@@ -8,6 +8,8 @@
 /assets/custom-codemirror-spell-checker/dist/spell-checker.min.js
 /assets/bbpress/css/field.min.css
 /assets/bbpress/js/field.min.js
+/assets/buddypress/css/field.min.css
+/assets/buddypress/js/field.min.js
 /assets/easy-markdown-editor/dist/easymde.min.css
 /assets/markup-markdown/css/wordpress_richedit-easymde.min.css
 /assets/markup-markdown/js/builder.min.js
