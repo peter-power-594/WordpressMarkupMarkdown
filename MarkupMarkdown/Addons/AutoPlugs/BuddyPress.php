@@ -58,7 +58,7 @@ class BuddyPress {
 			$arr,
 			array(
 				# Activities
-				'bp_get_activity_content_body', 'bp_get_activity_parent_content', 'bp_get_activity_content', 'bp_get_activity_feed_item_description', 'bp_activity_comment_content',
+				'bp_get_activity_content_body', 'bp_get_activity_parent_content', 'bp_get_activity_latest_update_excerpt', 'bp_get_activity_feed_item_description', 'bp_activity_latest_update_content', 'bp_activity_comment_content',
 				# Blog
 				'bp_get_blog_description', 'bp_get_blog_latest_post_content', 
 				# Group
@@ -90,7 +90,7 @@ class BuddyPress {
 			return false;
 		endif;
 		error_log( bp_current_action() );
-		if ( ! in_array( bp_current_action(), array( 'home', 'edit', 'create', 'just-me' ) ) || ! is_buddypress() ) :
+		if ( ! in_array( bp_current_action(), array( 'home', 'admin', 'edit', 'create', 'just-me' ) ) || ! is_buddypress() ) :
 			return false;
 		endif;
 		add_filter( 'mmd_frontend_enabled', '__return_true' );

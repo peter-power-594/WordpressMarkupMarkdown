@@ -9,6 +9,7 @@
 		// The _CodeMirrorSpellCheckerReady_ event can be triggered multiple times
 		document.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
 			$textarea.each(function() {
+				$textarea.focus();
 				var $bpFormField = $textarea.parent();
 				if ( $bpFormField.length && ! $bpFormField.hasClass( 'ready' ) ) {
 					$bpFormField.addClass( 'ready' );
