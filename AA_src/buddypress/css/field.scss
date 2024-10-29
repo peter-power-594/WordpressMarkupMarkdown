@@ -1,12 +1,14 @@
-body #buddypress {
+body #buddypress,
+#wp-bp-groups-description-editor-container,
+#wp-bp-activities-content-editor-container,
+.buddypress-wrap .standard-form .wp-editor-container {
+	border: 0;
 	.EasyMDEContainer {
 		.editor-toolbar {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
+			border-radius: 0;
 		}
 		.CodeMirror {
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
+			border-radius: 0;
 		}
 	}
 }

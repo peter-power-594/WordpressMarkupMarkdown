@@ -12,7 +12,6 @@ class Parser {
 	private $parser = '';
 
 	private $preview = 'false';
-
 	private $mmd_allowed = 1;
 
 	private $cache_enabled = 0;
