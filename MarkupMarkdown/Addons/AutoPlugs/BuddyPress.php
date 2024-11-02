@@ -66,14 +66,13 @@ class BuddyPress {
 				# Group
 				'bp_get_group_description', 'bp_get_group_description_excerpt',
 				# Messages
-				'bp_get_message_thread_excerpt', 'bp_get_message_thread_content', 'bp_get_messages_content_value',
+				'bp_get_message_thread_excerpt', 'bp_get_message_thread_content', 'bp_get_the_thread_message_content', 'bp_get_messages_content_value',
 			)
 		);
 	}
 
 
 	public function grant_buddypress_hooks( $current_screen ) {
-		error_log( $current_screen->id );
 		if ( isset( $current_screen->id ) && in_array( $current_screen->id, $this->allowed_hooks ) !== false ) :
 			add_filter( 'mmd_backend_enabled', '__return_true', 11 );
 		endif;
@@ -92,9 +91,17 @@ class BuddyPress {
 		if ( ! function_exists( 'bp_is_current_action' ) || ! function_exists( 'is_buddypress' ) ) :
 			return false;
 		endif;
-		error_log( 'Current action' . bp_current_action() );
+		$should_load = false;
 		if ( ! is_admin() ) :
-			if ( ! in_array( bp_current_action(), array( 'home', 'admin', 'edit', 'create', 'just-me', 'compose', 'sentbox' ) ) || ! is_buddypress() ) :
+			$bp_current_action = bp_current_action();
+			if ( is_buddypress() && ! empty( $bp_current_action ) && in_array( $bp_current_action, array( 'home', 'admin', 'edit', 'create', 'just-me', 'compose', 'sentbox' ) ) ) :
+				$should_load = true;
+			elseif ( function_exists( 'bp_docs_is_doc_create' ) && bp_docs_is_doc_create() ) :
+				$should_load = true;
+			elseif ( function_exists( 'bp_docs_is_doc_edit' ) && bp_docs_is_doc_edit() ) :
+				$should_load = true;
+			endif;
+			if ( ! $should_load ) :
 				return false;
 			endif;
 			add_filter( 'mmd_frontend_enabled', '__return_true' );

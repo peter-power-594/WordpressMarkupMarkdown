@@ -166,7 +166,8 @@ class EngineEasyMDE {
 				return false;
 			endif;
 		else : # Frontend
-			if ( ! is_singular() || ! $this->frontend_enabled ) :
+			# 2024/11/2 : Disabling "! is_singular()"
+			if ( ! $this->frontend_enabled ) :
 				// Frontend and user is no logged or not possible to edit content
 				return false;
 			endif;
