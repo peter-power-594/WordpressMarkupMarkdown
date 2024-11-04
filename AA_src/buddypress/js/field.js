@@ -5,7 +5,7 @@
 		if ( ! _win.MarkupMarkdown || typeof _win.MarkupMarkdown !== "function" ) {
 			return false;
 		}
-		var $textarea = $( 'textarea[name="group-desc"], textarea[name="whats-new"], textarea[name="bp-groups-description"], textarea[name="bp-activities-content"], textarea[name="message_content"], #doc_content' );
+		var $textarea = $( 'textarea[name="group-desc"], textarea[name="whats-new"], textarea[name="bp-groups-description"], textarea[name="bp-activities-content"], textarea[name="message_content"]' );
 		// The _CodeMirrorSpellCheckerReady_ event can be triggered multiple times
 		document.addEventListener( 'CodeMirrorSpellCheckerReady', function() {
 			$textarea.each(function() {

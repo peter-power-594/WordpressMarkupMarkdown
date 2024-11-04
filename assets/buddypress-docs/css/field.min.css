@@ -1,0 +1,9 @@
+#wp-doc_content-editor-container {
+  border: 0;
+}
+#wp-doc_content-editor-container .EasyMDEContainer .editor-toolbar {
+  border-radius: 0;
+}
+#wp-doc_content-editor-container .EasyMDEContainer .CodeMirror {
+  border-radius: 0;
+}

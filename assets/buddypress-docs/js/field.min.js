@@ -1,0 +1,1 @@
+((n,a)=>{var e;n.MarkupMarkdown&&"function"==typeof n.MarkupMarkdown&&(e=a("#doc_content"),document.addEventListener("CodeMirrorSpellCheckerReady",function(){e.each(function(){e.focus();var n=e.parent();n.length&&!n.hasClass("ready")&&(n.addClass("ready"),new MarkupMarkdown(this))})}))})(window,window.jQuery);

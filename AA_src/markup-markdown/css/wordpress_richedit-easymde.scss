@@ -431,8 +431,8 @@ html[dir=rtl] .wp-admin .EasyMDEContainer .CodeMirror-fullscreen {
 	left: 0;
 	right: 160px;
 }
-.EasyMDEContainer .CodeMirror-sided,
-.EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
+.wp-admin .EasyMDEContainer .CodeMirror-sided,
+.wp-admin .EasyMDEContainer .CodeMirror-sided + .editor-preview-side {
 	width: calc(50% - 80px) !important;
 }
 html[dir=rtl] .EasyMDEContainer .CodeMirror-sided {

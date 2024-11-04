@@ -1,0 +1,11 @@
+#wp-doc_content-editor-container {
+	border: 0;
+	.EasyMDEContainer {
+		.editor-toolbar {
+			border-radius: 0;
+		}
+		.CodeMirror {
+			border-radius: 0;
+		}
+	}
+}

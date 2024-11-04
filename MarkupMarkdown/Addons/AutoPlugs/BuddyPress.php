@@ -91,14 +91,10 @@ class BuddyPress {
 		if ( ! function_exists( 'bp_is_current_action' ) || ! function_exists( 'is_buddypress' ) ) :
 			return false;
 		endif;
-		$should_load = false;
 		if ( ! is_admin() ) :
+			$should_load = false;
 			$bp_current_action = bp_current_action();
 			if ( is_buddypress() && ! empty( $bp_current_action ) && in_array( $bp_current_action, array( 'home', 'admin', 'edit', 'create', 'just-me', 'compose', 'sentbox' ) ) ) :
-				$should_load = true;
-			elseif ( function_exists( 'bp_docs_is_doc_create' ) && bp_docs_is_doc_create() ) :
-				$should_load = true;
-			elseif ( function_exists( 'bp_docs_is_doc_edit' ) && bp_docs_is_doc_edit() ) :
 				$should_load = true;
 			endif;
 			if ( ! $should_load ) :

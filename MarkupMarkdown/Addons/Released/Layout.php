@@ -122,7 +122,7 @@ class Layout {
 	 * @return Void
 	 */
 	public function add_tabmenu() {
-		echo "\t\t\t\t\t\t<li><a href=\"#tab-layout\">" . __( 'Layout', 'markup-markdown' ) . "</a></li>\n";
+		echo "\t\t\t\t\t\t<li><a href=\"#tab-layout\" class=\"mmd-ico ico-layout\">" . __( 'Layout', 'markup-markdown' ) . "</a></li>\n";
 	}
 
 

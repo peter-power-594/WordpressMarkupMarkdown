@@ -11,9 +11,11 @@ module.exports = function(grunt) {
 				files: {
 					'assets/easy-markdown-editor/dist/easymde.min.css': 'AA_src/easy-markdown-editor/css/easymde.scss',
 					'assets/markup-markdown/css/wordpress_richedit-easymde.min.css': 'AA_src/markup-markdown/css/wordpress_richedit-easymde.scss',
+					'assets/markup-markdown/css/plugin_options.min.css': 'AA_src/markup-markdown/css/plugin_options.scss',
 					'MarkupMarkdown/Addons/Unsupported/AdvancedCustomField/field.min.css': 'AA_src/advanced-custom-field/css/field.scss',
 					'assets/bbpress/css/field.min.css': 'AA_src/bbpress/css/field.scss',
-					'assets/buddypress/css/field.min.css': 'AA_src/buddypress/css/field.scss'
+					'assets/buddypress/css/field.min.css': 'AA_src/buddypress/css/field.scss',
+					'assets/buddypress-docs/css/field.min.css': 'AA_src/buddypress-docs/css/field.scss'
 				}
 			}
 		},
@@ -22,6 +24,7 @@ module.exports = function(grunt) {
 				'AA_src/advanced-custom-field/js/field.js',
 				'AA_src/bbpress/js/field.js',
 				'AA_src/buddypress/js/field.js',
+				'AA_src/buddypress-docs/js/field.js',
 				'AA_src/custom-codemirror-spell-chekcher/js/spell-checker.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-easymde.js',
 				'AA_src/markup-markdown/js/wordpress_richedit-media.js',
@@ -83,7 +86,8 @@ module.exports = function(grunt) {
 					'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js': 'assets/custom-codemirror-spell-checker/dist/spell-checker.debug.js',
 					'MarkupMarkdown/Addons/Unsupported/AdvancedCustomField/field.min.js': 'AA_src/advanced-custom-field/js/field.js',
 					'assets/bbpress/js/field.min.js': 'AA_src/bbpress/js/field.js',
-					'assets/buddypress/js/field.min.js': 'AA_src/buddypress/js/field.js'
+					'assets/buddypress/js/field.min.js': 'AA_src/buddypress/js/field.js',
+					'assets/buddypress-docs/js/field.min.js': 'AA_src/buddypress-docs/js/field.js'
 				}
 			}
 		},
