@@ -444,13 +444,6 @@
 		text = text.replace( /\[video([^\]]*)\]\[\/video\]/g, function( wpVideo ) {
 			return mediaPreview.processTask( 'convertVideo', wpVideo, vidCounter++ );
 		});
-		// Render the LaTex formulas
-		var ltxCounter = 0;
-		text = text.replace( /\${1,2}[^\$]+\${1,2}/g, function( wpLatex ) {
-			ltxCounter++;
-			var isBlock = /^\$\$/.test( wpLatex ) ? true : false;
-			return '<span id="' + getRandomNodeID() + '" class="tmp_media tmp_latex tmp_span_' + ( isBlock ? 'block' : 'inline' ) + '" data-pointer="tmp_latex-' + ltxCounter + '">' + mediaPreview.add2Queue( 'convertLatexFormulas', wpLatex, ltxCounter ) + '</span>';
-		});
 		if ( ! _self.isRendering ) {
 			_self.isRendering = setTimeout(function() {
 				$( window ).trigger( 'resize.mmd_preview' );

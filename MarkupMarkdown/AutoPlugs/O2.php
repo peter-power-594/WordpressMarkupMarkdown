@@ -10,9 +10,7 @@ class O2 {
 
 	public function __construct() {
 		if ( file_exists( WP_PLUGIN_DIR . '/o2/o2.php' ) ) :
-			if ( class_exists( 'o2' ) ) :
-				define( 'MMD_O2_PLUG', true );
-			endif;
+			define( 'MMD_O2_PLUG', true );
 			add_filter( 'o2_post_fragment', array( $this, 'o2_post_fragment_filter' ), 11, 2 );
 			add_filter( 'the_content', array( $this, 'o2_parse_list_filter' ), 1 );
 		endif;

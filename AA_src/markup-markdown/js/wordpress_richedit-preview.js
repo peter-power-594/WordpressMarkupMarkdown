@@ -1,4 +1,4 @@
-/* global wp, jQuery, katex */
+/* global wp, jQuery */
 
 /**
  * @preserve The Markup Markdown Preview Module
@@ -75,8 +75,7 @@
 				convertImage: 'convertHTMLImage',
 				convertAudio: 'convertAudioShortcode',
 				convertVideo: 'convertVideoShortcode',
-				convertHeading: 'convertHeadingTags',
-				convertLatexFormulas: 'renderLatexSnippets'
+				convertHeading: 'convertHeadingTags'
 			};
 		return {
 			flushQueue: function() {
@@ -706,62 +705,6 @@
 		}
 		return true;
 	};
-
-	
-	/**
-	 * LaTeX Snippets rendering
-	 *
-	 * @param {String} wpLatex The LaTeX snippet written in the markdown post
-	 * @param {Integer} formularNumber The number used for the formula ID in the HTML document
-	 *
-	 * @returns {Boolean} TRUE in case of success or FALSE
-	 */
-	renderEngine.prototype.renderLatexSnippets = function( wpLatex, formularNumber ) {
-		var myRenderApp = this,
-			snippetHash = myRenderApp.hashString( wpLatex ),
-			getSnippetNode = function() {
-				var myNode = $( 'span[data-pointer="tmp_latex-' + formularNumber + '"]' )[ 0 ] || false;
-				return myNode;
-			};
-		if ( tmp_cache && tmp_cache[ snippetHash ] ) {
-			return tmp_cache[ snippetHash ].join( '' );
-		}
-		var latexSnippet = wpLatex.match( /\${1,2}([^\$]+)\${1,2}/ );
-		if ( ! latexSnippet || ! latexSnippet[ 1 ] ) {
-			return false;
-		}
-		var latexCode = latexSnippet[ 1 ].replace( /<br\s*\/*>/g, '\n' ).replace( /(^\n|\n$)/, '' ),
-			snippetNode = getSnippetNode();
-		var renderSnippet = function() {
-			if ( ! snippetNode ) {
-				return false;
-			}
-			var isBlock = false;
-			if ( window.katex ) {
-				katex.render(latexCode, snippetNode, {
-					throwOnError: false
-				});
-			}
-			else if ( window.MathJax ) {
-				if ( MathJax.tex2chtml && typeof MathJax.tex2chtml === 'function' ) {
-					snippetNode.appendChild( MathJax.tex2chtml( latexCode ), { em: 16, ex: 8, display: isBlock } );
-				}
-				else if ( MathJax.tex2svg && typeof MathJax.tex2svg === 'function' ) {
-					snippetNode.appendChild( MathJax.tex2svg( latexCode ), { em: 16, ex: 8, display: isBlock } );
-				}
-				// snippetNode.appendChild( MathJax.HTML.Element( span, {}, latexCode ) );
-			}
-			if ( ! tmp_cache[ snippetHash ] ) {
-				tmp_cache[ snippetHash ] = [ snippetNode.innerHTML ];
-			}
-		};
-		if ( snippetNode && ! /tmp_ui_ready/.test( snippetNode.className ) ) {
-			snippetNode.className += ' tmp_ui_ready';
-			setTimeout( renderSnippet, 250 );			
-		}
-		return true;
-	};
-
 
 	window.MmdPreview = MmdPreview;
 
