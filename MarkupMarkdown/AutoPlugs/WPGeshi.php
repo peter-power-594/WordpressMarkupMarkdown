@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\AutoPlugs;
+namespace MarkupMarkdown\AutoPlugs;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -10,12 +10,12 @@ class WPGeshi {
 	private $mmd_geshi_css_code = '';
 
 
-    public function __construct() {
+	public function __construct() {
 		if ( file_exists( WP_PLUGIN_DIR . '/wp-geshi-highlight/wp-geshi-highlight.php' ) ) :
 			define( 'MMD_WPGESHI_PLUG', true );
 			add_action( 'after_setup_theme', array( $this, 'mmd_wp_geshi_plug' ) );
 		endif;
-    }
+	}
 
 
 	public function mmd_wp_geshi_plug() {
@@ -102,4 +102,4 @@ class WPGeshi {
 
 }
 
-new \MarkupMarkdown\Addons\AutoPlugs\WPGeshi();
+new \MarkupMarkdown\AutoPlugs\WPGeshi();

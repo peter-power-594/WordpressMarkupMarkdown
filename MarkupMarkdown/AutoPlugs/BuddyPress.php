@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\AutoPlugs;
+namespace MarkupMarkdown\AutoPlugs;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -122,4 +122,4 @@ class BuddyPress {
 }
 
 
-new \MarkupMarkdown\Addons\AutoPlugs\BuddyPress();
+new \MarkupMarkdown\AutoPlugs\BuddyPress();
