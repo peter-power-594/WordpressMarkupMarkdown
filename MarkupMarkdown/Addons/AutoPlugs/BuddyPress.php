@@ -82,7 +82,7 @@ class BuddyPress {
 	/**
 	 * Check we are on a bbpress related template and trigger the launch of the markdown editor
 	 * 
-	 * @since 3.9.0
+	 * @since 3.10.0
 	 * @access public 
 	 * 
 	 * @return Boolean TRUE if the edit form view was triggered or FALSE

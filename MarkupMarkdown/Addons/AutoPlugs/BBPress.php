@@ -22,7 +22,9 @@ class BBPress {
 
 	public function __construct() {
 		if ( file_exists( WP_PLUGIN_DIR . '/bbpress/bbpress.php' ) ) :
-			define( 'MMD_BBPRESS_PLUG', true );
+			if ( function_exists( 'bbpress' ) ) :
+				define( 'MMD_BBPRESS_PLUG', true );
+			endif;
 		endif;
 		if ( defined( 'MMD_BUDDYPRESS_PLUG' ) && MMD_BUDDYPRESS_PLUG && ! is_admin() ) :
 			if ( ! defined( 'WP_MMD_MEDIA_UPLOADER' ) ) :

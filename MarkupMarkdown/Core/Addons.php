@@ -189,22 +189,34 @@ class Addons {
 	 */
 	public function update_config( $my_cnf ) {
 		$fm_plugs = filter_input( INPUT_POST, 'mmd_plugs', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-		$my_plugs = $this->plugs;
-		foreach( $my_plugs as $my_slug => $my_plug ) :
-			$my_plugs[ $my_slug ][ 1 ] = in_array( $my_slug, $fm_plugs ) ? 1 : 0;
+		$my_plugs = array();
+		foreach( $this->plugs as $my_slug => $my_plug ) :
+			$my_plugs[ $my_slug ] = in_array( $my_slug, $fm_plugs ) ? 1 : 0;
 		endforeach;
 		$my_cnf[ 'plugs' ] = $my_plugs;
 		return $my_cnf;
 	}
 	public function create_const( $my_cnf ) {
-		unset( $my_cnf[ 'plugs' ] );
+		if ( isset( $my_cnf[ 'plugs' ] ) ) :
+			$this->sanitize_save_conf( $my_cnf[ 'plugs' ] );
+			unset( $my_cnf[ 'plugs' ] );
+		endif;
 		return $my_cnf;
 	}
-	public function sanitize_save_conf( $my_cnf ) {
-		$data = '<?php define( "MMD_AUTOPLUGS", ';
-		$data .= str_replace( [ '{', '}', ':' ], [ '[', ']', '=>' ], json_encode( $my_cnf ) );
-		$data .= '); ?>';
-		file_put_contents( mmd()->conf_blog_prefix . 'plugs.php', $data );
+	public function sanitize_save_conf( $my_cnf = [] ) {
+		$cnf_file = mmd()->conf_blog_prefix . 'plugs.php';
+		$data = "<?php\n\tdefined( 'ABSPATH' ) || exit;";
+		$data .= "\n\tdefine( \"MMD_AUTOPLUGS\", ";
+		$safe_cnf = json_encode( $my_cnf );
+		if ( ! $safe_cnf ) :
+			$data .= '[]';
+		else:
+			$data .= str_replace( [ '{', '}', ':' ], [ '[', ']', '=>' ], $safe_cnf );
+		endif;
+		$data .= ");\n?>";
+		file_put_contents( $cnf_file, $data );
+		mmd()->clear_cache( $cnf_file );
+		return $cnf_file;
 	}
 
 
@@ -246,18 +258,15 @@ class Addons {
 	 * @access private
 	 * @since 3.10.0
 	 *
-	 * @param Boolean $auto TRUE to load automatically the plugs or FALSE
-	 *
-	 * @return Boolean TRUE in case series of plugs should be loaded or FALSE
+	 * @return String the autoplugs settings file
 	 */
 	private function check_plugs() {
 		$plugs_conf_file = mmd()->conf_blog_prefix . 'plugs.php';
 		if ( file_exists( $plugs_conf_file ) ) :
 			return $plugs_conf_file;
 		endif;
-		$my_plugs = $this->plugs;
 		$my_plug_cnf = array();
-		foreach ( $my_plugs as $plug_slug => $plug_setting ) :
+		foreach ( $this->plugs as $plug_slug => $plug_setting ) :
 			$curr_plug = $this->addon_dir . 'AutoPlugs/' . $plug_slug . '.php';
 			if ( ! file_exists( $curr_plug ) ) :
 				$my_plug_cnf[ $plug_slug ] = 0;
@@ -271,8 +280,7 @@ class Addons {
 				$my_plug_cnf[ $plug_slug ] = isset( $plug_setting[ 0 ] ) && (int)$plug_setting[ 0 ] > 0 ? 1 : 0;
 			endif;
 		endforeach;
-		$this->sanitize_save_conf( $my_plug_cnf );
-		return $plugs_conf_file;
+		return $this->sanitize_save_conf( $my_plug_cnf );
 	}
 
 
