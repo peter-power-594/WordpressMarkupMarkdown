@@ -430,7 +430,7 @@ class SpellChecker {
 	 * @return Void
 	 */
 	public function add_tabmenu() {
-		echo "\t\t\t\t\t\t<li><a href=\"#tab-spellchecker\">" . __( 'Spell Checker', 'markup-markdown' ) . "</a></li>\n";
+		echo "\t\t\t\t\t\t<li><a href=\"#tab-spellchecker\" class=\"mmd-ico ico-spellcheck\">" . __( 'Spell Checker', 'markup-markdown' ) . "</a></li>\n";
 	}
 
 

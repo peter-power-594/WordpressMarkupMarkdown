@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.9.1
-Version: 3.9.1
+Stable Tag: 3.10.1
+Version: 3.10.1
 Requires at least: 4.9
 Tested up to: 6.6.2
 Requires PHP: 5.6.0
@@ -19,8 +19,9 @@ The content is saved with the markdown syntax in the database and is rendered on
 
 
 This extension rocks:
+- v3.10: Adding compatibility with the BuddyPress and BuddyPress Docs plugins via an autoplug, possible to disable autoplugs from the settings panel
 - v3.9: Adding compatibility with the bbPress plugin via an autoplug 
-- v3.8: Adding support for using # signs as ordered list
+- v3.8: Adding compatibility with the O2 plugin via an autoplug, support for using # signs as ordered list
 - v3.7: Adding support for selective heading levels
 - v3.6: Performance improvements with spellchecker and suggestions
 - v3.5: Adding support for right-to-left alphabets like Arabic, Hebrew, or Persian
@@ -93,6 +94,18 @@ The current version is based on components that are not compatible with assistiv
 
 
 == Changelog ==
+
+= 3.10.1 =
+
+Bug Fix:
+- Adding missing files
+
+= 3.10.0 =
+
+Improvements:
+- _AutoPlugs_ tab added to the settings panel
+- _BuddyPress_ and _BuddyPress Docs_ plugs added
+
 
 = 3.9.1 =
 

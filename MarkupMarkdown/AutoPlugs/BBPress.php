@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\AutoPlugs;
+namespace MarkupMarkdown\AutoPlugs;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +21,12 @@ class BBPress {
 
 
 	public function __construct() {
-		if ( file_exists( WP_PLUGIN_DIR . '/bbpress/bbpress.php' ) && ! is_admin() ) :
+		if ( file_exists( WP_PLUGIN_DIR . '/bbpress/bbpress.php' ) ) :
+			if ( function_exists( 'bbpress' ) ) :
+				define( 'MMD_BBPRESS_PLUG', true );
+			endif;
+		endif;
+		if ( defined( 'MMD_BBPRESS_PLUG' ) && MMD_BBPRESS_PLUG && ! is_admin() ) :
 			if ( ! defined( 'WP_MMD_MEDIA_UPLOADER' ) ) :
 				define( 'WP_MMD_MEDIA_UPLOADER', FALSE );
 			endif;
@@ -53,10 +58,10 @@ class BBPress {
 	 */
 	public function load_edit_mmdform() {
 		if ( ! function_exists( 'bbp_use_wp_editor' ) || ! function_exists( 'is_bbpress' ) ) :
-			return FALSE;
+			return false;
 		endif;
 		if ( ! bbp_use_wp_editor() || ! is_bbpress() ) :
-			return FALSE;
+			return false;
 		endif;
 		add_filter( 'mmd_frontend_enabled', '__return_true' );
 		$this->plugin_uri = mmd()->plugin_uri;
@@ -79,4 +84,4 @@ class BBPress {
 }
 
 
-new \MarkupMarkdown\Addons\AutoPlugs\BBPress();
+new \MarkupMarkdown\AutoPlugs\BBPress();

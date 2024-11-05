@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\AutoPlugs;
+namespace MarkupMarkdown\AutoPlugs;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -8,11 +8,12 @@ defined( 'ABSPATH' ) || exit;
 class Woocommerce {
 
 
-    public function __construct() {
+	public function __construct() {
 		if ( file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' ) ) :
+			define( 'MMD_WOOCOMMERCE_PLUG', true );
 			add_action( 'after_setup_theme', array( $this, 'mmd_woocommerce_plug' ) );
 		endif;
-    }
+	}
 
 
 	public function mmd_woocommerce_plug() {
@@ -39,5 +40,5 @@ class Woocommerce {
 }
 
 
-new \MarkupMarkdown\Addons\AutoPlugs\Woocommerce();
+new \MarkupMarkdown\AutoPlugs\Woocommerce();
 

@@ -47,6 +47,9 @@ class Support {
 		if ( is_admin() ) :
 			# Check then enable or disable the markdown editor on the backend
 			add_filter( 'mmd_backend_enabled', array( $this, 'current_hook_allowed' ) );
+			# Add the basic proxy filters for ajax requests flagged as 'is_admin'
+			add_filter( 'mmd_proxy_filters', array( $this, 'push_proxy_filters' ), 9, 1);
+			add_action( 'mmd_addons_loaded', array( $this, 'add_extra_proxy_filters' ) );
 			# Check if we are at the right location
 			add_action( 'init', array( $this, 'prepare_markdown_editor' ), 9999 ); # Priority 9999
 			# Toggle on / off the markdown related filters. Different hook so ok with priority 10

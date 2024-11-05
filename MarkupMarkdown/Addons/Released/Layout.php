@@ -33,7 +33,7 @@ class Layout {
 		$this->toolbar_conf = mmd()->conf_blog_prefix . 'conf_easymde_toolbar.json';
 		if ( defined( 'MMD_ADDONS' ) && in_array( $this->prop[ 'slug' ], MMD_ADDONS ) === FALSE ) :
 			$this->prop[ 'active' ] = 0;
-			return FALSE; # Addon has been desactivated
+			return false; # Addon has been desactivated
 		endif;
 		if ( is_admin() ) :
 			add_filter( 'mmd_verified_config', array( $this, 'update_config' ) );
@@ -122,7 +122,7 @@ class Layout {
 	 * @return Void
 	 */
 	public function add_tabmenu() {
-		echo "\t\t\t\t\t\t<li><a href=\"#tab-layout\">" . __( 'Layout', 'markup-markdown' ) . "</a></li>\n";
+		echo "\t\t\t\t\t\t<li><a href=\"#tab-layout\" class=\"mmd-ico ico-layout\">" . __( 'Layout', 'markup-markdown' ) . "</a></li>\n";
 	}
 
 

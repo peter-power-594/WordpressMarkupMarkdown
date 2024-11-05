@@ -39,6 +39,8 @@ class Activation {
 		$mmd_cpt = new \MarkupMarkdown\Core\Support();
 		require_once $core_dir . 'Addons.php';
 		$mmd_addons = new \MarkupMarkdown\Core\Addons( $mmd_cpt );
+		require_once $core_dir . 'AutoPlugs.php';
+		$mmd_autoplugs = new \MarkupMarkdown\Core\AutoPlugs();
 		do_action( 'mmd_addons_loaded' );
 		require_once $core_dir . 'Settings.php';
 		new \MarkupMarkdown\Core\Settings( $mmd_addons );

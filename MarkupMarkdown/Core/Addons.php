@@ -19,13 +19,11 @@ class Addons {
 
 
 	public function __construct() {
-		add_filter( 'mmd_autoplugs_enabled', array( $this, 'should_load_plugs' ), 10, 1 );
 		$addon_conf = mmd()->conf_blog_prefix . 'conf_screen.php';
 		if ( file_exists( $addon_conf ) ) :
 			require_once $addon_conf;
 		endif;
 		$this->load_addons();
-		$this->load_autoplugs( apply_filters( 'mmd_autoplugs_enabled', true ) );
 	}
 
 
@@ -142,27 +140,5 @@ class Addons {
 		unset( $tmp_addon );
 	}
 
-
-	/**
-	 * Add a few "plugs" with existing WP Plugins to make a smooth connection
-	 *
-	 * @access public
-	 * @since 3.3.0
-	 *
-	 * @param Boolean $auto TRUE to load automatically the plugs or FALSE
-	 *
-	 * @return Voids
-	 */
-	public function load_autoplugs( $auto = TRUE ) {
-		if ( ! $auto ) :
-			return;
-		else :
-			require_once $this->addon_dir . 'AutoPlugs/DisableEmojis.php';
-			require_once $this->addon_dir . 'AutoPlugs/Woocommerce.php';
-			require_once $this->addon_dir . 'AutoPlugs/O2.php';
-			require_once $this->addon_dir . 'AutoPlugs/BBPress.php';
-			require_once $this->addon_dir . 'AutoPlugs/WPGeshi.php';
-		endif;
-	 }
 
 }

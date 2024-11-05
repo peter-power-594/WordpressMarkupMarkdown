@@ -144,6 +144,8 @@
 		$( '.tmp_media' ).each(function() {
 			css.push( 'div[data-pointer="' + $( this ).attr( 'data-pointer' ) + '"]{min-height:' + Math.ceil( $( this ).height() ) + 'px}' );
 		});
+		css.push( '.tmp_span_block{display:block}' );
+		css.push( '.tmp_span_inline{display:inline-block;vertical-align:baseline}' );
 		_self.previewSheet.innerText = css.join( '' );
 	};
 
@@ -591,7 +593,7 @@
 				});
 		}
 		else {
-			renderPlaylist( renderPlaylist, 250 );
+			setTimeout( renderPlaylist, 250 );
 		}
 		return true;
 	};
@@ -699,12 +701,10 @@
 				});
 		}
 		else {
-			renderPlaylist( renderPlaylist, 250 );
+			setTimeout( renderPlaylist, 250 );
 		}
 		return true;
 	};
-
-
 
 	window.MmdPreview = MmdPreview;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace MarkupMarkdown\Addons\AutoPlugs;
+namespace MarkupMarkdown\AutoPlugs;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,7 +14,8 @@ defined( 'ABSPATH' ) || exit;
 class DisableEmojis {
 
 
-    public function __construct() {
+	public function __construct() {
+		define( 'MMD_DISABLEEMOJIS_PLUG', true );
 		if ( file_exists( WP_PLUGIN_DIR . '/disable-emojis/disable-emojis.php' ) ) :
 			# The plugin exists, only need the community patch
 			add_action( 'admin_init', array( $this, 'disable_back_emojis' ) );
@@ -23,7 +24,7 @@ class DisableEmojis {
 			add_action( 'init', array( $this, 'disable_front_emojis' ) );
 			add_action( 'admin_init', array( $this, 'disable_back_emojis' ) );
 		endif;
-    }
+	}
 
 
 	/**
@@ -104,4 +105,4 @@ class DisableEmojis {
 
 
 
-new \MarkupMarkdown\Addons\AutoPlugs\DisableEmojis();
+new \MarkupMarkdown\AutoPlugs\DisableEmojis();
