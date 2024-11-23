@@ -304,7 +304,7 @@ class Layout {
 			[ "#<ul>\n<div class=\"grid-item\"><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u", "<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><a data-lightbox=\"$1\" href=\"$2\"" ],
 			# New version with *figure* and *figcaption*
 			[ "#<li><figure([^>]+)><a href=\"(/wp-content/.*?\.(jpg|jpeg|gif|png))\" title=\"(myset[0-9_]+)\s(.*?)</li>#u", "<div class=\"grid-item\"><figure$1><a data-lightbox=\"$4\" href=\"$2\" title=\"$5</div>" ],
-			[ "#<ul>\n<div class=\"grid-item\"><figure([^>]+)><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u", "<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><figure$1><a data-lightbox=\"$2\" href=\"$3\"" ],
+			[ "#<ul>\n<div class=\"grid-item\"><figure id\=\"(.*?)\"([^>]+)><a data-lightbox=\"(.*?)\" href=\"(.*?)\"#u", "<div id=\"$1\" class=\"grid lightbox-set\" data-masonry='{ \"itemSelector\": \".grid-item\", \"columnWidth\": \".grid-sizer\", \"percentPosition\": true }'>\n<div class=\"grid-sizer\"></div>\n<div class=\"grid-item\"><figure id=\"$1\"$2><a data-lightbox=\"$3\" href=\"$4\"" ],
 			# Safety clean
 			[ "#</div>\n</ul>#u", "</div>\n</div>" ],
 			# Adjust lightbox for single images
