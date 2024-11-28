@@ -1,7 +1,7 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 
 <div id="tab-plugs">
-	<h2><?php esc_html_e( 'AutoPlugs', 'markup-markdown' ); ?></h2>
+	<h2><?php esc_html_e( 'Autoplugs', 'markup-markdown' ); ?></h2>
 	<p><?php esc_html_e( 'Bridges to activate markdown with existing plugins if available.', 'markup-markdown' ); ?></p>
 	<table class="form-table" role="presentation">
 		<tbody>

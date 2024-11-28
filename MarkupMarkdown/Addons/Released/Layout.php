@@ -27,6 +27,7 @@ class Layout {
 		mmd()->default_conf = array( 'MMD_USE_LIGHTBOX' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_IMAGESLOADED' => 1 );
 		mmd()->default_conf = array( 'MMD_USE_MASONRY' => 1 );
+		mmd()->default_conf = array( 'MMD_USE_BLOCKSTYLES' => 0 );
 		mmd()->default_conf = array( 'MMD_CUSTOM_TOOLBAR' => 0 );
 		mmd()->default_conf = array( 'MMD_KEEP_SPACES' => 0 );
 		mmd()->default_conf = array( 'MMD_USE_HEADINGS' => [] );
@@ -66,6 +67,7 @@ class Layout {
 	 * @return Void
 	 */
 	public function update_config( $my_cnf ) {
+		$my_cnf[ 'goodvibes' ] = filter_input( INPUT_POST, 'mmd_goodvibes', FILTER_VALIDATE_INT );
 		$my_cnf[ 'lightbox' ] = filter_input( INPUT_POST, 'mmd_lightbox', FILTER_VALIDATE_INT );
 		$my_cnf[ 'imagesloaded' ] = filter_input( INPUT_POST, 'mmd_imagesloaded', FILTER_VALIDATE_INT );
 		$my_cnf[ 'masonry' ] = filter_input( INPUT_POST, 'mmd_masonry', FILTER_VALIDATE_INT );
