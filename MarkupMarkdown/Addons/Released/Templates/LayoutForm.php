@@ -76,7 +76,7 @@
 				<td>
 					<label for="mmd_lightbox">
 						<input type="checkbox" name="mmd_lightbox" id="mmd_lightbox" value="1" <?php echo (int)$my_cnf[ 'lightbox' ] > 0 ? 'checked="checked"' : ''; ?> />
-						<?php printf( esc_html__( 'An image inside a $1%spost$2%s or $1%spage$2%s that was linked to its original size will open in a modal (overlay on the same page) instead of a new window / tab.', 'markup-markdown' ), '<em>', '</em>', '<em>', '</em>' ); ?>
+						<?php printf( esc_html__( 'An image inside a %1$spost%2$s or %1$spage%2$s that was linked to its original size will open in a modal (overlay on the same page) instead of a new window / tab.', 'markup-markdown' ), '<em>', '</em>', '<em>', '</em>' ); ?>
 					</label>
 				</td>
 			</tr>
@@ -87,7 +87,7 @@
 				<td>
 					<label for="mmd_masonry">
 						<input type="checkbox" name="mmd_masonry" id="mmd_masonry" value="1" <?php echo (int)$my_cnf[ 'masonry' ] > 0 ? 'checked="checked"' : ''; ?>>
-						<?php printf( esc_html__( 'Transform a bullet list of images as a 2 waterfall column layout when the $1%sphoto gallery$2%s post format is selected.', 'markup-markdown' ), '<em>', '</em>' ); ?>
+						<?php printf( esc_html__( 'Transform a bullet list of images as a 2 waterfall column layout when the %1$sphoto gallery%2$s post format is selected.', 'markup-markdown' ), '<em>', '</em>' ); ?>
 					</label>
 				</td>
 			</tr>
