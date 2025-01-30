@@ -244,7 +244,7 @@ class EngineEasyMDE {
 			wp_enqueue_script( 'markup_markdown__sticky', $plugin_uri . 'assets/jquery-waypoints/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
 			wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.debug.js', [ 'markup_markdown__sticky' ], '1.1.24', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_spellchecker', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-spellchecker.debug.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.2', true );
-			wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.debug.js', [ 'markup_markdown__wordpress_spellchecker' ], '1.0.26', true );
+			wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.debug.js', [ 'markup_markdown__wordpress_spellchecker' ], '1.1.3', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.debug.js', [ 'markup_markdown__wordpress_preview' ], '1.0.27', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.debug.js', [ 'markup_markdown__wordpress_media' ], '1.6.4', true );
 		elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) :
@@ -254,7 +254,7 @@ class EngineEasyMDE {
 			wp_enqueue_script( 'markup_markdown__sticky', $plugin_uri . 'assets/jquery-waypoints/lib/shortcuts/sticky.min.js', [ 'markup_markdown__waypoints' ], '4.0.1', true );
 			wp_enqueue_script( 'markup_markdown__codemirror_spellchecker', $plugin_uri . 'assets/custom-codemirror-spell-checker/dist/spell-checker.min.js', [ 'markup_markdown__sticky' ], '1.1.24', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_spellchecker', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-spellchecker.min.js', [ 'markup_markdown__codemirror_spellchecker' ], '1.0.2', true );
-			wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.min.js', [ 'markup_markdown__wordpress_spellchecker' ], '1.0.26', true );
+			wp_enqueue_script( 'markup_markdown__wordpress_preview', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-preview.min.js', [ 'markup_markdown__wordpress_spellchecker' ], '1.1.3', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_media', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-media.min.js', [ 'markup_markdown__wordpress_preview' ], '1.0.27', true );
 			wp_enqueue_script( 'markup_markdown__wordpress_richedit', $plugin_uri . 'assets/markup-markdown/js/wordpress_richedit-easymde.min.js', [ 'markup_markdown__wordpress_media' ], '1.6.4', true );
 		else :

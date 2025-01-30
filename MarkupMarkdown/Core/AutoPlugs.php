@@ -16,6 +16,7 @@ class AutoPlugs {
 		'DisableEmojis' => [ 1, 'https://wordpress.org/plugins/disable-emojis/' ],
 		'O2' => [ 0, 'https://github.com/Automattic/o2' ],
 		'Woocommerce' => [ 0, 'https://wordpress.org/plugins/woocommerce/' ],
+		'WPCodeBlocks' => [ 0, 'https://wordpress.org/plugins/wp-codemirror-block/' ],
 		'WPGeshi' => [ 0, 'https://wordpress.org/plugins/wp-geshi-highlight/' ]
 	);
 

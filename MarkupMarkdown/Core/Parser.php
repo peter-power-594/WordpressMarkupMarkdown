@@ -69,7 +69,17 @@ class Parser {
 	private function live_html( $content ) {
 		$html = $this->final_html( $content );
 		# Decode the double quotes to avoid breaking native WP shortcodes
-		return htmlspecialchars_decode( $html, ENT_COMPAT );
+		$final = htmlspecialchars_decode( $html, ENT_COMPAT );
+		unset( $html ); $code_blocks = [];
+		preg_match_all( '#<code([^>]*)>(.*?)<\/code>#is', $final, $code_blocks );
+		if ( isset( $code_blocks ) && is_array( $code_blocks ) && isset( $code_blocks[ 0 ] ) && isset( $code_blocks[ 1 ] ) ) :
+			foreach( $code_blocks[ 0 ] as $id_block => $code_block ) :
+				$my_lang = isset( $code_blocks[ 1 ][ $id_block ] ) && ! empty( $code_blocks[ 1 ][ $id_block ] ) ? $code_blocks[ 1 ][ $id_block ] : '';
+				$my_code = isset( $code_blocks[ 2 ][ $id_block ] ) && ! empty( $code_blocks[ 2 ][ $id_block ] ) ? htmlentities( $code_blocks[ 2 ][ $id_block ] ) : '';
+				$final = str_replace( $code_block, '<code' . $my_lang . '>' . $my_code .'</code>', $final );
+			endforeach;
+		endif; 
+		return $final;
 	}
 
 

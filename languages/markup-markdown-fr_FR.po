@@ -3,9 +3,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Markup Markdown 3.7.4\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
-"POT-Creation-Date: 2024-11-28T00:26:06+00:00\n"
-"PO-Revision-Date: 2024-11-28 09:28+0900\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown-"
+"release\n"
+"POT-Creation-Date: 2024-12-22T14:22:38+00:00\n"
+"PO-Revision-Date: 2024-12-23 09:41+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -188,6 +189,18 @@ msgstr "Refaire"
 msgid "Spellchecker"
 msgstr "Vérificateur d’orthographe"
 
+#: MarkupMarkdown/Addons/Released/LaTeX.php:23
+#: MarkupMarkdown/Addons/Released/LaTeX.php:107
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:4
+msgid "LaTeX"
+msgstr "LaTeX"
+
+#: MarkupMarkdown/Addons/Released/LaTeX.php:24
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:5
+msgid "Easily type and render math formulas inside your post."
+msgstr ""
+"Écriver et afficher vos formules mathématique depuis l'éditeur Markdown."
+
 #: MarkupMarkdown/Addons/Released/Layout.php:25
 #: MarkupMarkdown/Addons/Released/Layout.php:127
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:4
@@ -299,6 +312,42 @@ msgstr ""
 "votre hébergeur. Désactivé par défaut et ne pas utiliser si votre hébergeur "
 "utilise déjà un système de cache. Idéal si vous utilisez un hébergement "
 "partagé non optimisé pour Wordpress."
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:28
+msgid "Rendering engine"
+msgstr "Moteur de rendus"
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:33
+msgid "None"
+msgstr "Aucun (Pure LaTeX)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:37
+msgid "Katex rendering"
+msgstr "Rendu par Katex"
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:41
+msgid "Mathjax rendering"
+msgstr "Rendu par MathJax"
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:47
+msgid "Load assets"
+msgstr "Chargement des bibliothèques"
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:52
+msgid ""
+"Load the LaTeX engine related assets on the frontend as well. (Only added to "
+"the edit screen by default)"
+msgstr ""
+"Charger le moteur sur les pages publiées (Chargé uniquement sur l'écran "
+"d'édition par défaut)"
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:56
+msgid ""
+"Specify the ID of an HTML node to parse when a page is loaded. (Parse the "
+"whole body by default)"
+msgstr ""
+"Spécifier l'identifiant d'un nœud HTML (Vérifie l'existence de formules sur "
+"l'ensemble du corps de la page par défaut)"
 
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:5
 msgid ""
@@ -617,6 +666,11 @@ msgid "Install"
 msgstr "Installer"
 
 #: MarkupMarkdown/AutoPlugs/Templates/PlugsForm.php:4
+#: MarkupMarkdown/Core/AutoPlugs.php:195
+msgid "Autoplugs"
+msgstr "Compatibilité d'extensions"
+
+#: MarkupMarkdown/AutoPlugs/Templates/PlugsForm.php:5
 msgid "Bridges to activate markdown with existing plugins if available."
 msgstr ""
 "Passerelles pour activer correctement des fonctionnalités Markdown avec des "
@@ -633,10 +687,6 @@ msgstr "Forum d’aide en ligne"
 #: MarkupMarkdown/Core/Activation.php:86
 msgid "Rate this plugin »"
 msgstr "Laissez un avis »"
-
-#: MarkupMarkdown/Core/AutoPlugs.php:194
-msgid "Autoplugs"
-msgstr "Compatibilité d'extensions"
 
 #: MarkupMarkdown/Core/Settings.php:127
 msgid ""

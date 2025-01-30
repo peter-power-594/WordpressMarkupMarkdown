@@ -57,9 +57,12 @@ class Activation {
 	 * @return String $mofile The language specific translation file
 	 */
 	function plugin_textdomain( $mofile, $domain ) {
-		if ( 'markup-markdown' === $domain && false !== strpos( $mofile, WP_LANG_DIR . '/plugins/' ) ) :
+		if ( 'markup-markdown' === $domain ) :
 			$locale = apply_filters( 'plugin_locale', determine_locale(), $domain );
-			$mofile = mmd()->plugin_dir . 'languages/' . $domain . '-' . $locale . '.mo';
+			$new_mofile = mmd()->plugin_dir . 'languages/' . $domain . '-' . $locale . '.mo';
+			if ( $new_mofile !== $mofile && file_exists( $new_mofile ) ) :
+				return $new_mofile;
+			endif;
 		endif;
 		return $mofile;
 	}

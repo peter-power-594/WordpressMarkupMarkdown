@@ -1,7 +1,7 @@
 === Markup Markdown ===
 Tags: Editor, Markdown
-Stable Tag: 3.10.2
-Version: 3.10.2
+Stable Tag: 3.12.0
+Version: 3.12.0
 Requires at least: 4.9
 Tested up to: 6.7.1
 Requires PHP: 5.6.0
@@ -19,6 +19,8 @@ The content is saved with the markdown syntax in the database and is rendered on
 
 
 This extension rocks:
+- v3.12: Adding support for LaTeX via Katex or MathJax
+- v3.11: Bug fix with code block fences, compatible with plugins like Prismatic and new autoplug for CodeMirror Blocks (Syntax Highlighter)
 - v3.10: Adding compatibility with the BuddyPress and BuddyPress Docs plugins via an autoplug, possible to disable autoplugs from the settings panel
 - v3.9: Adding compatibility with the bbPress plugin via an autoplug 
 - v3.8: Adding compatibility with the O2 plugin via an autoplug, support for using # signs as ordered list

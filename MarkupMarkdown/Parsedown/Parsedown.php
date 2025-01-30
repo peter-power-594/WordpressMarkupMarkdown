@@ -456,7 +456,7 @@ class Parsedown
                  */
                 $language = substr($matches[1], 0, strcspn($matches[1], " \t\n\f\r"));
 
-                $class = 'language-'.$language;
+                $class = $language;
 
                 $Element['attributes'] = array(
                     'class' => $class,

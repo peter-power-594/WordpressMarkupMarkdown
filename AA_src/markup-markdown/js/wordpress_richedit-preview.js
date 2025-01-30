@@ -1,10 +1,10 @@
-/* global wp, jQuery */
+/* global wp, jQuery, katex, MathJax */
 
 /**
  * @preserve The Markup Markdown Preview Module
  * @desc Everything needed to handle the preview. Mostly cache and media rules handlers
  * @author Pierre-Henri Lavigne <lavigne.pierrehenri@proton.me>
- * @version 1.0.26
+ * @version 1.1.3
  * @license GPL 3 - https://www.gnu.org/licenses/gpl-3.0.html#license-text
  */
 
@@ -75,7 +75,8 @@
 				convertImage: 'convertHTMLImage',
 				convertAudio: 'convertAudioShortcode',
 				convertVideo: 'convertVideoShortcode',
-				convertHeading: 'convertHeadingTags'
+				convertHeading: 'convertHeadingTags',
+				convertLatexFormulas: 'renderLatexSnippets'
 			};
 		return {
 			flushQueue: function() {
@@ -705,6 +706,77 @@
 		}
 		return true;
 	};
+
+
+	/**
+	 * LaTeX Snippets rendering
+	 *
+	 * @param {String} wpLatex The LaTeX snippet written in the markdown post
+	 * @param {Integer} formularNumber The number used for the formula ID in the HTML document
+	 *
+	 * @returns {Boolean} TRUE in case of success or FALSE
+	 */
+	renderEngine.prototype.renderLatexSnippets = function( wpLatex, formularNumber ) {
+		var myRenderApp = this,
+			snippetHash = myRenderApp.hashString( wpLatex ),
+			getSnippetNode = function() {
+				var myNode = $( 'span[data-pointer="tmp_latex-' + formularNumber + '"]' )[ 0 ] || false;
+				return myNode;
+			};
+		if ( tmp_cache && tmp_cache[ snippetHash ] ) {
+			return tmp_cache[ snippetHash ].join( '' );
+		}
+		var latexSnippet = wpLatex.match( /\${1,2}([^\$]+)\${1,2}/ );
+		if ( ! latexSnippet || ! latexSnippet[ 1 ] ) {
+			return false;
+		}
+		var latexCode = latexSnippet[ 1 ].replace( /<br\s*\/*>/g, '\n' ).replace( /(^\n|\n$)/, '' ),
+			snippetNode = getSnippetNode();
+		if ( ! snippetNode ) {
+			return false;
+		}
+		else if ( snippetNode.parentNode ) {
+			var parentNode, pn = 0;
+			while ( pn < 3 ) {
+				parentNode = snippetNode.parentNode || {};
+				if ( ( parentNode.tagName || '' ).toUpperCase() === 'CODE' || /hljs/.test( parentNode.className || '' ) ) {
+					snippetNode.parentNode.removeChild( snippetNode );
+					return false;
+				}
+				pn++;
+			}
+		}
+		var renderSnippet = function() {
+			if ( ! snippetNode ) {
+				return false;
+			}
+			var isBlock = /\$\$/.test( latexSnippet ) ? true : false;
+			if ( window.katex ) {
+				katex.render(latexCode, snippetNode, {
+					displayMode: isBlock,
+					throwOnError: false
+				});
+			}
+			else if ( window.MathJax ) {
+				if ( MathJax.tex2chtml && typeof MathJax.tex2chtml === 'function' ) {
+					snippetNode.appendChild( MathJax.tex2chtml( latexCode ), { em: 16, ex: 8, display: isBlock } );
+				}
+				else if ( MathJax.tex2svg && typeof MathJax.tex2svg === 'function' ) {
+					snippetNode.appendChild( MathJax.tex2svg( latexCode ), { em: 16, ex: 8, display: isBlock } );
+				}
+				// snippetNode.appendChild( MathJax.HTML.Element( span, {}, latexCode ) );
+			}
+			if ( ! tmp_cache[ snippetHash ] ) {
+				tmp_cache[ snippetHash ] = [ snippetNode.innerHTML ];
+			}
+		};
+		if ( snippetNode && ! /tmp_ui_ready/.test( snippetNode.className ) ) {
+			snippetNode.className += ' tmp_ui_ready';
+			setTimeout( renderSnippet, 250 );			
+		}
+		return true;
+	};
+
 
 	window.MmdPreview = MmdPreview;
 

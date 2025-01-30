@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Markup Markdown 3.10.2\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown\n"
+"Project-Id-Version: Markup Markdown 3.12.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markup-markdown-release\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-11-28T00:29:10+00:00\n"
+"POT-Creation-Date: 2024-12-22T14:22:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: markup-markdown\n"
@@ -186,6 +186,17 @@ msgstr ""
 msgid "Spellchecker"
 msgstr ""
 
+#: MarkupMarkdown/Addons/Released/LaTeX.php:23
+#: MarkupMarkdown/Addons/Released/LaTeX.php:107
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:4
+msgid "LaTeX"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/LaTeX.php:24
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:5
+msgid "Easily type and render math formulas inside your post."
+msgstr ""
+
 #: MarkupMarkdown/Addons/Released/Layout.php:25
 #: MarkupMarkdown/Addons/Released/Layout.php:127
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:4
@@ -283,6 +294,34 @@ msgstr ""
 
 #: MarkupMarkdown/Addons/Released/OPCache.php:20
 msgid "Static html files can be generated to speed up the rendering if the default PHP OPCache if available. Uncheck to enable."
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:28
+msgid "Rendering engine"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:33
+msgid "None"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:37
+msgid "Katex rendering"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:41
+msgid "Mathjax rendering"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:47
+msgid "Load assets"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:52
+msgid "Load the LaTeX engine related assets on the frontend as well. (Only added to the edit screen by default)"
+msgstr ""
+
+#: MarkupMarkdown/Addons/Released/Templates/LaTeXForm.php:56
+msgid "Specify the ID of an HTML node to parse when a page is loaded. (Parse the whole body by default)"
 msgstr ""
 
 #: MarkupMarkdown/Addons/Released/Templates/LayoutForm.php:5
@@ -471,7 +510,7 @@ msgid "Install"
 msgstr ""
 
 #: MarkupMarkdown/AutoPlugs/Templates/PlugsForm.php:4
-#: MarkupMarkdown/Core/AutoPlugs.php:194
+#: MarkupMarkdown/Core/AutoPlugs.php:195
 msgid "Autoplugs"
 msgstr ""
 
