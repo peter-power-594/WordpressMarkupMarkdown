@@ -13,6 +13,7 @@ class AutoPlugs {
 		'BBPress' => [ 0, 'https://wordpress.org/plugins/bbpress/' ],
 		'BuddyPress' => [ 0, 'https://wordpress.org/plugins/buddypress/' ],
 		'BuddyPressDocs' => [ 0, 'https://wordpress.org/plugins/buddypress-docs/' ],
+		'CodeSnippets' => [ 0, 'https://wordpress.org/plugins/code-snippets/' ],
 		'DisableEmojis' => [ 1, 'https://wordpress.org/plugins/disable-emojis/' ],
 		'O2' => [ 0, 'https://github.com/Automattic/o2' ],
 		'Woocommerce' => [ 0, 'https://wordpress.org/plugins/woocommerce/' ],

@@ -1,7 +1,7 @@
 # WP Markup Markdown
 [![WP compatibility](https://plugintests.com/plugins/wporg/markup-markdown/wp-badge.svg?ver=3.9.1)](https://plugintests.com/plugins/wporg/markup-markdown/latest)
 [![PHP compatibility](https://plugintests.com/plugins/wporg/markup-markdown/php-badge.svg?ver=3.9.1)](https://plugintests.com/plugins/wporg/markup-markdown/latest) 
-[![Code Climate Quality](https://codeclimate.com/github/peter-power-594/WordpressMarkupMarkdown.png)](https://codeclimate.com/github/peter-power-594/WordpressMarkupMarkdown)  
+[![Code Climate Quality](https://codeclimate.com/github/peter-power-594/markup-markdown.png)](https://codeclimate.com/github/peter-power-594/markup-markdown)  
 The [Markup Markdown](https://wordpress.org/plugins/markup-markdown/) WordPress Plugin !  
 Write your blog posts and pages directly in Markdown from the WordPress's admin screen 
 

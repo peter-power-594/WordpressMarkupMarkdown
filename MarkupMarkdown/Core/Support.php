@@ -208,6 +208,12 @@ class Support {
 			if ( ! (int)$mmd_tmpl_enabled ) :
 				return false;
 			endif;
+		else :
+			# Toggle on or off the markdown **editor** on the backend
+			$mmd_disable_gutenberg = apply_filters( 'mmd_disable_gutenberg', true );
+			if ( ! (int)$mmd_disable_gutenberg ) :
+				return false;
+			endif;
 		endif;
 		if ( ! $this->mmd_syntax ) :
 			return false;
